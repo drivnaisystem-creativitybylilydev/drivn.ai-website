@@ -59,22 +59,22 @@ export default function Hero() {
           className="space-y-10 md:space-y-12"
         >
           {/* Split section: title left, bullets right */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-            {/* Left: Title */}
+          <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-12 lg:gap-12 xl:gap-20 items-center lg:items-start">
+            {/* Left: Title - constrained to column */}
             <motion.h1
               variants={fadeInFromLeft}
-              className="leading-tight flex flex-col items-center lg:items-start text-center lg:text-left"
+              className="leading-tight flex flex-col items-center lg:items-start text-center lg:text-left min-w-0 max-w-full"
             >
-              <span className="text-5xl md:text-6xl lg:text-7xl font-sora font-bold text-white whitespace-nowrap">
+              <span className="text-4xl md:text-5xl lg:text-5xl xl:text-6xl font-sora font-bold text-white">
                 You&apos;re <span className="underline-glow-purple">Losing Revenue</span>.
               </span>
-              <span className="text-4xl md:text-5xl lg:text-6xl font-sora font-bold text-neon-purple whitespace-nowrap">
+              <span className="text-3xl md:text-4xl lg:text-4xl xl:text-5xl font-sora font-bold text-neon-purple">
                 We Know Where.
               </span>
             </motion.h1>
 
             {/* Right: Bullet points */}
-            <motion.div variants={fadeInFromRight} className="flex flex-col items-center lg:items-start">
+            <motion.div variants={fadeInFromRight} className="flex flex-col items-center lg:items-start min-w-0">
               <ul className="space-y-4 flex flex-col items-stretch w-fit">
                 <li className="flex items-center gap-3 w-full">
                   <CheckCircle
