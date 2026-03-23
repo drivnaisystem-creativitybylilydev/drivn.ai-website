@@ -16,7 +16,7 @@ export default function FinalCTA() {
           viewport={{ once: true }}
           className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-sora font-semibold mb-6"
         >
-          Ready to See Where You&apos;re <span className="text-neon-purple">Losing Money</span>?
+          Ready to See Where You&apos;re <span className="text-neon-purple">Losing Money?</span>
         </motion.h2>
 
         <motion.p

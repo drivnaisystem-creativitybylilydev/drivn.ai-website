@@ -87,6 +87,33 @@
     }
   }
 
+  /* Hero title row — underline only under “Losing Revenue” */
+  .underline-glow-purple-hero {
+    display: inline-block;
+    width: fit-content;
+    overflow: visible;
+    padding-bottom: 0.12em;
+  }
+  .underline-glow-purple-hero::after {
+    bottom: 2px;
+    z-index: 0;
+  }
+  @media (min-width: 768px) {
+    .underline-glow-purple-hero::after {
+      bottom: 5px;
+    }
+  }
+  @media (min-width: 1024px) {
+    .underline-glow-purple-hero::after {
+      bottom: 8px;
+    }
+  }
+  @media (min-width: 1280px) {
+    .underline-glow-purple-hero::after {
+      bottom: 11px;
+    }
+  }
+
   /* Bullet points - underline sits lower under smaller text */
   .underline-glow-purple-bullet::after {
     bottom: 2px;

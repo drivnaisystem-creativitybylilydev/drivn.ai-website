@@ -44,7 +44,7 @@ export default function Navigation() {
         scrolled ? "backdrop-blur-xl bg-brand-dark/80 border-b border-white/5" : ""
       )}
     >
-      <nav className="max-w-7xl mx-auto px-4 md:px-8 py-4 flex items-center justify-between">
+      <nav className="max-w-screen-2xl mx-auto px-3 sm:px-4 md:px-5 lg:px-5 xl:px-6 py-4 flex items-center justify-between">
         <Link href="#hero" className="flex-shrink-0">
           <Image
             src="/brand/writingonlylogo.png"
