@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { viewRelaxed } from "@/lib/motion-viewport";
 import { Search, LayoutTemplate, Wrench, TrendingUp } from "lucide-react";
 
 const steps = [
@@ -43,7 +44,7 @@ export default function HowItWorks() {
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.3 }}
+          viewport={viewRelaxed}
           transition={{ duration: 0.6, ease: "easeOut" }}
           className="text-3xl md:text-4xl font-sora font-semibold text-center text-white mb-16 md:mb-20"
         >
@@ -55,7 +56,7 @@ export default function HowItWorks() {
           <motion.div
             initial={{ scaleY: 0 }}
             whileInView={{ scaleY: 1 }}
-            viewport={{ once: true, amount: 0.1 }}
+            viewport={viewRelaxed}
             transition={{ duration: 1, ease: "easeOut", delay: staggerDelay }}
             className="absolute left-5 md:left-6 top-0 bottom-0 w-px bg-gradient-to-b from-brand-purple via-brand-purple-light to-brand-purple origin-top"
           />
@@ -66,7 +67,7 @@ export default function HowItWorks() {
                 key={step.number}
                 initial={{ opacity: 0, x: -24 }}
                 whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true, amount: 0.2 }}
+                viewport={viewRelaxed}
                 transition={{
                   duration: 0.6,
                   ease: [0.22, 1, 0.36, 1],
@@ -78,7 +79,7 @@ export default function HowItWorks() {
                 <motion.div
                   initial={{ scale: 0, opacity: 0 }}
                   whileInView={{ scale: 1, opacity: 1 }}
-                  viewport={{ once: true, amount: 0.2 }}
+                  viewport={viewRelaxed}
                   transition={{
                     duration: 0.5,
                     type: "spring",

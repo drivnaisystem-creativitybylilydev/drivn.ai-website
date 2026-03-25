@@ -26,6 +26,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuditForm } from "@/components/providers/AuditFormProvider";
+import { viewRelaxed } from "@/lib/motion-viewport";
 
 const industries: { label: string; Icon: LucideIcon }[] = [
   { label: "Landscaping", Icon: TreePine },
@@ -73,7 +74,7 @@ export default function IndustriesWeServe() {
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.3 }}
+          viewport={viewRelaxed}
           transition={{ duration: 0.6, ease: "easeOut" }}
           className="text-3xl md:text-4xl font-sora font-semibold text-center text-white mb-12 md:mb-16"
         >
@@ -87,7 +88,7 @@ export default function IndustriesWeServe() {
               key={label}
               initial={{ opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.2 }}
+              viewport={viewRelaxed}
               transition={{
                 duration: 0.4,
                 delay: i * 0.03,
@@ -110,7 +111,7 @@ export default function IndustriesWeServe() {
           <motion.div
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
-            viewport={{ once: true, amount: 0.3 }}
+            viewport={viewRelaxed}
             transition={{ duration: 0.6, delay: 0.3 }}
             className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-10 gap-3 md:gap-4"
           >
@@ -143,14 +144,15 @@ export default function IndustriesWeServe() {
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={viewRelaxed}
           transition={{ duration: 0.6, delay: 0.2 }}
           className="flex justify-center"
         >
           <Button
             size="lg"
             className="px-8 bg-violet-900 hover:bg-violet-800 shadow-[0_0_24px_rgba(88,28,135,0.6)]"
-            onClick={openAuditForm}
+            type="button"
+            onClick={() => openAuditForm()}
           >
             Book Free Audit
           </Button>

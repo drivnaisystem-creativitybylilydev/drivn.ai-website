@@ -1,6 +1,12 @@
 "use client";
 
-import { createContext, useContext, useState, useCallback } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  useCallback,
+  useEffect,
+} from "react";
 import {
   Dialog,
   DialogContent,
@@ -28,6 +34,12 @@ export function AuditFormProvider({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(false);
   const [formKey, setFormKey] = useState(0);
 
+  /** Radix + RemoveScroll require a real boolean; never pass a stray Event/object into `open`. */
+  const dialogOpen = open === true;
+  useEffect(() => {
+    if (typeof open !== "boolean") setOpen(false);
+  }, [open]);
+
   const openAuditForm = useCallback(() => {
     setFormKey((k) => k + 1);
     setOpen(true);
@@ -37,7 +49,12 @@ export function AuditFormProvider({ children }: { children: React.ReactNode }) {
   return (
     <AuditFormContext.Provider value={{ openAuditForm, closeAuditForm }}>
       {children}
-      <Dialog open={open} onOpenChange={setOpen}>
+      <Dialog
+        open={dialogOpen}
+        onOpenChange={(next) => {
+          if (typeof next === "boolean") setOpen(next);
+        }}
+      >
         <DialogContent
           className="max-w-xl max-h-[90vh] overflow-y-auto"
           onClose={closeAuditForm}

@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { useAuditForm } from "@/components/providers/AuditFormProvider";
+import { viewRelaxed } from "@/lib/motion-viewport";
 
 export default function FinalCTA() {
   const { openAuditForm } = useAuditForm();
@@ -13,7 +14,7 @@ export default function FinalCTA() {
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={viewRelaxed}
           className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-sora font-semibold mb-6"
         >
           Ready to See Where You&apos;re <span className="text-neon-purple">Losing Money?</span>
@@ -22,7 +23,7 @@ export default function FinalCTA() {
         <motion.p
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
+          viewport={viewRelaxed}
           transition={{ delay: 0.1 }}
           className="text-lg md:text-xl text-white/90 leading-relaxed mb-10 max-w-3xl mx-auto"
         >
@@ -34,7 +35,7 @@ export default function FinalCTA() {
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
+          viewport={viewRelaxed}
           transition={{ delay: 0.2, type: "spring", stiffness: 300, damping: 20 }}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
@@ -42,7 +43,8 @@ export default function FinalCTA() {
           <Button
             size="lg"
             className="px-8 bg-violet-900 hover:bg-violet-800 shadow-[0_0_24px_rgba(88,28,135,0.6)]"
-            onClick={openAuditForm}
+            type="button"
+            onClick={() => openAuditForm()}
           >
             Discovery Call
           </Button>

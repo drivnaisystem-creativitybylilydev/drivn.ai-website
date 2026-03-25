@@ -3,6 +3,7 @@
 import { Code2, Phone, Zap, FileText, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { viewRelaxed } from "@/lib/motion-viewport";
 
 const services = [
   {
@@ -42,7 +43,7 @@ export default function Services() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.3 }}
+          viewport={viewRelaxed}
           transition={{ duration: 0.6 }}
           className="text-center mb-12 md:mb-16"
         >
@@ -61,7 +62,7 @@ export default function Services() {
               key={service.title}
               initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.2 }}
+              viewport={viewRelaxed}
               transition={{
                 duration: 0.6,
                 delay: i * 0.1,
@@ -94,7 +95,7 @@ export default function Services() {
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={viewRelaxed}
           transition={{ duration: 0.6, delay: 0.4 }}
           className="relative mt-16 md:mt-24 -mx-4 md:-mx-8 px-4 md:px-8 py-12 md:py-16"
         >

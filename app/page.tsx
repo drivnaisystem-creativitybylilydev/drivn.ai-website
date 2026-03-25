@@ -1,7 +1,5 @@
 "use client";
 
-import { useEffect } from "react";
-import Lenis from "lenis";
 import Navigation from "@/components/Navigation";
 import Hero from "@/components/sections/Hero";
 import ProblemStatement from "@/components/sections/ProblemStatement";
@@ -14,15 +12,6 @@ import FinalCTA from "@/components/sections/FinalCTA";
 import Footer from "@/components/sections/Footer";
 
 export default function Home() {
-  useEffect(() => {
-    const lenis = new Lenis();
-    function raf(time: number) {
-      lenis.raf(time);
-      requestAnimationFrame(raf);
-    }
-    requestAnimationFrame(raf);
-  }, []);
-
   return (
     <>
       <Navigation />

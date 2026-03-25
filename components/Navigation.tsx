@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Menu } from "lucide-react";
@@ -31,11 +31,19 @@ export default function Navigation() {
   const [sheetOpen, setSheetOpen] = useState(false);
   const { openAuditForm } = useAuditForm();
 
+  const sheetIsOpen = sheetOpen === true;
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll);
+    if (typeof sheetOpen !== "boolean") setSheetOpen(false);
+  }, [sheetOpen]);
+
+  const onScroll = useCallback(() => {
+    setScrolled(window.scrollY > 20);
   }, []);
+
+  useEffect(() => {
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [onScroll]);
 
   return (
     <header
@@ -75,13 +83,20 @@ export default function Navigation() {
             whileTap={{ scale: 0.95 }}
             transition={{ type: "spring", stiffness: 300, damping: 20 }}
           >
-            <Button onClick={openAuditForm}>Book Free Audit</Button>
+            <Button type="button" onClick={() => openAuditForm()}>
+              Book Free Audit
+            </Button>
           </motion.div>
         </div>
 
         <div className="md:hidden flex-1" />
         <div className="md:hidden">
-          <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
+          <Sheet
+            open={sheetIsOpen}
+            onOpenChange={(next) => {
+              if (typeof next === "boolean") setSheetOpen(next);
+            }}
+          >
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon">
                 <Menu className="h-6 w-6" />

@@ -37,9 +37,9 @@ export function HeroLeftColumn({ variants }: HeroLeftColumnProps) {
         </h1>
       </div>
 
-      {/* Fills remaining column height; centers CTA so space isn’t one dead band */}
+      {/* flex-1 + justify-start: CTA follows headline; extra space goes below (not a void between blocks) */}
       <div
-        className="hero-split__cta flex min-h-0 w-full max-w-full flex-1 flex-col justify-center gap-10 py-8 md:gap-12 md:py-10 lg:gap-14 lg:py-12"
+        className="hero-split__cta mt-6 flex min-h-0 w-full max-w-full flex-1 flex-col justify-start gap-8 py-4 md:mt-8 md:gap-10 md:py-6 lg:gap-12 lg:py-8"
         data-hero-region="cta"
       >
         <div className="flex w-full max-w-full flex-col items-center text-center">
@@ -60,7 +60,8 @@ export function HeroLeftColumn({ variants }: HeroLeftColumnProps) {
               <Button
                 size="lg"
                 className="h-14 min-h-[3.5rem] px-10 text-base font-semibold bg-violet-900 hover:bg-violet-800 shadow-[0_0_24px_rgba(88,28,135,0.6)]"
-                onClick={openAuditForm}
+                type="button"
+                onClick={() => openAuditForm()}
               >
                 Book Free Audit
               </Button>

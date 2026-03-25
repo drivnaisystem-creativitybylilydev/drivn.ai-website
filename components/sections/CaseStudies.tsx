@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { viewRelaxed } from "@/lib/motion-viewport";
 
 const caseStudies = [
   {
@@ -33,7 +34,7 @@ export default function CaseStudies() {
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={viewRelaxed}
           className="text-3xl md:text-4xl font-sora font-semibold text-center mb-12 md:mb-16"
         >
           Results That Matter
