@@ -1,8 +1,15 @@
 "use client";
 
-import { useLayoutEffect, useMemo, useRef } from "react";
+import {
+  createContext,
+  useContext,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  type RefObject,
+} from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { Billboard, OrbitControls, Text } from "@react-three/drei";
+import { Html, OrbitControls } from "@react-three/drei";
 import * as THREE from "three";
 
 /** Decorative meshes must not win pointer rays or OrbitControls won’t drag */
@@ -13,6 +20,8 @@ const noopRaycast: THREE.Object3D["raycast"] = (raycaster, intersects) => {
 
 const BRAND_LIGHT = new THREE.Color("#A78BFA");
 const BRAND = new THREE.Color("#8B5CF6");
+
+const HtmlPortalContext = createContext<RefObject<HTMLDivElement | null> | null>(null);
 
 /** All industries from the previous grid + teaser row (order preserved) */
 const INDUSTRIES = [
@@ -73,33 +82,37 @@ function IndustryLabel({
   position: [number, number, number];
   label: string;
 }) {
-  const textRef = useRef<THREE.Mesh>(null);
+  const groupRef = useRef<THREE.Group>(null);
+  const htmlPortalRef = useContext(HtmlPortalContext);
 
   useLayoutEffect(() => {
-    const m = textRef.current;
-    if (m) m.raycast = noopRaycast;
+    const g = groupRef.current;
+    if (g) g.raycast = noopRaycast;
   }, []);
 
   return (
-    <Billboard follow position={position}>
-      <Text
-        ref={textRef}
-        fontSize={0.12}
-        color="#FFFFFF"
-        anchorX="center"
-        anchorY="middle"
-        letterSpacing={0.025}
-        outlineWidth={0.028}
-        outlineColor="#8B5CF6"
-        outlineOpacity={0.85}
-        onSync={() => {
-          const m = textRef.current;
-          if (m) m.raycast = noopRaycast;
+    <group ref={groupRef} position={position}>
+      <Html
+        center
+        transform
+        sprite
+        portal={
+          htmlPortalRef
+            ? (htmlPortalRef as unknown as RefObject<HTMLElement>)
+            : undefined
+        }
+        distanceFactor={6.5}
+        pointerEvents="none"
+        zIndexRange={[100, 0]}
+        className="select-none whitespace-nowrap font-sora text-[5.5px] font-bold leading-none tracking-wide text-white sm:text-[7px]"
+        style={{
+          textShadow:
+            "0 0 6px rgba(167, 139, 250, 0.65), 0 0 14px rgba(139, 92, 246, 0.4)",
         }}
       >
-        {label.toUpperCase()}
-      </Text>
-    </Billboard>
+        {label}
+      </Html>
+    </group>
   );
 }
 
@@ -217,40 +230,49 @@ function ParticleSphere() {
 }
 
 export default function IndustrySphere() {
+  const htmlPortalRef = useRef<HTMLDivElement>(null);
+
   return (
-    <div className="h-[min(70vh,520px)] min-h-[420px] w-full md:h-[min(72vh,640px)] md:min-h-[480px] lg:h-[min(75vh,720px)] lg:min-h-[520px]">
-      <Canvas
-        className="!h-full !w-full touch-none"
-        camera={{ position: [0, 0, 8], fov: 50 }}
-        gl={{ alpha: true, antialias: true, powerPreference: "high-performance" }}
-        style={{ background: "transparent" }}
-        dpr={[1, 2]}
-      >
-        <ambientLight intensity={0.32} />
-        <pointLight position={[10, 10, 10]} intensity={0.55} color="#FFFFFF" />
-        <pointLight position={[-10, -8, -6]} intensity={0.35} color="#8B5CF6" />
-        <pointLight
-          position={[0, 12, 4]}
-          intensity={0.42}
-          color="#A78BFA"
-          decay={2}
-          distance={36}
+    <div className="relative h-[min(70vh,520px)] min-h-[420px] w-full md:h-[min(72vh,640px)] md:min-h-[480px] lg:h-[min(75vh,720px)] lg:min-h-[520px]">
+      <HtmlPortalContext.Provider value={htmlPortalRef}>
+        <div
+          ref={htmlPortalRef}
+          className="pointer-events-none absolute inset-0 z-[5]"
+          aria-hidden
         />
+        <Canvas
+          className="absolute inset-0 !h-full !w-full touch-none z-0"
+          camera={{ position: [0, 0, 8], fov: 50 }}
+          gl={{ alpha: true, antialias: true, powerPreference: "high-performance" }}
+          style={{ background: "transparent" }}
+          dpr={[1, 2]}
+        >
+          <ambientLight intensity={0.32} />
+          <pointLight position={[10, 10, 10]} intensity={0.55} color="#FFFFFF" />
+          <pointLight position={[-10, -8, -6]} intensity={0.35} color="#8B5CF6" />
+          <pointLight
+            position={[0, 12, 4]}
+            intensity={0.42}
+            color="#A78BFA"
+            decay={2}
+            distance={36}
+          />
 
-        <ParticleSphere />
+          <ParticleSphere />
 
-        <OrbitControls
-          makeDefault
-          enableDamping
-          dampingFactor={0.08}
-          enableZoom={false}
-          enablePan={false}
-          rotateSpeed={0.65}
-          autoRotate={false}
-          minPolarAngle={Math.PI / 4}
-          maxPolarAngle={Math.PI - Math.PI / 4}
-        />
-      </Canvas>
+          <OrbitControls
+            makeDefault
+            enableDamping
+            dampingFactor={0.08}
+            enableZoom={false}
+            enablePan={false}
+            rotateSpeed={0.65}
+            autoRotate={false}
+            minPolarAngle={Math.PI / 4}
+            maxPolarAngle={Math.PI - Math.PI / 4}
+          />
+        </Canvas>
+      </HtmlPortalContext.Provider>
     </div>
   );
 }

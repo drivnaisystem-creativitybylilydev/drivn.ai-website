@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "dev:fresh": "for p in 3000 3001; do lsof -ti:$p | xargs kill -9 2>/dev/null || true; done; rm -rf .next && next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"

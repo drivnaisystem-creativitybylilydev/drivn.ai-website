@@ -1,22 +1,10 @@
 "use client";
 
-import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
+import IndustrySphereLazy from "@/components/IndustrySphereLazy";
 import { useAuditForm } from "@/components/providers/AuditFormProvider";
 import { viewRelaxed } from "@/lib/motion-viewport";
-
-const IndustrySphere = dynamic(() => import("@/components/IndustrySphere"), {
-  ssr: false,
-  loading: () => (
-    <div
-      className="flex h-[520px] w-full items-center justify-center rounded-xl bg-white/5 md:h-[640px] lg:h-[720px]"
-      aria-hidden
-    >
-      <span className="text-sm text-white/40">Loading 3D…</span>
-    </div>
-  ),
-});
 
 const sectionBg = {
   background:
@@ -59,11 +47,11 @@ export default function IndustriesWeServe() {
             Industries We{" "}
             <span className="text-brand-purple-light">Transform</span>
           </h2>
-          <p className="mb-3 font-inter text-sm tracking-wide text-white/50 md:mb-4 md:text-base">
-            Drag to explore · Industries we transform
-          </p>
-          <p className="mx-auto max-w-2xl text-base text-white/60 md:text-lg">
+          <p className="mx-auto mb-3 max-w-2xl text-base text-white/60 md:mb-4 md:text-lg">
             Service businesses losing revenue to manual processes
+          </p>
+          <p className="font-inter text-sm tracking-wide text-white/50 md:text-base">
+            Drag to explore · Industries we transform
           </p>
         </motion.div>
 
@@ -74,7 +62,7 @@ export default function IndustriesWeServe() {
           viewport={viewRelaxed}
           transition={{ duration: 0.75, delay: 0.12, ease: [0.22, 1, 0.36, 1] }}
         >
-          <IndustrySphere />
+          <IndustrySphereLazy />
         </motion.div>
 
         <motion.p
