@@ -20,6 +20,9 @@ const config: Config = {
         sora: ["var(--font-sora)"],
         inter: ["var(--font-inter)"],
       },
+      backgroundImage: {
+        "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
+      },
       fontSize: {
         xs: "clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem)",
         sm: "clamp(0.875rem, 0.8rem + 0.375vw, 1rem)",
