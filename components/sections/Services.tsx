@@ -1,6 +1,6 @@
 "use client";
 
-import { Code2, Phone, Zap, FileText, Sparkles } from "lucide-react";
+import { Code2, Phone, Zap, FileText } from "lucide-react";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { viewRelaxed } from "@/lib/motion-viewport";
@@ -90,34 +90,6 @@ export default function Services() {
             </motion.div>
           ))}
         </div>
-
-        {/* Connector to How It Works - spans full width */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={viewRelaxed}
-          transition={{ duration: 0.6, delay: 0.4 }}
-          className="relative mt-16 md:mt-24 -mx-4 md:-mx-8 px-4 md:px-8 py-12 md:py-16"
-        >
-          <div className="max-w-7xl mx-auto flex flex-col items-center gap-6">
-            <div className="relative inline-flex">
-              <div className="absolute inset-0 bg-brand-purple/20 rounded-full blur-lg scale-150" />
-              <div className="relative p-3 rounded-xl border border-brand-purple/30 bg-brand-purple/10 backdrop-blur-sm">
-                <Sparkles className="h-8 w-8 text-brand-purple-light" />
-              </div>
-            </div>
-            <p className="text-xl md:text-2xl lg:text-3xl font-sora font-medium text-white text-center w-full">
-              Each engagement is tailored. We don&apos;t do templates.
-            </p>
-            <a
-              href="#how-it-works"
-              className="text-brand-purple-light font-medium hover:text-brand-purple-light/80 transition-colors flex items-center gap-2 mt-2"
-            >
-              See how it works
-              <span className="text-lg">↓</span>
-            </a>
-          </div>
-        </motion.div>
       </div>
     </section>
   );

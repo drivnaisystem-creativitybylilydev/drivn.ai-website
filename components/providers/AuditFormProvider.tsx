@@ -5,7 +5,7 @@ import {
   useContext,
   useState,
   useCallback,
-  useEffect,
+  type SetStateAction,
 } from "react";
 import {
   Dialog,
@@ -13,7 +13,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import AuditForm from "@/components/forms/AuditForm";
+import {
+  DiscoveryDialogContent,
+  type DiscoveryDialogView,
+  type CalendlySchedulePrefill,
+} from "@/components/booking/DiscoveryDialogContent";
+import { hasCalendlyScheduling } from "@/lib/booking";
+import { cn } from "@/lib/utils";
 
 type AuditFormContextType = {
   openAuditForm: () => void;
@@ -31,45 +37,94 @@ export function useAuditForm() {
 }
 
 export function AuditFormProvider({ children }: { children: React.ReactNode }) {
-  const [open, setOpen] = useState(false);
+  const [open, setOpenRaw] = useState(false);
   const [formKey, setFormKey] = useState(0);
+  const [dialogView, setDialogView] = useState<DiscoveryDialogView>("form");
+  const [schedulePrefill, setSchedulePrefill] = useState<
+    CalendlySchedulePrefill | undefined
+  >(undefined);
 
-  /** Radix + RemoveScroll require a real boolean; never pass a stray Event/object into `open`. */
+  /** Radix + RemoveScroll require a real boolean — never persist a leaked click `Event` in state. */
+  const setOpen = useCallback((value: SetStateAction<boolean>) => {
+    setOpenRaw((prev) => {
+      const safePrev = typeof prev === "boolean" ? prev : false;
+      const next = typeof value === "function" ? value(safePrev) : value;
+      return typeof next === "boolean" ? next : false;
+    });
+  }, []);
+
   const dialogOpen = open === true;
-  useEffect(() => {
-    if (typeof open !== "boolean") setOpen(false);
-  }, [open]);
+  const showCalendlyWide =
+    hasCalendlyScheduling() && dialogView === "schedule";
 
   const openAuditForm = useCallback(() => {
     setFormKey((k) => k + 1);
+    setSchedulePrefill(undefined);
+    setDialogView("form");
     setOpen(true);
-  }, []);
-  const closeAuditForm = useCallback(() => setOpen(false), []);
+  }, [setOpen]);
+
+  const handleFormFinishedForSchedule = useCallback(
+    (answers: Record<string, string>) => {
+      const name = answers.fullName?.trim();
+      const email = answers.email?.trim();
+      setSchedulePrefill(
+        name || email
+          ? {
+              ...(name ? { name } : {}),
+              ...(email ? { email } : {}),
+            }
+          : undefined,
+      );
+      setDialogView("schedule");
+    },
+    [],
+  );
+
+  const closeAuditForm = useCallback(() => setOpen(false), [setOpen]);
 
   return (
     <AuditFormContext.Provider value={{ openAuditForm, closeAuditForm }}>
       {children}
       <Dialog
         open={dialogOpen}
-        onOpenChange={(next) => {
-          if (typeof next === "boolean") setOpen(next);
-        }}
+        onOpenChange={(next) => setOpen(next)}
       >
         <DialogContent
-          className="max-w-xl max-h-[90vh] overflow-y-auto"
+          className={cn(
+            "max-h-[90vh] overflow-y-auto overflow-x-hidden",
+            showCalendlyWide
+              ? "w-[min(100%,980px)] max-w-[calc(100vw-1.5rem)] sm:max-w-5xl"
+              : "max-w-xl",
+          )}
           onClose={closeAuditForm}
         >
           <DialogHeader>
             <DialogTitle className="text-2xl font-sora font-semibold">
-              Request Your Audit
+              {hasCalendlyScheduling()
+                ? "Book a discovery call"
+                : "Request your audit"}
             </DialogTitle>
-            <p className="text-sm text-white/60 mt-1">
-              Fill out the form below and we&apos;ll reach out within 24 hours to
-              schedule your discovery call.
+            <p className="mt-1 text-sm text-white/60">
+              {showCalendlyWide
+                ? "Step 2: Pick a time. You'll get a calendar invite with your meeting details."
+                : hasCalendlyScheduling()
+                  ? "Step 1: Complete every field so we're prepared — then tap Next to pick your call time."
+                  : "Fill out the form and we'll reach out within 24 hours to schedule your discovery call."}
             </p>
           </DialogHeader>
           <div className="mt-6">
-            <AuditForm key={formKey} />
+            <DiscoveryDialogContent
+              formKey={formKey}
+              view={dialogView}
+              onViewChange={setDialogView}
+              schedulePrefill={schedulePrefill}
+              onFormFinishedForSchedule={
+                hasCalendlyScheduling()
+                  ? handleFormFinishedForSchedule
+                  : undefined
+              }
+            />
           </div>
         </DialogContent>
       </Dialog>

@@ -2,7 +2,13 @@
 
 import { motion } from "framer-motion";
 import { viewRelaxed } from "@/lib/motion-viewport";
-import { Search, LayoutTemplate, Wrench, TrendingUp } from "lucide-react";
+import {
+  Search,
+  LayoutTemplate,
+  Wrench,
+  TrendingUp,
+  Sparkles,
+} from "lucide-react";
 
 const steps = [
   {
@@ -39,8 +45,39 @@ const staggerDelay = 0.3;
 
 export default function HowItWorks() {
   return (
-    <section id="how-it-works" className="pt-12 md:pt-16 pb-16 md:pb-24">
-      <div className="max-w-3xl mx-auto px-4 md:px-8">
+    <section
+      id="how-it-works"
+      className="scroll-mt-20 pt-12 pb-16 md:scroll-mt-24 md:pt-16 md:pb-24"
+    >
+      <div className="mx-auto max-w-7xl px-4 md:px-8">
+        {/* Bridge from Industries — intro sits in How It Works, uses full section width */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={viewRelaxed}
+          transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
+          className="mx-auto mb-16 max-w-6xl text-center md:mb-20 lg:mb-24"
+        >
+          <div className="relative mx-auto mb-8 inline-flex md:mb-10">
+            <div className="absolute inset-0 scale-150 rounded-full bg-brand-purple/25 blur-xl" />
+            <div className="relative rounded-2xl border border-brand-purple/35 bg-brand-purple/10 p-4 backdrop-blur-sm md:p-5">
+              <Sparkles className="h-10 w-10 text-brand-purple-light md:h-12 md:w-12 lg:h-14 lg:w-14" />
+            </div>
+          </div>
+          <p className="mx-auto w-full max-w-5xl px-2 font-sora text-2xl font-semibold leading-snug text-white md:text-3xl md:leading-snug lg:text-4xl lg:leading-tight xl:text-5xl">
+            Each engagement is tailored. We don&apos;t do templates.
+          </p>
+          <a
+            href="#how-it-works-steps"
+            className="mt-8 inline-flex items-center gap-2 font-sora text-base font-semibold text-brand-purple-light transition-colors hover:text-brand-purple-light/85 md:mt-10 md:text-lg lg:text-xl"
+          >
+            See how it works
+            <span className="text-xl md:text-2xl" aria-hidden>
+              ↓
+            </span>
+          </a>
+        </motion.div>
+
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -51,7 +88,10 @@ export default function HowItWorks() {
           How It Works
         </motion.h2>
 
-        <div className="relative">
+        <div
+          id="how-it-works-steps"
+          className="relative mx-auto max-w-3xl scroll-mt-28"
+        >
           {/* Vertical connecting line */}
           <motion.div
             initial={{ scaleY: 0 }}

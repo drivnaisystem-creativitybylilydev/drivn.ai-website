@@ -35,14 +35,14 @@ export default function ProblemStatement() {
       </div>
 
       <div className="relative z-10 mx-auto max-w-6xl px-4 md:px-8">
-        <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2 lg:gap-16">
+        <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-12 lg:gap-12 xl:gap-16">
           {/* Left: Writing */}
           <motion.div
             initial={{ opacity: 0, x: -24 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={viewRelaxed}
             transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-            className="order-2 space-y-8 lg:order-1"
+            className="order-2 space-y-8 lg:order-1 lg:col-span-4"
           >
             <h2 className="font-sora text-4xl font-semibold text-white md:text-5xl lg:text-6xl">
               The Problem...
@@ -60,9 +60,9 @@ export default function ProblemStatement() {
           {/* Right: Chaos → Order graphic */}
           <motion.div
             style={{ opacity: graphicsOpacity, x: graphicsX }}
-            className="order-1 flex justify-center lg:order-2 lg:justify-end"
+            className="order-1 flex w-full min-w-0 justify-center lg:order-2 lg:col-span-8 lg:justify-end"
           >
-            <div className="w-full max-w-xl lg:max-w-none">
+            <div className="w-full max-w-none">
               <ChaosToOrderGraphic />
             </div>
           </motion.div>

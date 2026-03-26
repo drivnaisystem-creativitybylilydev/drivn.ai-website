@@ -5,34 +5,24 @@ import { HeroLeftColumn } from "./HeroLeftColumn";
 import { HeroBulletColumn } from "./HeroBulletColumn";
 
 /**
- * Canonical stagger: parent `hidden` → `visible` so children reliably leave
- * `opacity: 0` (FM + React 19 can fail with `initial`/`animate` naming alone).
+ * Left + right columns animate in parallel; bullet list staggers inside `HeroBulletColumn`.
  */
 const containerVariants: Variants = {
   hidden: {},
   visible: {
     transition: {
-      staggerChildren: 0.15,
-      delayChildren: 0.05,
+      staggerChildren: 0,
+      delayChildren: 0,
     },
   },
 };
 
 const fadeInFromLeft: Variants = {
-  hidden: { opacity: 0, x: -40 },
+  hidden: { opacity: 0, x: -56 },
   visible: {
     opacity: 1,
     x: 0,
-    transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] },
-  },
-};
-
-const fadeInFromRight: Variants = {
-  hidden: { opacity: 0, x: 40 },
-  visible: {
-    opacity: 1,
-    x: 0,
-    transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] },
+    transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] },
   },
 };
 
@@ -51,7 +41,7 @@ export function HeroSplit() {
       animate="visible"
     >
       <HeroLeftColumn variants={fadeInFromLeft} />
-      <HeroBulletColumn variants={fadeInFromRight} />
+      <HeroBulletColumn />
     </motion.div>
   );
 }

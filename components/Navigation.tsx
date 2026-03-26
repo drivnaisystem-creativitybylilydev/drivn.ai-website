@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, type SetStateAction } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Menu } from "lucide-react";
@@ -21,6 +21,7 @@ const navLinks = [
   { href: "#services", label: "Services" },
   { href: "#how-it-works", label: "How It Works" },
   { href: "#industries", label: "Industries" },
+  { href: "#integrations", label: "Stack" },
   { href: "#work", label: "Results" },
   { href: "#why-us", label: "Why Us" },
   { href: "#contact", label: "Contact" },
@@ -28,13 +29,18 @@ const navLinks = [
 
 export default function Navigation() {
   const [scrolled, setScrolled] = useState(false);
-  const [sheetOpen, setSheetOpen] = useState(false);
+  const [sheetOpen, setSheetOpenRaw] = useState(false);
   const { openAuditForm } = useAuditForm();
 
+  const setSheetOpen = useCallback((value: SetStateAction<boolean>) => {
+    setSheetOpenRaw((prev) => {
+      const safePrev = typeof prev === "boolean" ? prev : false;
+      const next = typeof value === "function" ? value(safePrev) : value;
+      return typeof next === "boolean" ? next : false;
+    });
+  }, []);
+
   const sheetIsOpen = sheetOpen === true;
-  useEffect(() => {
-    if (typeof sheetOpen !== "boolean") setSheetOpen(false);
-  }, [sheetOpen]);
 
   const onScroll = useCallback(() => {
     setScrolled(window.scrollY > 20);
@@ -118,6 +124,7 @@ export default function Navigation() {
                   </Link>
                 ))}
                 <Button
+                  type="button"
                   onClick={() => {
                     setSheetOpen(false);
                     openAuditForm();
