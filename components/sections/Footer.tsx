@@ -19,12 +19,12 @@ export default function Footer() {
           <span className="text-sm text-white/60">© 2026 Drivn.AI</span>
         </div>
 
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-2 sm:gap-4">
           <Link
             href="https://linkedin.com"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-white/60 hover:text-white transition-colors"
+            className="flex h-11 w-11 items-center justify-center text-white/60 transition-colors hover:text-white active:scale-95"
             aria-label="LinkedIn"
           >
             <Linkedin className="h-5 w-5" />
@@ -33,14 +33,14 @@ export default function Footer() {
             href="https://instagram.com"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-white/60 hover:text-white transition-colors"
+            className="flex h-11 w-11 items-center justify-center text-white/60 transition-colors hover:text-white active:scale-95"
             aria-label="Instagram"
           >
             <Instagram className="h-5 w-5" />
           </Link>
           <Link
             href="mailto:hello@drivn.ai"
-            className="text-white/60 hover:text-white transition-colors"
+            className="flex h-11 w-11 items-center justify-center text-white/60 transition-colors hover:text-white active:scale-95"
             aria-label="Email"
           >
             <Mail className="h-5 w-5" />

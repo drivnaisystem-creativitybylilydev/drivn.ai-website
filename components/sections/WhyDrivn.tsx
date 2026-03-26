@@ -59,7 +59,7 @@ export default function WhyDrivn() {
           {benefits.map((benefit) => (
             <div
               key={benefit.heading}
-              className="p-6 border border-white/10 rounded-xl hover:border-brand-purple/50 hover:shadow-[0_0_30px_-5px_rgba(139,92,246,0.3)] transition-all duration-300"
+              className="rounded-xl border border-white/10 p-6 transition-all duration-300 hover:border-brand-purple/50 hover:shadow-[0_0_30px_-5px_rgba(139,92,246,0.3)] active:scale-[0.99]"
             >
               <benefit.icon className="h-8 w-8 text-brand-purple mb-4" />
               <h3 className="text-xl font-sora font-semibold text-white mb-3">

@@ -39,10 +39,11 @@ export default function FinalCTA() {
           transition={{ delay: 0.2, type: "spring", stiffness: 300, damping: 20 }}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
+          className="mx-auto w-full max-w-xs md:mx-0 md:max-w-none"
         >
           <Button
             size="lg"
-            className="px-8 bg-violet-900 hover:bg-violet-800 shadow-[0_0_24px_rgba(88,28,135,0.6)]"
+            className="w-full px-8 bg-violet-900 hover:bg-violet-800 shadow-[0_0_24px_rgba(88,28,135,0.6)] md:w-auto"
             type="button"
             onClick={() => openAuditForm()}
           >

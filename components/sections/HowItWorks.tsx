@@ -69,7 +69,7 @@ export default function HowItWorks() {
           </p>
           <a
             href="#how-it-works-steps"
-            className="mt-8 inline-flex items-center gap-2 font-sora text-base font-semibold text-brand-purple-light transition-colors hover:text-brand-purple-light/85 md:mt-10 md:text-lg lg:text-xl"
+            className="mt-8 inline-flex min-h-11 items-center justify-center gap-2 rounded-md px-2 py-2 font-sora text-base font-semibold text-brand-purple-light transition-colors hover:text-brand-purple-light/85 active:scale-[0.98] md:mt-10 md:text-lg lg:text-xl"
           >
             See how it works
             <span className="text-xl md:text-2xl" aria-hidden>

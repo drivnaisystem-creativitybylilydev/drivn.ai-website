@@ -18,10 +18,23 @@
     border-color: hsl(var(--border));
   }
 
+  html {
+    -webkit-tap-highlight-color: transparent;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
   body {
     background-color: var(--color-brand-dark);
     color: white;
     font-family: var(--font-inter);
+    overflow-x: hidden;
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
   }
 
   h1,

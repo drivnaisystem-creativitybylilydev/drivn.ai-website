@@ -108,17 +108,17 @@ export default function Navigation() {
                 <Menu className="h-6 w-6" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-[280px]">
+            <SheetContent side="right" className="w-[min(280px,calc(100vw-2rem))]">
               <SheetHeader>
                 <SheetTitle>Menu</SheetTitle>
               </SheetHeader>
-              <div className="flex flex-col gap-6 mt-8">
+              <div className="mt-8 flex flex-col gap-2">
                 {navLinks.map((link) => (
                   <Link
                     key={link.href}
                     href={link.href}
                     onClick={() => setSheetOpen(false)}
-                    className="text-lg text-white/80 hover:text-white transition-colors"
+                    className="flex min-h-11 items-center rounded-md py-2 text-lg text-white/80 transition-colors hover:text-white active:bg-white/5"
                   >
                     {link.label}
                   </Link>
@@ -129,7 +129,7 @@ export default function Navigation() {
                     setSheetOpen(false);
                     openAuditForm();
                   }}
-                  className="w-full"
+                  className="mt-4 w-full"
                 >
                   Book Free Audit
                 </Button>

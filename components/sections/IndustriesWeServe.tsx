@@ -81,11 +81,11 @@ export default function IndustriesWeServe() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={viewRelaxed}
           transition={{ duration: 0.6, delay: 0.28 }}
-          className="mt-10 flex justify-center md:mt-12"
+          className="mt-10 flex justify-center px-2 md:mt-12"
         >
           <Button
             size="lg"
-            className="bg-violet-900 px-8 shadow-[0_0_24px_rgba(88,28,135,0.6)] hover:bg-violet-800"
+            className="w-full max-w-sm bg-violet-900 px-8 shadow-[0_0_24px_rgba(88,28,135,0.6)] hover:bg-violet-800 sm:w-auto sm:max-w-none"
             type="button"
             onClick={() => openAuditForm()}
           >

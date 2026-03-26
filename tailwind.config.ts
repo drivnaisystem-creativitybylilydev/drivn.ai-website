@@ -9,6 +9,9 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      screens: {
+        xs: "375px",
+      },
       colors: {
         "brand-purple": "#8B5CF6",
         "brand-purple-light": "#A78BFA",

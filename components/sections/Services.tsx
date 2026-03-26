@@ -69,7 +69,7 @@ export default function Services() {
                 ease: [0.22, 1, 0.36, 1],
               }}
             >
-              <Card className="group h-full hover:border-brand-purple/50 hover:shadow-[0_0_30px_-5px_rgba(139,92,246,0.3)] hover:-translate-y-2 hover:scale-[1.02] transition-all duration-300 overflow-hidden">
+              <Card className="group h-full overflow-hidden transition-all duration-300 hover:border-brand-purple/50 hover:-translate-y-2 hover:scale-[1.02] hover:shadow-[0_0_30px_-5px_rgba(139,92,246,0.3)] active:translate-y-0 active:scale-[1.01]">
                 <CardHeader>
                   <div className="relative inline-flex">
                     <div className="absolute inset-0 bg-brand-purple/20 rounded-lg blur-md scale-150 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />

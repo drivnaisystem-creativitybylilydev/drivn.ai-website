@@ -3,9 +3,11 @@
 import {
   createContext,
   useContext,
+  useEffect,
   useLayoutEffect,
   useMemo,
   useRef,
+  useState,
   type RefObject,
 } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
@@ -104,7 +106,7 @@ function IndustryLabel({
         distanceFactor={6.5}
         pointerEvents="none"
         zIndexRange={[100, 0]}
-        className="select-none whitespace-nowrap font-sora text-[5.5px] font-bold leading-none tracking-wide text-white sm:text-[7px]"
+        className="select-none whitespace-nowrap font-sora text-[6px] font-bold leading-none tracking-wide text-white sm:text-[7px]"
         style={{
           textShadow:
             "0 0 6px rgba(167, 139, 250, 0.65), 0 0 14px rgba(139, 92, 246, 0.4)",
@@ -118,7 +120,16 @@ function IndustryLabel({
 
 function ParticleSphere() {
   const meshRef = useRef<THREE.Group>(null);
-  const particleCount = 180;
+  const [particleCount, setParticleCount] = useState(180);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 767px)");
+    const apply = () => setParticleCount(mq.matches ? 120 : 180);
+    apply();
+    mq.addEventListener("change", apply);
+    return () => mq.removeEventListener("change", apply);
+  }, []);
+
   const radius = 3;
   const connectionDistance = 0.75;
 
@@ -233,7 +244,7 @@ export default function IndustrySphere() {
   const htmlPortalRef = useRef<HTMLDivElement>(null);
 
   return (
-    <div className="relative h-[min(70vh,520px)] min-h-[420px] w-full md:h-[min(72vh,640px)] md:min-h-[480px] lg:h-[min(75vh,720px)] lg:min-h-[520px]">
+    <div className="relative h-[min(68vh,500px)] min-h-[360px] w-full md:h-[min(72vh,640px)] md:min-h-[480px] lg:h-[min(75vh,720px)] lg:min-h-[520px]">
       <HtmlPortalContext.Provider value={htmlPortalRef}>
         <div
           ref={htmlPortalRef}

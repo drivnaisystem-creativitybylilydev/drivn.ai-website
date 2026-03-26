@@ -117,7 +117,7 @@ export default function Hero() {
               aria-label="Scroll to next section"
               animate={{ y: [0, 8, 0] }}
               transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-              className="flex flex-col items-center gap-2 text-white/60 transition-colors hover:text-white/80"
+              className="flex min-h-11 min-w-11 flex-col items-center justify-center gap-2 rounded-md text-white/60 transition-colors hover:text-white/80 active:scale-95 active:text-white/90"
             >
               <ChevronDown className="h-8 w-8" />
             </motion.a>

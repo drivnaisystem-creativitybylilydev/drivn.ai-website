@@ -24,14 +24,14 @@ export function HeroLeftColumn({ variants }: HeroLeftColumnProps) {
       {/* Title + subtitle: one box, `items-center` keeps subheader centered under the title */}
       <div className="hero-split__title-group flex w-full max-w-full shrink-0 flex-col items-center self-center lg:self-start">
         <h1 className="flex w-full max-w-full flex-col items-center leading-[1.05] text-center">
-          <span className="text-5xl md:text-6xl lg:text-6xl xl:text-7xl font-sora font-bold text-white max-w-full [overflow-wrap:anywhere]">
+          <span className="text-4xl xs:text-5xl md:text-6xl lg:text-6xl xl:text-7xl font-sora font-bold text-white max-w-full [overflow-wrap:anywhere]">
             You&apos;re{" "}
             <span className="underline-glow-purple underline-glow-purple-hero">
               Losing Revenue
             </span>
             .
           </span>
-          <span className="text-4xl md:text-5xl lg:text-5xl xl:text-6xl font-sora font-bold text-neon-purple mt-2 md:mt-3">
+          <span className="text-3xl xs:text-4xl md:text-5xl lg:text-5xl xl:text-6xl font-sora font-bold text-neon-purple mt-2 md:mt-3">
             We Know Where.
           </span>
         </h1>
@@ -51,15 +51,16 @@ export function HeroLeftColumn({ variants }: HeroLeftColumnProps) {
             <span className="text-brand-purple-light">find out how</span>.
           </p>
 
-          <div className="mt-10 lg:mt-12 flex w-full flex-col items-center gap-5 sm:flex-row sm:justify-center sm:gap-6">
+          <div className="mt-10 lg:mt-12 flex w-full max-w-md flex-col items-stretch gap-5 sm:max-w-none sm:flex-row sm:items-center sm:justify-center sm:gap-6">
             <motion.div
+              className="w-full sm:w-auto"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               transition={{ type: "spring", stiffness: 300, damping: 20 }}
             >
               <Button
                 size="lg"
-                className="h-14 min-h-[3.5rem] px-10 text-base font-semibold bg-violet-900 hover:bg-violet-800 shadow-[0_0_24px_rgba(88,28,135,0.6)]"
+                className="h-14 min-h-[3.5rem] w-full px-10 text-base font-semibold bg-violet-900 hover:bg-violet-800 shadow-[0_0_24px_rgba(88,28,135,0.6)] sm:w-auto"
                 type="button"
                 onClick={() => openAuditForm()}
               >
@@ -67,6 +68,7 @@ export function HeroLeftColumn({ variants }: HeroLeftColumnProps) {
               </Button>
             </motion.div>
             <motion.div
+              className="w-full sm:w-auto"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               transition={{ type: "spring", stiffness: 300, damping: 20 }}
@@ -75,7 +77,7 @@ export function HeroLeftColumn({ variants }: HeroLeftColumnProps) {
                 variant="ghost"
                 size="lg"
                 asChild
-                className="h-14 min-h-[3.5rem] px-10 text-base font-semibold border-2 border-violet-900"
+                className="h-14 min-h-[3.5rem] w-full px-10 text-base font-semibold border-2 border-violet-900 sm:w-auto"
               >
                 <a href="#work">See Results</a>
               </Button>
