@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Sora, Inter } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/providers/Providers";
+import logoNobg from "./logo-nobg.png";
 
 const sora = Sora({
   subsets: ["latin"],
@@ -19,6 +20,11 @@ export const metadata: Metadata = {
   title: "Drivn.AI — Revenue Systems for Service Businesses",
   description:
     "We help service businesses stop losing revenue to missed opportunities. A different approach. Measurable outcomes.",
+  icons: {
+    icon: [{ url: logoNobg.src, type: "image/png" }],
+    apple: logoNobg.src,
+    shortcut: logoNobg.src,
+  },
 };
 
 export default function RootLayout({
