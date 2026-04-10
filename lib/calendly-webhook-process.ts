@@ -148,7 +148,8 @@ export async function handleCalendlyWebhookBody(body: unknown): Promise<Calendly
     return { ok: true, matched: false, event, reason: "no_lead_for_email" };
   }
 
-  if (event === "invitee.created" || event === "invitee.rescheduled") {
+  /** Calendly does not expose `invitee.rescheduled`; reschedules are typically cancel + new `invitee.created`. */
+  if (event === "invitee.created") {
     const patch = bookingPatchFromInviteePayload(payload, false);
     await mergeLeadBooking(leadId, patch, { setStatus: "call_booked" });
     return { ok: true, matched: true, leadId, event };

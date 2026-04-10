@@ -4,8 +4,9 @@ import dynamic from "next/dynamic";
 import { hasCalendlyScheduling, getCalendlySchedulingUrl } from "@/lib/booking";
 import AuditForm from "@/components/forms/AuditForm";
 
-const InlineWidget = dynamic(
-  () => import("react-calendly").then((m) => m.InlineWidget),
+const CalendlyEmbedStep = dynamic(
+  () =>
+    import("@/components/booking/CalendlyEmbedStep").then((m) => m.CalendlyEmbedStep),
   { ssr: false, loading: () => <CalendlySkeleton /> },
 );
 
@@ -57,11 +58,11 @@ export function DiscoveryDialogContent({
   if (calendly && view === "schedule") {
     return (
       <div className="space-y-4">
-        <InlineWidget
-          url={calendlyUrl}
+        <CalendlyEmbedStep
+          calendlyUrl={calendlyUrl}
           prefill={prefillForWidget}
-          styles={{ minWidth: "320px", height: "640px" }}
-          className="w-full overflow-hidden rounded-lg border border-white/10 bg-white"
+          leadEmail={schedulePrefill?.email}
+          leadName={schedulePrefill?.name}
         />
         <p className="text-center text-sm text-white/50">
           <button

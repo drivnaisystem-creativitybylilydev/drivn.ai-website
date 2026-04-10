@@ -1,0 +1,7 @@
+{
+  "url": "https://drivn-ai-website.vercel.app/api/webhooks/calendly",
+  "events": ["invitee.created", "invitee.canceled"],
+  "organization": "https://api.calendly.com/organizations/7aa14ff4-247b-4a27-b7ac-e10eb7d83af6",
+  "user": "https://api.calendly.com/users/1f5347fa-1713-4d04-a61a-b0ac8e136bc4",
+  "scope": "user"
+}

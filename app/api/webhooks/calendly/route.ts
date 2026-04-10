@@ -12,7 +12,8 @@ export async function GET() {
     ok: true,
     endpoint: "/api/webhooks/calendly",
     methods: ["GET", "POST"],
-    hint: "Calendly sends events as signed POST requests. Set CALENDLY_WEBHOOK_SIGNING_KEY in Vercel.",
+    hint:
+      "Calendly sends signed POST requests here (requires Standard+). On free Calendly, bookings are recorded via the embed → POST /api/bookings/calendly-embed instead.",
   });
 }
 
