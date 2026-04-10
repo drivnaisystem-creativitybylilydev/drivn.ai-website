@@ -92,7 +92,7 @@ export type AuditFormProps = {
 };
 
 export default function AuditForm({ onContinueToSchedule }: AuditFormProps) {
-  const [formData, setFormData] = useState<Record<string, string>>({});
+  const [formData, setFormData] = useState<Record<string, string>>({ website: "" });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -154,7 +154,17 @@ export default function AuditForm({ onContinueToSchedule }: AuditFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-8">
+    <form onSubmit={handleSubmit} className="relative space-y-8">
+      <input
+        type="text"
+        name="website"
+        value={formData.website ?? ""}
+        onChange={handleChange}
+        tabIndex={-1}
+        autoComplete="off"
+        aria-hidden
+        className="pointer-events-none absolute left-0 top-0 h-0 w-0 opacity-0"
+      />
       {submitError ? (
         <p
           className="rounded-lg border border-red-500/40 bg-red-950/40 px-4 py-3 text-sm text-red-200"

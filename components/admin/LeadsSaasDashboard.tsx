@@ -7,6 +7,8 @@ import { ChevronRight, Sparkles } from "lucide-react";
 import { LEAD_FIELD_KEYS, type LeadPayload } from "@/lib/lead-submission";
 import { LEAD_FIELD_LABELS } from "@/lib/lead-labels";
 import { logoutLeadsAdmin } from "@/app/admin/leads/actions";
+import { LeadCrmForm } from "@/components/admin/LeadCrmForm";
+import { LeadExpandedPanel } from "@/components/admin/LeadExpandedPanel";
 
 const ALWAYS_PREVIEW_FIELDS = new Set<(typeof LEAD_FIELD_KEYS)[number]>([
   "biggestChallenge",
@@ -35,18 +37,79 @@ function CellPreview({
   );
 }
 
+export type LeadInviteeView = {
+  email: string;
+  name?: string;
+};
+
+export type LeadBookingView = {
+  calendlyEventUri?: string;
+  calendlyInviteeUri?: string;
+  eventTypeName?: string;
+  joinUrl?: string;
+  scheduledStart?: string;
+  scheduledEnd?: string;
+  timezone?: string;
+  lastWebhookAt?: string;
+  canceled?: boolean;
+  invitees?: LeadInviteeView[];
+};
+
+export type LeadEmailSentView = {
+  type: string;
+  sentAt: string;
+  opened?: boolean;
+};
+
+export type LeadStatusView =
+  | "form_submitted"
+  | "call_booked"
+  | "call_completed"
+  | "converted"
+  | "lost";
+
+const STATUS_LABEL: Record<LeadStatusView, string> = {
+  form_submitted: "Form",
+  call_booked: "Booked",
+  call_completed: "Done",
+  converted: "Won",
+  lost: "Lost",
+};
+
+function StatusBadge({ status }: { status: LeadStatusView }) {
+  return (
+    <span className="inline-flex rounded-full border border-white/15 bg-white/[0.06] px-2.5 py-0.5 font-sora text-[0.65rem] font-bold uppercase tracking-wider text-brand-purple-light/95">
+      {STATUS_LABEL[status]}
+    </span>
+  );
+}
+
 export type LeadRowView = {
   id: string;
   created_at: string;
   payload: LeadPayload;
+  schemaVersion: number;
+  status: LeadStatusView;
+  booking: LeadBookingView | null;
+  emailsSent: LeadEmailSentView[];
+  internalNotes: string;
+  callNotes: string;
+};
+
+export type LeadAdminStats = {
+  total: number;
+  byStatus: Record<LeadStatusView, number>;
+  upcomingCallsNext7Days: number;
 };
 
 export function LeadsSaasDashboard({
   leads,
   storageConfigured,
+  stats,
 }: {
   leads: LeadRowView[];
   storageConfigured: boolean;
+  stats: LeadAdminStats;
 }) {
   const [openId, setOpenId] = useState<string | null>(null);
 
@@ -84,6 +147,36 @@ export function LeadsSaasDashboard({
         </div>
       </header>
 
+      <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-7">
+        <div className="rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3">
+          <p className="font-sora text-[0.6rem] font-bold uppercase tracking-wider text-white/40">
+            Total leads
+          </p>
+          <p className="mt-1 font-sora text-xl font-bold tabular-nums text-white">{stats.total}</p>
+        </div>
+        {(Object.keys(STATUS_LABEL) as LeadStatusView[]).map((key) => (
+          <div
+            key={key}
+            className="rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3"
+          >
+            <p className="font-sora text-[0.6rem] font-bold uppercase tracking-wider text-white/40">
+              {STATUS_LABEL[key]}
+            </p>
+            <p className="mt-1 font-sora text-xl font-bold tabular-nums text-white">
+              {stats.byStatus[key]}
+            </p>
+          </div>
+        ))}
+        <div className="rounded-xl border border-brand-purple/25 bg-brand-purple/[0.08] px-4 py-3">
+          <p className="font-sora text-[0.6rem] font-bold uppercase tracking-wider text-brand-purple-light/80">
+            Calls · 7d
+          </p>
+          <p className="mt-1 font-sora text-xl font-bold tabular-nums text-white">
+            {stats.upcomingCallsNext7Days}
+          </p>
+        </div>
+      </div>
+
       {!storageConfigured ? (
         <div className="mt-10 overflow-hidden rounded-2xl border border-amber-500/30 bg-gradient-to-br from-amber-950/45 via-brand-dark to-brand-dark p-6 shadow-[inset_0_1px_0_0_rgba(251,191,36,0.15)]">
           <p className="font-sora text-lg font-semibold text-amber-100">Database not wired</p>
@@ -114,6 +207,9 @@ export function LeadsSaasDashboard({
                   <th className="w-10 px-2 py-3.5" aria-hidden />
                   <th className="whitespace-nowrap px-3 py-3.5 font-sora text-xs font-bold uppercase tracking-wider text-brand-purple-light/95">
                     Received
+                  </th>
+                  <th className="whitespace-nowrap px-3 py-3.5 font-sora text-xs font-bold uppercase tracking-wider text-white/75">
+                    Status
                   </th>
                   {LEAD_FIELD_KEYS.map((key) => (
                     <th
@@ -146,6 +242,9 @@ export function LeadsSaasDashboard({
                         <td className="whitespace-nowrap px-3 py-3 font-mono text-xs text-white/55">
                           {new Date(row.created_at).toLocaleString()}
                         </td>
+                        <td className="px-3 py-3 align-middle">
+                          <StatusBadge status={row.status} />
+                        </td>
                         {LEAD_FIELD_KEYS.map((key) => {
                           const text = row.payload[key];
                           const trunc = isTruncatedField(key, text);
@@ -163,8 +262,100 @@ export function LeadsSaasDashboard({
                       </tr>
                       {open ? (
                         <tr className="border-b border-white/[0.08] bg-black/30">
-                          <td colSpan={2 + LEAD_FIELD_KEYS.length} className="p-0">
-                            <div className="border-t border-brand-purple/30 bg-gradient-to-b from-brand-purple/[0.14] to-transparent px-4 py-6 sm:px-6">
+                          <td colSpan={3 + LEAD_FIELD_KEYS.length} className="p-0">
+                            <LeadExpandedPanel>
+                              <div className="border-t border-brand-purple/30 bg-gradient-to-b from-brand-purple/[0.14] to-transparent px-4 py-6 sm:px-6">
+                              <p className="mb-4 font-sora text-xs font-bold uppercase tracking-widest text-brand-purple-light">
+                                Pipeline &amp; metadata
+                              </p>
+                              <div className="mb-6 grid gap-3 rounded-xl border border-white/10 bg-black/25 p-4 text-sm text-white/80 sm:grid-cols-2 lg:grid-cols-4">
+                                <div>
+                                  <p className="font-sora text-[0.6rem] font-bold uppercase tracking-wider text-white/40">
+                                    Schema
+                                  </p>
+                                  <p className="mt-1 font-mono text-white/90">v{row.schemaVersion}</p>
+                                </div>
+                                <div>
+                                  <p className="font-sora text-[0.6rem] font-bold uppercase tracking-wider text-white/40">
+                                    Status
+                                  </p>
+                                  <p className="mt-1">
+                                    <StatusBadge status={row.status} />
+                                  </p>
+                                </div>
+                                <div>
+                                  <p className="font-sora text-[0.6rem] font-bold uppercase tracking-wider text-white/40">
+                                    Emails logged
+                                  </p>
+                                  <p className="mt-1 tabular-nums text-white/90">
+                                    {row.emailsSent.length}
+                                  </p>
+                                </div>
+                                <div>
+                                  <p className="font-sora text-[0.6rem] font-bold uppercase tracking-wider text-white/40">
+                                    Booking
+                                  </p>
+                                  <p className="mt-1 text-white/90">
+                                    {row.booking?.scheduledStart
+                                      ? new Date(row.booking.scheduledStart).toLocaleString()
+                                      : "—"}
+                                  </p>
+                                </div>
+                              </div>
+                              {row.booking &&
+                              (row.booking.eventTypeName ||
+                                row.booking.joinUrl ||
+                                row.booking.invitees?.length ||
+                                row.booking.canceled) ? (
+                                <div className="mb-6 rounded-xl border border-white/10 bg-black/20 p-4 text-sm text-white/80">
+                                  <p className="font-sora text-[0.6rem] font-bold uppercase tracking-wider text-white/40">
+                                    Booking details
+                                  </p>
+                                  {row.booking.canceled ? (
+                                    <p className="mt-2 text-amber-200/90">Canceled (per last sync)</p>
+                                  ) : null}
+                                  {row.booking.eventTypeName ? (
+                                    <p className="mt-2">
+                                      <span className="text-white/45">Event: </span>
+                                      {row.booking.eventTypeName}
+                                    </p>
+                                  ) : null}
+                                  {row.booking.joinUrl ? (
+                                    <p className="mt-2 break-all">
+                                      <span className="text-white/45">Join: </span>
+                                      <a
+                                        href={row.booking.joinUrl}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-brand-purple-light underline-offset-2 hover:underline"
+                                      >
+                                        {row.booking.joinUrl}
+                                      </a>
+                                    </p>
+                                  ) : null}
+                                  {row.booking.invitees && row.booking.invitees.length > 0 ? (
+                                    <ul className="mt-2 list-inside list-disc space-y-1 text-white/75">
+                                      {row.booking.invitees.map((inv) => (
+                                        <li key={inv.email}>
+                                          {inv.name ? `${inv.name} · ` : null}
+                                          {inv.email}
+                                        </li>
+                                      ))}
+                                    </ul>
+                                  ) : null}
+                                </div>
+                              ) : null}
+                              <div className="mb-8 rounded-xl border border-white/10 bg-black/25 p-4">
+                                <p className="mb-3 font-sora text-[0.65rem] font-bold uppercase tracking-wider text-brand-purple-light/90">
+                                  Update pipeline
+                                </p>
+                                <LeadCrmForm
+                                  leadId={row.id}
+                                  status={row.status}
+                                  internalNotes={row.internalNotes}
+                                  callNotes={row.callNotes}
+                                />
+                              </div>
                               <p className="mb-4 font-sora text-xs font-bold uppercase tracking-widest text-brand-purple-light">
                                 Full record
                               </p>
@@ -183,7 +374,8 @@ export function LeadsSaasDashboard({
                                   </div>
                                 ))}
                               </div>
-                            </div>
+                              </div>
+                            </LeadExpandedPanel>
                           </td>
                         </tr>
                       ) : null}

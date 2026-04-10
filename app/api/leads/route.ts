@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { LEAD_FIELD_KEYS, parseLeadPayload, type LeadPayload } from "@/lib/lead-submission";
-import { insertLead } from "@/lib/lead-db";
+import { appendLeadEmailSent, insertLead } from "@/lib/lead-db";
+import { isResendConfigured, sendLeadConfirmationEmail } from "@/lib/lead-outbound-email";
 import { isMongoConfigured } from "@/lib/mongodb";
 
 export const runtime = "nodejs";
@@ -40,6 +41,11 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
   }
 
+  const raw = json as Record<string, unknown>;
+  if (typeof raw.website === "string" && raw.website.trim() !== "") {
+    return NextResponse.json({ error: "Bad request" }, { status: 400 });
+  }
+
   const data = parseLeadPayload(json);
   if (!data) {
     return NextResponse.json(
@@ -61,9 +67,10 @@ export async function POST(request: Request) {
     );
   }
 
+  let newLeadId: string | null = null;
   if (mongoReady) {
     try {
-      await insertLead(data);
+      newLeadId = await insertLead(data);
     } catch (err) {
       console.error("[leads] MongoDB insert failed:", err);
       return NextResponse.json(
@@ -73,6 +80,16 @@ export async function POST(request: Request) {
         },
         { status: 502 },
       );
+    }
+  }
+
+  if (newLeadId && isResendConfigured()) {
+    const emailed = await sendLeadConfirmationEmail(data);
+    if (emailed) {
+      await appendLeadEmailSent(newLeadId, {
+        type: "confirmation",
+        sentAt: new Date(),
+      });
     }
   }
 
