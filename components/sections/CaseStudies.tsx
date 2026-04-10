@@ -1,31 +1,10 @@
 "use client";
 
+import Link from "next/link";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { viewRelaxed } from "@/lib/motion-viewport";
-
-const caseStudies = [
-  {
-    title: "NoTime Storage",
-    subheading: "College Move-In Service",
-    intro:
-      "They came to us with a problem: growth was chaos. We solved it. The details of how stay between us and our clients — but the outcome speaks for itself.",
-    bulletsIntro: null,
-    bullets: [] as string[],
-    result:
-      "50 → 200+ bookings per semester. No additional staff.",
-  },
-  {
-    title: "Creativity by Lilly Co",
-    subheading: "Jewellery & E-commerce",
-    intro:
-      "Limited to pop-ups and marketplaces that took a cut of every sale. She needed a different path. We built one. She runs it. The business scales.",
-    bulletsIntro: null,
-    bullets: [] as string[],
-    result:
-      "Margins reclaimed. Workflow streamlined. Zero platform fees on direct sales.",
-  },
-];
+import { caseStudies } from "@/lib/case-studies";
 
 export default function CaseStudies() {
   return (
@@ -42,39 +21,31 @@ export default function CaseStudies() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
           {caseStudies.map((study) => (
-            <div key={study.title}>
-              <Card className="h-full min-h-[280px] hover:border-brand-purple/50 transition-all duration-300 border-l-4 border-l-brand-purple">
+            <Link
+              key={study.slug}
+              href={`/work/${study.slug}`}
+              className="group block rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-brand-purple-light focus-visible:ring-offset-2 focus-visible:ring-offset-brand-dark"
+            >
+              <Card className="h-full min-h-[280px] border-l-4 border-l-brand-purple transition-all duration-300 group-hover:border-brand-purple/50">
                 <CardHeader>
-                  <h3 className="text-xl font-sora font-semibold">
+                  <h3 className="text-xl font-sora font-semibold group-hover:text-brand-purple-light transition-colors">
                     {study.title}
                   </h3>
-                  <p className="text-sm text-brand-purple-light">
+                  <p className="text-sm capitalize text-brand-purple-light">
                     {study.subheading}
                   </p>
                 </CardHeader>
                 <CardContent className="space-y-4 leading-[1.7]">
                   <p className="text-white/80">{study.intro}</p>
-                  {study.bulletsIntro && (
-                    <p className="text-white/90 font-medium">
-                      {study.bulletsIntro}
-                    </p>
-                  )}
-                  {study.bullets.length > 0 && (
-                    <ul className="space-y-2 text-white/80">
-                      {study.bullets.map((bullet) => (
-                        <li key={bullet} className="flex gap-2">
-                          <span className="text-brand-purple">•</span>
-                          {bullet}
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                  <p className="text-white/90 font-medium pt-2">
-                    {study.result}
+                  <p className="pt-2 font-medium text-white/90">
+                    {study.resultSummary}
                   </p>
+                  <span className="inline-block font-inter text-xs font-semibold uppercase tracking-wider text-white/45 group-hover:text-white/70">
+                    Read case study →
+                  </span>
                 </CardContent>
               </Card>
-            </div>
+            </Link>
           ))}
         </div>
       </div>

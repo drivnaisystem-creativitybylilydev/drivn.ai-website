@@ -21,13 +21,18 @@ export async function insertLead(payload: LeadPayload): Promise<void> {
 }
 
 export async function listLeads(limit = 500): Promise<LeadRow[]> {
-  const db = await getLeadsDb();
-  if (!db) return [];
-  const col = db.collection<{ createdAt: Date; payload: LeadPayload }>(COLLECTION);
-  const docs = await col.find({}).sort({ createdAt: -1 }).limit(limit).toArray();
-  return docs.map((d) => ({
-    id: d._id.toString(),
-    created_at: d.createdAt,
-    payload: d.payload,
-  }));
+  try {
+    const db = await getLeadsDb();
+    if (!db) return [];
+    const col = db.collection<{ createdAt: Date; payload: LeadPayload }>(COLLECTION);
+    const docs = await col.find({}).sort({ createdAt: -1 }).limit(limit).toArray();
+    return docs.map((d) => ({
+      id: d._id.toString(),
+      created_at: d.createdAt,
+      payload: d.payload,
+    }));
+  } catch (err) {
+    console.error("[lead-db] listLeads failed:", err);
+    return [];
+  }
 }

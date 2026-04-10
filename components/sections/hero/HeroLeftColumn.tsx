@@ -19,10 +19,10 @@ export function HeroLeftColumn({ variants }: HeroLeftColumnProps) {
     <motion.div
       variants={variants}
       data-hero-region="left-column"
-      className="hero-split__left flex min-h-0 min-w-0 w-full max-w-full flex-col overflow-visible lg:h-full lg:min-h-full lg:self-stretch"
+      className="hero-split__left flex h-full min-h-0 w-full max-w-full flex-col items-center justify-center gap-8 overflow-visible text-center md:gap-10 lg:gap-12 lg:min-h-full lg:self-stretch"
     >
-      {/* Title + subtitle: one box, `items-center` keeps subheader centered under the title */}
-      <div className="hero-split__title-group flex w-full max-w-full shrink-0 flex-col items-center self-center lg:self-start">
+      {/* Title + subtitle — centered; uses full column width */}
+      <div className="hero-split__title-group flex w-full max-w-full shrink-0 flex-col items-center self-center">
         <h1 className="flex w-full max-w-full flex-col items-center leading-[1.05] text-center">
           <span className="text-4xl xs:text-5xl md:text-6xl lg:text-6xl xl:text-7xl font-sora font-bold text-white max-w-full [overflow-wrap:anywhere]">
             You&apos;re{" "}
@@ -37,13 +37,12 @@ export function HeroLeftColumn({ variants }: HeroLeftColumnProps) {
         </h1>
       </div>
 
-      {/* flex-1 + justify-start: CTA follows headline; extra space goes below (not a void between blocks) */}
       <div
-        className="hero-split__cta mt-6 flex min-h-0 w-full max-w-full flex-1 flex-col justify-start gap-8 py-4 md:mt-8 md:gap-10 md:py-6 lg:gap-12 lg:py-8"
+        className="hero-split__cta flex w-full max-w-full flex-col items-center py-2 md:py-4"
         data-hero-region="cta"
       >
         <div className="flex w-full max-w-full flex-col items-center text-center">
-          <p className="text-xl md:text-2xl lg:text-3xl font-inter text-white font-medium w-full max-w-full lg:max-w-2xl leading-relaxed [overflow-wrap:anywhere]">
+          <p className="w-full max-w-5xl text-xl font-medium leading-relaxed text-white [overflow-wrap:anywhere] md:text-2xl lg:max-w-6xl lg:text-3xl">
             <span className="inline">
               The question isn&apos;t whether it&apos;s possible — it&apos;s whether
             </span>{" "}

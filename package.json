@@ -3,8 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "dev:fresh": "for p in 3000 3001; do lsof -ti:$p | xargs kill -9 2>/dev/null || true; done; rm -rf .next && next dev",
+    "dev": "next dev --turbopack",
+    "dev:webpack": "next dev",
+    "stop:dev": "for p in 3000 3001 3002 3003; do lsof -ti:$p 2>/dev/null | xargs kill -9 2>/dev/null || true; done; pkill -f 'next dev' 2>/dev/null || true; pkill -f 'next start' 2>/dev/null || true; true",
+    "dev:fresh": "npm run stop:dev && rm -rf .next node_modules/.cache && next dev --turbopack",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
