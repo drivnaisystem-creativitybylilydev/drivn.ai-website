@@ -435,7 +435,7 @@ export function CreativityByLilyCaseStudy() {
 
   return (
     <main
-      className="relative min-h-screen overflow-x-clip text-white"
+      className="relative min-h-screen overflow-x-clip pt-20 text-white md:pt-24"
       style={{ backgroundColor: BG }}
     >
       {/* Ambient + pattern */}

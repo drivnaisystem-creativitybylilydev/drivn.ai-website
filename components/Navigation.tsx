@@ -59,7 +59,7 @@ export default function Navigation() {
       )}
     >
       <nav className="max-w-screen-2xl mx-auto px-3 sm:px-4 md:px-5 lg:px-5 xl:px-6 py-4 flex items-center justify-between">
-        <Link href="#hero" className="flex-shrink-0">
+        <Link href="/" className="flex-shrink-0">
           <Image
             src="/brand/writingonlylogo.png"
             alt="Drivn.AI"

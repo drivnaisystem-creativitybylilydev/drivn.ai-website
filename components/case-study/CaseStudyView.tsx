@@ -24,7 +24,7 @@ export function CaseStudyView({ study }: Props) {
   const { openAuditForm } = useAuditForm();
 
   return (
-    <article className="relative min-h-screen overflow-x-clip bg-brand-dark text-white">
+    <article className="relative min-h-screen overflow-x-clip bg-brand-dark pt-20 text-white md:pt-24">
       <div className="pointer-events-none absolute inset-0 z-0" aria-hidden>
         <div className="absolute -right-[20%] -top-[30%] h-[70vmin] w-[70vmin] rounded-full bg-brand-purple/[0.07] blur-[100px]" />
         <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/[0.08] to-transparent" />
