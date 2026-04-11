@@ -17,15 +17,21 @@ export async function getMongoClient(): Promise<MongoClient | null> {
   const uri = getMongoUri();
   if (!uri) return null;
 
+  const options = {
+    connectTimeoutMS: 5000,
+    serverSelectionTimeoutMS: 5000,
+    socketTimeoutMS: 10000,
+  };
+
   if (process.env.NODE_ENV === "development") {
     if (!global._mongoClientPromise) {
-      global._mongoClientPromise = new MongoClient(uri).connect();
+      global._mongoClientPromise = new MongoClient(uri, options).connect();
     }
     return global._mongoClientPromise;
   }
 
   if (!prodClientPromise) {
-    prodClientPromise = new MongoClient(uri).connect();
+    prodClientPromise = new MongoClient(uri, options).connect();
   }
   return prodClientPromise;
 }
