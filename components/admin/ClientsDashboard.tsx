@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -23,60 +23,7 @@ import {
 import { cn } from "@/lib/utils";
 import type { ClientRow, ClientStatus } from "@/lib/client-db";
 import { addClientAction, editClientAction } from "@/app/admin/clients/actions";
-
-// ─── Design primitives ──────────────────────────────────────────────────────
-
-function HudBrackets({ color = "rgba(139,92,246,0.45)", size = 10 }: { color?: string; size?: number }) {
-  const s = size;
-  return (
-    <>
-      <div style={{ width: s, height: s, borderColor: color }} className="absolute left-0 top-0 border-l border-t" />
-      <div style={{ width: s, height: s, borderColor: color }} className="absolute right-0 top-0 border-r border-t" />
-      <div style={{ width: s, height: s, borderColor: color }} className="absolute bottom-0 left-0 border-b border-l" />
-      <div style={{ width: s, height: s, borderColor: color }} className="absolute bottom-0 right-0 border-b border-r" />
-    </>
-  );
-}
-
-function ScanLine({ delay = 0 }: { delay?: number }) {
-  return (
-    <motion.div
-      className="pointer-events-none absolute inset-x-0 z-20 h-px bg-gradient-to-r from-transparent via-brand-purple/60 to-transparent"
-      initial={{ top: 0, opacity: 0 }}
-      animate={{ top: "100%", opacity: [0, 0.9, 0.9, 0] }}
-      transition={{ duration: 1.4, ease: "linear", delay, times: [0, 0.05, 0.95, 1] }}
-    />
-  );
-}
-
-function AnimatedNumber({
-  to,
-  prefix = "",
-  suffix = "",
-}: {
-  to: number;
-  prefix?: string;
-  suffix?: string;
-}) {
-  const ref = useRef<HTMLSpanElement>(null);
-  useEffect(() => {
-    const node = ref.current;
-    if (!node) return;
-    let start: number | null = null;
-    const duration = 1400;
-    function step(ts: number) {
-      if (start === null) start = ts;
-      const progress = Math.min((ts - start) / duration, 1);
-      const eased = 1 - Math.pow(1 - progress, 3);
-      const value = Math.round(eased * to);
-      node!.textContent = prefix + value.toLocaleString() + suffix;
-      if (progress < 1) requestAnimationFrame(step);
-    }
-    const raf = requestAnimationFrame(step);
-    return () => cancelAnimationFrame(raf);
-  }, [to, prefix, suffix]);
-  return <span ref={ref}>{prefix}0{suffix}</span>;
-}
+import { HudBrackets, AnimatedNumber, ScanLine } from "@/components/admin/hud-primitives";
 
 const STATUS_META: Record<
   ClientStatus,
@@ -404,72 +351,33 @@ function ClientForm({
 
 // ─── Dialogs ─────────────────────────────────────────────────────────────────
 
-function AddClientDialog({
-  open,
-  onOpenChange,
-}: {
-  open: boolean;
-  onOpenChange: (v: boolean) => void;
-}) {
-  const router = useRouter();
-  const [pending, startTransition] = useTransition();
-  const [error, setError] = useState<string | null>(null);
-
-  function handleSubmit(formData: FormData) {
-    setError(null);
-    startTransition(async () => {
-      const res = await addClientAction(formData);
-      if (res.error) { setError(res.error); return; }
-      onOpenChange(false);
-      router.refresh();
-    });
-  }
-
-  return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent
-        onClose={() => onOpenChange(false)}
-        className="border-brand-purple/20 bg-[#07071a] shadow-[0_0_80px_-20px_rgba(139,92,246,0.5),inset_0_1px_0_0_rgba(167,139,250,0.1)]"
-      >
-        <DialogHeader>
-          <p className="font-inter text-[0.6rem] font-bold uppercase tracking-[0.2em] text-brand-purple-light/80">
-            Drivn · Clients
-          </p>
-          <DialogTitle className="bg-gradient-to-r from-white to-brand-purple-light bg-clip-text text-transparent">
-            Add New Client
-          </DialogTitle>
-        </DialogHeader>
-        {error && (
-          <p className="rounded-xl border border-red-500/30 bg-red-950/30 px-4 py-3 text-sm text-red-200">
-            {error}
-          </p>
-        )}
-        <form action={handleSubmit}>
-          <ClientForm pending={pending} />
-        </form>
-      </DialogContent>
-    </Dialog>
-  );
-}
-
-function EditClientDialog({
+function ClientDialog({
   client,
-  onClose,
+  addOpen,
+  onAddOpenChange,
+  onEditClose,
 }: {
   client: ClientRow | null;
-  onClose: () => void;
+  addOpen: boolean;
+  onAddOpenChange: (v: boolean) => void;
+  onEditClose: () => void;
 }) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => { if (!client) setError(null); }, [client]);
+  const isEdit = client !== null;
+  const open = isEdit || addOpen;
+  const onClose = isEdit ? onEditClose : () => onAddOpenChange(false);
+
+  useEffect(() => { if (!open) setError(null); }, [open]);
 
   function handleSubmit(formData: FormData) {
-    if (!client) return;
     setError(null);
     startTransition(async () => {
-      const res = await editClientAction(client.id, formData);
+      const res = isEdit
+        ? await editClientAction(client.id, formData)
+        : await addClientAction(formData);
       if (res.error) { setError(res.error); return; }
       onClose();
       router.refresh();
@@ -477,7 +385,7 @@ function EditClientDialog({
   }
 
   return (
-    <Dialog open={!!client} onOpenChange={(v) => { if (!v) onClose(); }}>
+    <Dialog open={open} onOpenChange={(v) => { if (!v) onClose(); }}>
       <DialogContent
         onClose={onClose}
         className="border-brand-purple/20 bg-[#07071a] shadow-[0_0_80px_-20px_rgba(139,92,246,0.5),inset_0_1px_0_0_rgba(167,139,250,0.1)]"
@@ -487,7 +395,7 @@ function EditClientDialog({
             Drivn · Clients
           </p>
           <DialogTitle className="bg-gradient-to-r from-white to-brand-purple-light bg-clip-text text-transparent">
-            Edit Client
+            {isEdit ? "Edit Client" : "Add New Client"}
           </DialogTitle>
         </DialogHeader>
         {error && (
@@ -512,6 +420,7 @@ export function ClientsDashboard({ clients }: { clients: ClientRow[] }) {
   const active = clients.filter((c) => c.status === "active");
   const totalMrr = active.reduce((sum, c) => sum + c.mrr, 0);
   const pipeline = clients.filter((c) => c.status === "prospect" || c.status === "proposal");
+  const other = clients.filter((c) => c.status === "paused" || c.status === "churned");
 
   return (
     <div className="relative min-h-svh overflow-hidden bg-brand-dark text-white">
@@ -620,7 +529,7 @@ export function ClientsDashboard({ clients }: { clients: ClientRow[] }) {
             )}
 
             {/* Other statuses */}
-            {clients.filter((c) => c.status === "paused" || c.status === "churned").length > 0 && (
+            {other.length > 0 && (
               <section>
                 <div className="mb-4 flex items-center gap-3">
                   <p className="font-sora text-[0.65rem] font-bold uppercase tracking-[0.2em] text-white/40">
@@ -629,11 +538,9 @@ export function ClientsDashboard({ clients }: { clients: ClientRow[] }) {
                   <div className="h-px flex-1 bg-white/[0.06]" />
                 </div>
                 <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-                  {clients
-                    .filter((c) => c.status === "paused" || c.status === "churned")
-                    .map((c, i) => (
-                      <ClientCard key={c.id} client={c} index={active.length + pipeline.length + i} onEdit={setEditClient} />
-                    ))}
+                  {other.map((c, i) => (
+                    <ClientCard key={c.id} client={c} index={active.length + pipeline.length + i} onEdit={setEditClient} />
+                  ))}
                 </div>
               </section>
             )}
@@ -641,9 +548,12 @@ export function ClientsDashboard({ clients }: { clients: ClientRow[] }) {
         )}
       </div>
 
-      {/* Dialogs */}
-      <AddClientDialog open={addOpen} onOpenChange={setAddOpen} />
-      <EditClientDialog client={editClient} onClose={() => setEditClient(null)} />
+      <ClientDialog
+        client={editClient}
+        addOpen={addOpen}
+        onAddOpenChange={setAddOpen}
+        onEditClose={() => setEditClient(null)}
+      />
     </div>
   );
 }

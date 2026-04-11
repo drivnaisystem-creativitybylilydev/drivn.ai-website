@@ -14,12 +14,15 @@ import { getLeadsDb, isMongoConfigured } from "@/lib/mongodb";
 
 const COLLECTION = "leads";
 
+let _leadIndexesEnsured = false;
+
 export type { LeadRow };
 
 /** Sync check for UI (connection is lazy until first request). */
 export { isMongoConfigured as isLeadStorageConfigured };
 
 async function ensureLeadIndexes(): Promise<void> {
+  if (_leadIndexesEnsured) return;
   const db = await getLeadsDb();
   if (!db) return;
   const col = db.collection<LeadDocument>(COLLECTION);
@@ -27,6 +30,7 @@ async function ensureLeadIndexes(): Promise<void> {
   await col.createIndex({ status: 1, createdAt: -1 }).catch(() => {});
   /** Non-unique: duplicate submissions / same email allowed until dedup strategy exists. */
   await col.createIndex({ "payload.email": 1 }).catch(() => {});
+  _leadIndexesEnsured = true;
 }
 
 export async function insertLead(payload: LeadPayload): Promise<string> {
@@ -84,20 +88,33 @@ export async function appendLeadEmailSent(
 
 /** Nurture: form submitted, no scheduled call, 1–14 days old, nudge not sent. */
 export async function findLeadsForNudge(limit = 25): Promise<LeadRow[]> {
-  const rows = await listLeads(500);
-  const now = Date.now();
-  const msDay = 24 * 60 * 60 * 1000;
-  return rows
-    .filter((r) => {
-      if (r.status !== "form_submitted") return false;
-      const created = r.created_at.getTime();
-      if (now - created < msDay) return false;
-      if (now - created > 14 * msDay) return false;
-      if (r.booking?.scheduledStart) return false;
-      if (r.emailsSent.some((e) => e.type === "nudge_not_booked")) return false;
-      return true;
-    })
-    .slice(0, limit);
+  try {
+    const db = await getLeadsDb();
+    if (!db) return [];
+    await ensureLeadIndexes();
+    const now = new Date();
+    const msDay = 24 * 60 * 60 * 1000;
+    const col = db.collection<LeadDocument>(COLLECTION);
+    const docs = await col
+      .find({
+        status: "form_submitted",
+        createdAt: { $gte: new Date(now.getTime() - 14 * msDay), $lt: new Date(now.getTime() - msDay) },
+        "booking.scheduledStart": { $exists: false },
+        "emailsSent.type": { $ne: "nudge_not_booked" },
+      })
+      .sort({ createdAt: -1 })
+      .limit(limit)
+      .toArray();
+    const rows: LeadRow[] = [];
+    for (const d of docs) {
+      const row = normalizeLeadRowFromDoc(d);
+      if (row) rows.push(row);
+    }
+    return rows;
+  } catch (err) {
+    console.error("[lead-db] findLeadsForNudge failed:", err);
+    return [];
+  }
 }
 
 export async function listLeads(limit = 500): Promise<LeadRow[]> {

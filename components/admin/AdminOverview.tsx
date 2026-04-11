@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import {
@@ -15,40 +15,7 @@ import {
 import { cn } from "@/lib/utils";
 import type { ClientRow, ClientStats } from "@/lib/client-db";
 import type { LeadAdminStats, LeadRowView } from "@/components/admin/LeadsSaasDashboard";
-
-// ─── Primitives ──────────────────────────────────────────────────────────────
-
-function HudBrackets({ color = "rgba(139,92,246,0.4)", size = 10 }: { color?: string; size?: number }) {
-  const s = size;
-  return (
-    <>
-      <div style={{ width: s, height: s, borderColor: color }} className="absolute left-0 top-0 border-l border-t" />
-      <div style={{ width: s, height: s, borderColor: color }} className="absolute right-0 top-0 border-r border-t" />
-      <div style={{ width: s, height: s, borderColor: color }} className="absolute bottom-0 left-0 border-b border-l" />
-      <div style={{ width: s, height: s, borderColor: color }} className="absolute bottom-0 right-0 border-b border-r" />
-    </>
-  );
-}
-
-function AnimatedNumber({ to }: { to: number }) {
-  const ref = useRef<HTMLSpanElement>(null);
-  useEffect(() => {
-    const node = ref.current;
-    if (!node) return;
-    let start: number | null = null;
-    const duration = 1600;
-    function step(ts: number) {
-      if (start === null) start = ts;
-      const progress = Math.min((ts - start) / duration, 1);
-      const eased = 1 - Math.pow(1 - progress, 3);
-      node!.textContent = Math.round(eased * to).toLocaleString();
-      if (progress < 1) requestAnimationFrame(step);
-    }
-    const raf = requestAnimationFrame(step);
-    return () => cancelAnimationFrame(raf);
-  }, [to]);
-  return <span ref={ref}>0</span>;
-}
+import { HudBrackets, AnimatedNumber } from "@/components/admin/hud-primitives";
 
 // ─── MRR Ring ────────────────────────────────────────────────────────────────
 
@@ -319,7 +286,7 @@ export function AdminOverview({
           </motion.div>
 
           {/* Stat tiles grid */}
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2">
+          <div className="grid grid-cols-2 gap-3">
             <StatTile icon={DollarSign} label="Monthly Revenue" value={clientStats.totalMrr} href="/admin/clients" delay={0.12} accent />
             <StatTile icon={Briefcase} label="Active Clients"  value={clientStats.active}   href="/admin/clients" delay={0.18} />
             <StatTile icon={Users2}    label="Total Leads"     value={leadStats.total}       href="/admin/leads"   delay={0.24} />

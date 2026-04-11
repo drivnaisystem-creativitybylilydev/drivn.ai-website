@@ -46,3 +46,6 @@ export async function getLeadsDb(): Promise<Db | null> {
   const name = process.env.MONGODB_DB?.trim() || "drivn";
   return client.db(name);
 }
+
+/** Generic alias — use this in modules that aren't lead-specific. */
+export const getDb = getLeadsDb;

@@ -1,5 +1,5 @@
 import { ObjectId } from "mongodb";
-import { getLeadsDb, isMongoConfigured } from "@/lib/mongodb";
+import { getDb, isMongoConfigured } from "@/lib/mongodb";
 
 export type ClientStatus = "prospect" | "proposal" | "active" | "paused" | "churned";
 
@@ -42,6 +42,8 @@ export interface ClientStats {
 
 const COLLECTION = "clients";
 
+let _indexesEnsured = false;
+
 export { isMongoConfigured as isClientStorageConfigured };
 
 function normalizeRow(doc: ClientDocument & { _id: ObjectId }): ClientRow {
@@ -62,11 +64,13 @@ function normalizeRow(doc: ClientDocument & { _id: ObjectId }): ClientRow {
 }
 
 async function ensureIndexes(): Promise<void> {
-  const db = await getLeadsDb();
+  if (_indexesEnsured) return;
+  const db = await getDb();
   if (!db) return;
   const col = db.collection(COLLECTION);
   await col.createIndex({ status: 1, createdAt: -1 }).catch(() => {});
   await col.createIndex({ name: 1 }).catch(() => {});
+  _indexesEnsured = true;
 }
 
 export async function insertClient(data: {
@@ -80,7 +84,7 @@ export async function insertClient(data: {
   notes: string;
   startDate?: Date;
 }): Promise<string> {
-  const db = await getLeadsDb();
+  const db = await getDb();
   if (!db) throw new Error("MONGODB_URI not configured");
   const col = db.collection<ClientDocument>(COLLECTION);
   await ensureIndexes();
@@ -91,7 +95,7 @@ export async function insertClient(data: {
 
 export async function listClients(limit = 200): Promise<ClientRow[]> {
   try {
-    const db = await getLeadsDb();
+    const db = await getDb();
     if (!db) return [];
     await ensureIndexes();
     const col = db.collection<ClientDocument>(COLLECTION);
@@ -109,7 +113,7 @@ export async function updateClient(
 ): Promise<boolean> {
   if (!ObjectId.isValid(clientId)) return false;
   try {
-    const db = await getLeadsDb();
+    const db = await getDb();
     if (!db) return false;
     const col = db.collection<ClientDocument>(COLLECTION);
     const res = await col.updateOne(
@@ -123,8 +127,7 @@ export async function updateClient(
   }
 }
 
-export async function getClientStats(): Promise<ClientStats> {
-  const clients = await listClients();
+export function computeClientStats(clients: ClientRow[]): ClientStats {
   const byStatus: Record<ClientStatus, number> = {
     prospect: 0,
     proposal: 0,
@@ -138,4 +141,8 @@ export async function getClientStats(): Promise<ClientStats> {
     if (c.status === "active") totalMrr += c.mrr;
   }
   return { total: clients.length, active: byStatus.active, totalMrr, byStatus };
+}
+
+export async function getClientStats(): Promise<ClientStats> {
+  return computeClientStats(await listClients());
 }

@@ -16,22 +16,24 @@ function parseServices(raw: string | null): string[] {
     .filter(Boolean);
 }
 
+function parseClientFields(formData: FormData) {
+  return {
+    name: (formData.get("name") as string)?.trim() ?? "",
+    industry: (formData.get("industry") as string)?.trim() ?? "",
+    contactName: (formData.get("contactName") as string)?.trim() ?? "",
+    contactEmail: (formData.get("contactEmail") as string)?.trim() ?? "",
+    status: parseStatus(formData.get("status")),
+    mrr: parseInt((formData.get("mrr") as string) ?? "0", 10) || 0,
+    services: parseServices(formData.get("services") as string | null),
+    notes: (formData.get("notes") as string)?.trim() ?? "",
+  };
+}
+
 export async function addClientAction(formData: FormData): Promise<{ error?: string }> {
   try {
-    const name = (formData.get("name") as string)?.trim();
-    if (!name) return { error: "Client name is required." };
-
-    await insertClient({
-      name,
-      industry: (formData.get("industry") as string)?.trim() ?? "",
-      contactName: (formData.get("contactName") as string)?.trim() ?? "",
-      contactEmail: (formData.get("contactEmail") as string)?.trim() ?? "",
-      status: parseStatus(formData.get("status")),
-      mrr: parseInt((formData.get("mrr") as string) ?? "0", 10) || 0,
-      services: parseServices(formData.get("services") as string | null),
-      notes: (formData.get("notes") as string)?.trim() ?? "",
-    });
-
+    const fields = parseClientFields(formData);
+    if (!fields.name) return { error: "Client name is required." };
+    await insertClient(fields);
     revalidatePath("/admin");
     revalidatePath("/admin/clients");
     return {};
@@ -46,20 +48,9 @@ export async function editClientAction(
   formData: FormData,
 ): Promise<{ error?: string }> {
   try {
-    const name = (formData.get("name") as string)?.trim();
-    if (!name) return { error: "Client name is required." };
-
-    await updateClient(clientId, {
-      name,
-      industry: (formData.get("industry") as string)?.trim() ?? "",
-      contactName: (formData.get("contactName") as string)?.trim() ?? "",
-      contactEmail: (formData.get("contactEmail") as string)?.trim() ?? "",
-      status: parseStatus(formData.get("status")),
-      mrr: parseInt((formData.get("mrr") as string) ?? "0", 10) || 0,
-      services: parseServices(formData.get("services") as string | null),
-      notes: (formData.get("notes") as string)?.trim() ?? "",
-    });
-
+    const fields = parseClientFields(formData);
+    if (!fields.name) return { error: "Client name is required." };
+    await updateClient(clientId, fields);
     revalidatePath("/admin");
     revalidatePath("/admin/clients");
     return {};

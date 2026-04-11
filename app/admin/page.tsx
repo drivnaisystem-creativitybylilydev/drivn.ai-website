@@ -1,6 +1,6 @@
 import { isLeadsAdminAuthenticated } from "@/lib/admin-session";
 import { listLeads } from "@/lib/lead-db";
-import { listClients, getClientStats } from "@/lib/client-db";
+import { listClients, computeClientStats } from "@/lib/client-db";
 import { AdminChrome } from "@/components/admin/AdminChrome";
 import { AdminLoginPanel } from "@/components/admin/AdminLoginPanel";
 import { AdminOverview } from "@/components/admin/AdminOverview";
@@ -77,15 +77,11 @@ export default async function AdminHomePage({
     );
   }
 
-  const [leads, clients, clientStats] = await Promise.all([
-    listLeads(50),
-    listClients(10),
-    getClientStats(),
-  ]);
+  const [leads, clients] = await Promise.all([listLeads(50), listClients()]);
 
   return (
     <AdminOverview
-      clientStats={clientStats}
+      clientStats={computeClientStats(clients)}
       leadStats={computeLeadStats(leads)}
       recentClients={clients.slice(0, 5)}
       recentLeads={toLeadRowView(leads)}
