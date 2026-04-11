@@ -45,7 +45,7 @@ export function AdminEasterEgg() {
         step.current += 1;
         if (step.current >= SEQUENCE.length) {
           step.current = 0;
-          router.push("/admin/leads");
+          router.push("/admin");
         }
       } else {
         step.current = k === normalizeKey(SEQUENCE[0]) ? 1 : 0;
