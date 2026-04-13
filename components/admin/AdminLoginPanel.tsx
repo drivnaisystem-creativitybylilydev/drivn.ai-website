@@ -18,8 +18,8 @@ function normalizeKey(key: string) {
   return key.length === 1 ? key.toLowerCase() : key;
 }
 
-export function AdminLoginPanel({ error }: { error?: "1" | "2" }) {
-  const [unlocked, setUnlocked] = useState(false);
+export function AdminLoginPanel({ error, defaultUnlocked }: { error?: "1" | "2"; defaultUnlocked?: boolean }) {
+  const [unlocked, setUnlocked] = useState(defaultUnlocked ?? false);
   const step = useRef(0);
 
   useEffect(() => {

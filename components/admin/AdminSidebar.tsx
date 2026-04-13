@@ -12,9 +12,7 @@ import {
   Terminal,
   ArrowLeft,
   Zap,
-  LogOut,
 } from "lucide-react";
-import { logoutLeadsAdmin } from "@/app/admin/leads/actions";
 import { cn } from "@/lib/utils";
 
 const NAV_ITEMS = [
@@ -180,29 +178,6 @@ export function AdminSidebar() {
             </AnimatePresence>
           </div>
         </Link>
-        <form action={logoutLeadsAdmin}>
-          <button
-            type="submit"
-            className="flex h-11 w-full items-center text-white/25 transition-colors hover:bg-red-950/30 hover:text-red-400/70"
-          >
-            <div className="flex w-14 shrink-0 items-center justify-center">
-              <LogOut className="h-4 w-4" />
-            </div>
-            <AnimatePresence>
-              {expanded && (
-                <motion.span
-                  initial={{ opacity: 0, x: -6 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -6 }}
-                  transition={{ duration: 0.15 }}
-                  className="whitespace-nowrap font-inter text-[0.8rem]"
-                >
-                  Sign out
-                </motion.span>
-              )}
-            </AnimatePresence>
-          </button>
-        </form>
       </div>
     </motion.aside>
   );

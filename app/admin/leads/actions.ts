@@ -7,6 +7,7 @@ import {
   timingSafeEqualStr,
   setLeadsAdminSessionCookie,
   setLoginErrorCookie,
+  setShowFormCookie,
   clearLeadsAdminSessionCookie,
   isLeadsAdminAuthenticated,
 } from "@/lib/admin-session";
@@ -33,6 +34,7 @@ export async function loginLeadsAdmin(formData: FormData) {
 }
 
 export async function logoutLeadsAdmin() {
+  await setShowFormCookie();
   await clearLeadsAdminSessionCookie();
   redirect("/admin");
 }

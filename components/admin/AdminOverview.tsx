@@ -11,7 +11,9 @@ import {
   ChevronRight,
   Terminal,
   Zap,
+  LogOut,
 } from "lucide-react";
+import { logoutLeadsAdmin } from "@/app/admin/leads/actions";
 import { cn } from "@/lib/utils";
 import type { ClientRow, ClientStats } from "@/lib/client-db";
 import type { LeadAdminStats, LeadRowView } from "@/components/admin/LeadsSaasDashboard";
@@ -256,17 +258,30 @@ export function AdminOverview({
           transition={{ duration: 0.4, delay: 0.05 }}
           className="mb-8 border-b border-white/[0.07] pb-6"
         >
-          <h1 className="bg-gradient-to-r from-white via-white to-brand-purple-light bg-clip-text font-sora text-3xl font-bold tracking-tight text-transparent">
-            Command Center
-          </h1>
-          <p className="mt-1 font-inter text-sm text-white/40">
-            {new Date().toLocaleDateString("en-US", {
-              weekday: "long",
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-            })}
-          </p>
+          <div className="flex items-end justify-between gap-4">
+            <div>
+              <h1 className="bg-gradient-to-r from-white via-white to-brand-purple-light bg-clip-text font-sora text-3xl font-bold tracking-tight text-transparent">
+                Command Center
+              </h1>
+              <p className="mt-1 font-inter text-sm text-white/40">
+                {new Date().toLocaleDateString("en-US", {
+                  weekday: "long",
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })}
+              </p>
+            </div>
+            <form action={logoutLeadsAdmin}>
+              <button
+                type="submit"
+                className="flex items-center gap-2 rounded-xl border border-white/[0.07] bg-white/[0.03] px-3.5 py-2 font-inter text-xs text-white/35 transition hover:border-red-500/25 hover:bg-red-950/20 hover:text-red-400/70"
+              >
+                <LogOut className="h-3.5 w-3.5" />
+                Sign out
+              </button>
+            </form>
+          </div>
         </motion.div>
 
         {/* Top row: MRR ring + stat tiles */}

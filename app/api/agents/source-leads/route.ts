@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { cookies } from "next/headers";
 import { isLeadsAdminAuthenticated } from "@/lib/admin-session";
 import { runMasterLeadAgent } from "@/lib/lead-sourcing/master-agent";
 import { upsertSourcedLead } from "@/lib/sourced-lead-db";
@@ -7,8 +8,16 @@ import type { SourcingBrief } from "@/lib/lead-sourcing/types";
 export const maxDuration = 60;
 
 export async function POST(req: NextRequest) {
+  // ── Auth debug ─────────────────────────────────────────────────────────────
+  const cookieStore = await cookies();
+  const sessionCookie = cookieStore.get("leads_admin_session")?.value;
+  console.log("[source-leads] cookie present:", !!sessionCookie);
+  console.log("[source-leads] password env set:", !!process.env.LEADS_ADMIN_PASSWORD?.trim());
+  // ──────────────────────────────────────────────────────────────────────────
+
   const authed = await isLeadsAdminAuthenticated();
   if (!authed) {
+    console.log("[source-leads] auth failed — cookie:", !!sessionCookie, "password:", !!process.env.LEADS_ADMIN_PASSWORD?.trim());
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

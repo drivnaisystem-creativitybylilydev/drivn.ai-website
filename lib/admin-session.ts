@@ -70,6 +70,24 @@ export async function clearLeadsAdminSessionCookie() {
   (await cookies()).delete(COOKIE);
 }
 
+// ─── Show-form cookie (set on logout so next visit skips Konami) ─────────────
+
+const SHOW_FORM_COOKIE = "leads_show_form";
+
+export async function setShowFormCookie() {
+  (await cookies()).set(SHOW_FORM_COOKIE, "1", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    path: "/",
+    maxAge: 60,
+  });
+}
+
+export async function getShowForm(): Promise<boolean> {
+  return (await cookies()).get(SHOW_FORM_COOKIE)?.value === "1";
+}
+
 // ─── Login error cookie (short-lived, read from layout) ──────────────────────
 
 const LOGIN_ERROR_COOKIE = "leads_login_error";
