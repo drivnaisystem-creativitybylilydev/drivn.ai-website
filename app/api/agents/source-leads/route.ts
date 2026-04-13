@@ -40,12 +40,16 @@ export async function POST(req: NextRequest) {
 
     // Save all scored leads to DB (upsert by placeId — no dupes)
     let savedCount = 0;
-    await Promise.allSettled(
-      result.leads.map(async (lead) => {
-        await upsertSourcedLead(lead, brief.query);
-        savedCount++;
-      }),
+    const saveResults = await Promise.allSettled(
+      result.leads.map((lead) => upsertSourcedLead(lead, brief.query)),
     );
+    saveResults.forEach((r, i) => {
+      if (r.status === "fulfilled") {
+        savedCount++;
+      } else {
+        console.error(`[source-leads] failed to save lead ${result.leads[i]?.name}:`, r.reason);
+      }
+    });
 
     return NextResponse.json({ ...result, savedToDb: savedCount });
   } catch (err) {
