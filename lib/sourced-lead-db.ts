@@ -105,10 +105,30 @@ export async function upsertSourcedLead(lead: ScoredLead, sourcingQuery: string)
     updatedAt: now,
   };
 
-  const { updatedAt: _updatedAt, ...docForInsert } = doc;
   const res = await col.findOneAndUpdate(
     { placeId: lead.placeId },
-    { $setOnInsert: { ...docForInsert, createdAt: now }, $set: { updatedAt: now, score: doc.score, signals: doc.signals, emailDraft: doc.emailDraft } },
+    {
+      $setOnInsert: {
+        placeId: doc.placeId,
+        name: doc.name,
+        address: doc.address,
+        phone: doc.phone,
+        website: doc.website,
+        rating: doc.rating,
+        reviewCount: doc.reviewCount,
+        category: doc.category,
+        sourcingQuery: doc.sourcingQuery,
+        status: doc.status,
+        source: doc.source,
+        createdAt: now,
+      },
+      $set: {
+        updatedAt: now,
+        score: doc.score,
+        signals: doc.signals,
+        emailDraft: doc.emailDraft,
+      },
+    },
     { upsert: true, returnDocument: "after" },
   );
 
