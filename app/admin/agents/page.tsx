@@ -3,7 +3,7 @@ import { listAgentRuns, getLastRunByAgent } from "@/lib/agent-db";
 import { AdminChrome } from "@/components/admin/AdminChrome";
 import { AdminLoginPanel } from "@/components/admin/AdminLoginPanel";
 import { AgentsDashboard } from "@/components/admin/AgentsDashboard";
-import { AGENTS } from "@/components/admin/AgentsDashboard";
+import { AGENTS } from "@/lib/agent-registry";
 
 export const dynamic = "force-dynamic";
 
