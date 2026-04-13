@@ -21,6 +21,7 @@ const NAV_ITEMS = [
   { href: "/admin/clients", icon: Briefcase, label: "Clients", exact: false },
   { href: "/admin/revenue", icon: TrendingUp, label: "Revenue", exact: false },
   { href: "/admin/agents", icon: Terminal, label: "Agents", exact: false },
+  { href: "/admin/sourced-leads", icon: Zap, label: "Sourced Leads", exact: false },
 ];
 
 function NavItem({
