@@ -15,11 +15,13 @@ import {
   BookOpen,
   Search,
   ArrowRight,
+  Trash2,
+  AlertTriangle,
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { HudBrackets } from "@/components/admin/hud-primitives";
-import { runAgentAction } from "@/app/admin/agents/actions";
+import { runAgentAction, deleteAgentRunAction } from "@/app/admin/agents/actions";
 import type { AgentRunRow, AgentRunStatus } from "@/lib/agent-db";
 import { AGENTS } from "@/lib/agent-registry";
 import type { Agent } from "@/lib/agent-registry";
@@ -133,7 +135,7 @@ function AgentCard({
 
 // ─── Run log row ──────────────────────────────────────────────────────────────
 
-function RunLogRow({ run, index }: { run: AgentRunRow; index: number }) {
+function RunLogRow({ run, index, onDelete }: { run: AgentRunRow; index: number; onDelete: (id: string) => void }) {
   const meta = STATUS_META[run.status];
   const StatusIcon = meta.icon;
 
@@ -142,7 +144,7 @@ function RunLogRow({ run, index }: { run: AgentRunRow; index: number }) {
       initial={{ opacity: 0, x: -8 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.25, delay: index * 0.03 }}
-      className="flex items-center gap-4 border-b border-white/[0.04] py-3 last:border-0"
+      className="group flex items-center gap-4 border-b border-white/[0.04] py-3 last:border-0"
     >
       <StatusIcon className={cn("h-4 w-4 shrink-0", meta.color, run.status === "running" && "animate-spin")} />
 
@@ -169,6 +171,13 @@ function RunLogRow({ run, index }: { run: AgentRunRow; index: number }) {
         )}>
           {run.triggeredBy}
         </span>
+        <button
+          onClick={() => onDelete(run.id)}
+          className="rounded-lg p-1 text-white/20 opacity-0 transition hover:bg-red-950/40 hover:text-red-400 group-hover:opacity-100"
+          title="Delete run"
+        >
+          <Trash2 className="h-3.5 w-3.5" />
+        </button>
       </div>
     </motion.div>
   );
@@ -200,6 +209,18 @@ export function AgentsDashboard({
         router.refresh();
       }
       setTimeout(() => setToast(null), 3500);
+    });
+  }
+
+  function handleDeleteRun(runId: string) {
+    startTransition(async () => {
+      const res = await deleteAgentRunAction(runId);
+      if (res.error) {
+        setToast(res.error);
+        setTimeout(() => setToast(null), 3500);
+      } else {
+        router.refresh();
+      }
     });
   }
 
@@ -341,7 +362,7 @@ export function AgentsDashboard({
                 </p>
               </div>
             ) : (
-              runs.map((run, i) => <RunLogRow key={run.id} run={run} index={i} />)
+              runs.map((run, i) => <RunLogRow key={run.id} run={run} index={i} onDelete={handleDeleteRun} />)
             )}
           </div>
         </motion.section>
@@ -468,17 +489,28 @@ function PipelineScout() {
               initial={{ opacity: 0, y: 4 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
-              className="mt-4 flex items-center justify-between"
+              className="mt-4 space-y-3"
             >
-              <p className="font-inter text-sm text-emerald-400">
-                Found {result.found} businesses · {result.saved} saved · {(result.durationMs / 1000).toFixed(1)}s
-              </p>
-              <Link
-                href="/admin/sourced-leads"
-                className="flex items-center gap-1.5 font-inter text-sm font-medium text-brand-purple-light transition hover:text-white"
-              >
-                Review leads <ArrowRight className="h-3.5 w-3.5" />
-              </Link>
+              {result.saved === 0 ? (
+                <div className="flex items-start gap-2 rounded-xl border border-amber-500/25 bg-amber-950/20 px-4 py-3">
+                  <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-400" />
+                  <p className="font-inter text-sm text-amber-300/90">
+                    Found {result.found} businesses but <strong>0 were saved</strong> — check that <code className="rounded bg-black/30 px-1 font-mono text-xs">MONGODB_URI</code> is set in your Vercel environment variables.
+                  </p>
+                </div>
+              ) : (
+                <div className="flex items-center justify-between">
+                  <p className="font-inter text-sm text-emerald-400">
+                    Found {result.found} businesses · {result.saved} saved · {(result.durationMs / 1000).toFixed(1)}s
+                  </p>
+                  <Link
+                    href="/admin/sourced-leads"
+                    className="flex items-center gap-1.5 rounded-xl border border-brand-purple/30 bg-brand-purple/10 px-4 py-2 font-inter text-sm font-medium text-brand-purple-light transition hover:bg-brand-purple/20 hover:text-white"
+                  >
+                    Review leads <ArrowRight className="h-3.5 w-3.5" />
+                  </Link>
+                </div>
+              )}
             </motion.div>
           )}
           {error && (

@@ -101,6 +101,15 @@ export async function listAgentRuns(limit = 50): Promise<AgentRunRow[]> {
   }
 }
 
+export async function deleteAgentRun(runId: string): Promise<boolean> {
+  if (!ObjectId.isValid(runId)) return false;
+  const db = await getDb();
+  if (!db) return false;
+  const col = db.collection<AgentRunDocument>(COLLECTION);
+  const res = await col.deleteOne({ _id: new ObjectId(runId) });
+  return res.deletedCount > 0;
+}
+
 export async function getLastRunByAgent(
   agentIds: string[],
 ): Promise<Record<string, AgentRunRow>> {
