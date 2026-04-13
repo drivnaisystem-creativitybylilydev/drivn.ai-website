@@ -13,6 +13,8 @@ export async function POST(req: NextRequest) {
   const sessionCookie = cookieStore.get("leads_admin_session")?.value;
   console.log("[source-leads] cookie present:", !!sessionCookie);
   console.log("[source-leads] password env set:", !!process.env.LEADS_ADMIN_PASSWORD?.trim());
+  const rawKey = process.env.ANTHROPIC_API_KEY ?? "";
+  console.log("[source-leads] anthropic key set:", !!rawKey.trim(), "| prefix:", rawKey.trim().slice(0, 14), "| length:", rawKey.length);
   // ──────────────────────────────────────────────────────────────────────────
 
   const authed = await isLeadsAdminAuthenticated();
