@@ -4,7 +4,7 @@ import { scoreAndRankLeads } from "./scoring-agent";
 import { draftEmailsForTopLeads } from "./email-drafting-agent";
 import type { SourcingBrief, SourcingResult } from "./types";
 
-const client = new Anthropic();
+const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY?.trim() });
 
 /**
  * Master agent: takes a natural-language brief, uses Claude to generate

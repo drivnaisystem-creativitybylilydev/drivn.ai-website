@@ -1,7 +1,7 @@
 import Anthropic from "@anthropic-ai/sdk";
 import type { ScoredLead } from "./types";
 
-const client = new Anthropic();
+const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY?.trim() });
 
 const FINN_CONTEXT = `
 You are writing cold emails on behalf of Finn Schueler, founder of Drivn.AI — an AI consulting agency.
