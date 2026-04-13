@@ -69,3 +69,22 @@ export async function setLeadsAdminSessionCookie() {
 export async function clearLeadsAdminSessionCookie() {
   (await cookies()).delete(COOKIE);
 }
+
+// ─── Login error cookie (short-lived, read from layout) ──────────────────────
+
+const LOGIN_ERROR_COOKIE = "leads_login_error";
+
+export async function setLoginErrorCookie(code: "1" | "2") {
+  (await cookies()).set(LOGIN_ERROR_COOKIE, code, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    path: "/",
+    maxAge: 30,
+  });
+}
+
+export async function getLoginError(): Promise<"1" | "2" | null> {
+  const val = (await cookies()).get(LOGIN_ERROR_COOKIE)?.value;
+  return val === "1" || val === "2" ? val : null;
+}

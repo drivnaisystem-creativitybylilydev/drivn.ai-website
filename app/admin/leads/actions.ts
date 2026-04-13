@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import {
   timingSafeEqualStr,
   setLeadsAdminSessionCookie,
+  setLoginErrorCookie,
   clearLeadsAdminSessionCookie,
   isLeadsAdminAuthenticated,
 } from "@/lib/admin-session";
@@ -15,22 +16,25 @@ import { updateLeadCrmFields } from "@/lib/lead-db";
 export async function loginLeadsAdmin(formData: FormData) {
   const password = formData.get("password");
   if (typeof password !== "string") {
-    redirect("/admin/leads?e=1");
+    await setLoginErrorCookie("1");
+    redirect("/admin");
   }
   const expected = process.env.LEADS_ADMIN_PASSWORD?.trim();
   if (!expected) {
-    redirect("/admin/leads?e=2");
+    await setLoginErrorCookie("2");
+    redirect("/admin");
   }
   if (!timingSafeEqualStr(password, expected)) {
-    redirect("/admin/leads?e=1");
+    await setLoginErrorCookie("1");
+    redirect("/admin");
   }
   await setLeadsAdminSessionCookie();
-  redirect("/admin/leads");
+  redirect("/admin");
 }
 
 export async function logoutLeadsAdmin() {
   await clearLeadsAdminSessionCookie();
-  redirect("/admin/leads");
+  redirect("/admin");
 }
 
 function parseLeadStatus(raw: FormDataEntryValue | null): LeadStatus | null {
