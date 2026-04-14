@@ -47,6 +47,12 @@ export function scoreLead(business: RawBusiness): ScoredLead {
     score += 12;
   }
 
+  // ── Email signals ─────────────────────────────────────────────────────────────
+  if (business.email) {
+    signals.push({ type: "has_phone", weight: +10, label: `Email found — ${business.email}` });
+    score += 10;
+  }
+
   // ── Phone signals ─────────────────────────────────────────────────────────────
   if (business.phone) {
     signals.push({ type: "has_phone", weight: +5, label: "Phone listed — can cold call" });

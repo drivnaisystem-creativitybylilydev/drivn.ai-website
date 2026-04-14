@@ -4,11 +4,12 @@ export interface RawBusiness {
   address: string;
   phone?: string;
   website?: string;
+  email?: string;
   rating?: number;
   reviewCount?: number;
   category?: string;
   location: { lat: number; lng: number };
-  source: "google_maps";
+  source: "google_maps" | "apify";
 }
 
 export interface ScoredLead extends RawBusiness {

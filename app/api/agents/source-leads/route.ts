@@ -5,7 +5,8 @@ import { runMasterLeadAgent } from "@/lib/lead-sourcing/master-agent";
 import { upsertSourcedLead } from "@/lib/sourced-lead-db";
 import type { SourcingBrief } from "@/lib/lead-sourcing/types";
 
-export const maxDuration = 60;
+// Apify scrapes can take 2–3 minutes for large batches — requires Vercel Pro (300s max)
+export const maxDuration = 300;
 
 export async function POST(req: NextRequest) {
   // ── Auth debug ─────────────────────────────────────────────────────────────
@@ -33,7 +34,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
   }
 
-  brief.maxLeads = Math.min(brief.maxLeads ?? 20, 40);
+  brief.maxLeads = Math.min(brief.maxLeads ?? 50, 200);
 
   try {
     const result = await runMasterLeadAgent(brief);

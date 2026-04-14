@@ -11,6 +11,7 @@ export interface SourcedLeadDocument {
   address: string;
   phone?: string;
   website?: string;
+  email?: string;
   rating?: number;
   reviewCount?: number;
   category?: string;
@@ -19,7 +20,7 @@ export interface SourcedLeadDocument {
   emailDraft?: { subject: string; body: string };
   sourcingQuery: string;
   status: SourcedLeadStatus;
-  source: "google_maps";
+  source: "google_maps" | "apify";
   createdAt: Date;
   updatedAt: Date;
 }
@@ -31,6 +32,7 @@ export interface SourcedLeadRow {
   address: string;
   phone?: string;
   website?: string;
+  email?: string;
   rating?: number;
   reviewCount?: number;
   category?: string;
@@ -39,7 +41,7 @@ export interface SourcedLeadRow {
   emailDraft?: { subject: string; body: string };
   sourcingQuery: string;
   status: SourcedLeadStatus;
-  source: "google_maps";
+  source: "google_maps" | "apify";
   createdAt: string;
   updatedAt: string;
 }
@@ -66,6 +68,7 @@ function normalizeRow(doc: SourcedLeadDocument & { _id: ObjectId }): SourcedLead
     address: doc.address,
     phone: doc.phone,
     website: doc.website,
+    email: doc.email,
     rating: doc.rating,
     reviewCount: doc.reviewCount,
     category: doc.category,
@@ -92,6 +95,7 @@ export async function upsertSourcedLead(lead: ScoredLead, sourcingQuery: string)
     address: lead.address,
     phone: lead.phone,
     website: lead.website,
+    email: lead.email,
     rating: lead.rating,
     reviewCount: lead.reviewCount,
     category: lead.category,
@@ -100,7 +104,7 @@ export async function upsertSourcedLead(lead: ScoredLead, sourcingQuery: string)
     emailDraft: lead.emailDraft ? { subject: lead.emailDraft.subject, body: lead.emailDraft.body } : undefined,
     sourcingQuery,
     status: "new",
-    source: "google_maps",
+    source: lead.source,
     createdAt: now,
     updatedAt: now,
   };
@@ -114,6 +118,7 @@ export async function upsertSourcedLead(lead: ScoredLead, sourcingQuery: string)
         address: doc.address,
         phone: doc.phone,
         website: doc.website,
+        email: doc.email,
         rating: doc.rating,
         reviewCount: doc.reviewCount,
         category: doc.category,

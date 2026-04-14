@@ -1,5 +1,5 @@
 import Anthropic from "@anthropic-ai/sdk";
-import { runGoogleMapsAgent } from "./google-maps-agent";
+import { runApifyGoogleMaps } from "./apify-agent";
 import { scoreAndRankLeads } from "./scoring-agent";
 import { draftEmailsForTopLeads } from "./email-drafting-agent";
 import type { SourcingBrief, SourcingResult } from "./types";
@@ -17,14 +17,16 @@ export async function runMasterLeadAgent(
   const start = Date.now();
   let totalTokens = 0;
 
-  // ── Step 1: Use Claude to turn the brief into targeted Google Places queries ─
+  // ── Step 1: Use Claude to turn the brief into targeted Apify search queries ──
+  const maxLeads = brief.maxLeads ?? 50;
+  const numQueries = Math.max(1, Math.ceil(maxLeads / 50));
   const planPrompt = `You are helping an AI consulting agency (Drivn.AI) find leads.
 
 Their ideal clients: small-to-mid service businesses (5–50 employees, $500K–$5M revenue) in English-speaking markets. Industries: local services, health & wellness, professional services, e-commerce.
 
 The user's brief: "${brief.query}"
 
-Generate ${Math.ceil((brief.maxLeads ?? 20) / 10)} specific Google Places search queries that will find businesses matching this brief.
+Generate ${numQueries} specific Google Maps search queries that will find businesses matching this brief.
 
 Rules:
 - Each query should be a natural search phrase like "dentists in London" or "plumbers in Sydney"
@@ -54,13 +56,13 @@ Return ONLY a JSON array of strings. Example: ["dentists in Manchester", "dental
 
   if (queries.length === 0) queries = [brief.query];
 
-  // ── Step 2: Run Google Maps agent with generated queries ──────────────────────
-  const maxPerQuery = Math.ceil((brief.maxLeads ?? 20) / queries.length);
-  const rawBusinesses = await runGoogleMapsAgent(queries, maxPerQuery);
+  // ── Step 2: Run Apify Google Maps scraper with generated queries ─────────────
+  const maxPerQuery = Math.ceil(maxLeads / queries.length);
+  const rawBusinesses = await runApifyGoogleMaps(queries, maxPerQuery);
 
   // ── Step 3: Score and rank all leads ──────────────────────────────────────────
   const rankedLeads = scoreAndRankLeads(rawBusinesses);
-  const topLeads = rankedLeads.slice(0, brief.maxLeads ?? 20);
+  const topLeads = rankedLeads.slice(0, maxLeads);
 
   // ── Step 4: Draft emails for top 10 leads ────────────────────────────────────
   const leadsWithEmails = await draftEmailsForTopLeads(topLeads, 10);
