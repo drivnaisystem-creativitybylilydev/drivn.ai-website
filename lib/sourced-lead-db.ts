@@ -2,7 +2,7 @@ import { ObjectId } from "mongodb";
 import { getDb } from "@/lib/mongodb";
 import type { ScoredLead } from "@/lib/lead-sourcing/types";
 
-export type SourcedLeadStatus = "new" | "emailed" | "called" | "booked" | "converted" | "dismissed";
+export type SourcedLeadStatus = "new" | "called" | "booked" | "converted" | "dismissed";
 
 export interface SourcedLeadDocument {
   _id?: ObjectId;
@@ -185,6 +185,20 @@ export function groupLeadsByNiche(leads: SourcedLeadRow[]): NicheGroup[] {
       leads: bucket.sort((a, b) => b.score - a.score),
     }))
     .sort((a, b) => b.count - a.count);
+}
+
+export async function mergeNicheCategories(
+  fromCategory: string,
+  toCategory: string,
+): Promise<number> {
+  const db = await getDb();
+  if (!db) return 0;
+  const col = db.collection<SourcedLeadDocument>(COLLECTION);
+  const res = await col.updateMany(
+    { category: fromCategory },
+    { $set: { category: toCategory, updatedAt: new Date() } },
+  );
+  return res.modifiedCount;
 }
 
 export async function updateSourcedLeadStatus(id: string, status: SourcedLeadStatus): Promise<boolean> {

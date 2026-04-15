@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, useCallback, type DragEvent } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -14,25 +14,25 @@ import {
   Zap,
   Users,
   TrendingUp,
+  Merge,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { HudBrackets } from "@/components/admin/hud-primitives";
 import { NichePieChart } from "@/components/admin/NichePieChart";
-import { updateLeadStatusAction } from "@/app/admin/sourced-leads/actions";
+import { updateLeadStatusAction, mergeNichesAction } from "@/app/admin/sourced-leads/actions";
 import type { SourcedLeadRow, SourcedLeadStatus, NicheGroup } from "@/lib/sourced-lead-db";
 
 // ─── Status meta ──────────────────────────────────────────────────────────────
 
 const STATUS_META: Record<SourcedLeadStatus, { label: string; color: string; bg: string; border: string }> = {
   new:       { label: "New",       color: "text-brand-purple-light", bg: "bg-brand-purple/10",  border: "border-brand-purple/30" },
-  emailed:   { label: "Emailed",   color: "text-sky-400",            bg: "bg-sky-400/10",        border: "border-sky-400/30" },
   called:    { label: "Called",    color: "text-amber-400",          bg: "bg-amber-400/10",      border: "border-amber-400/30" },
   booked:    { label: "Booked",    color: "text-emerald-400",        bg: "bg-emerald-400/10",    border: "border-emerald-400/30" },
   converted: { label: "Converted", color: "text-emerald-300",        bg: "bg-emerald-300/10",    border: "border-emerald-300/30" },
   dismissed: { label: "Dismissed", color: "text-white/25",           bg: "bg-white/5",           border: "border-white/10" },
 };
 
-const STATUS_FLOW: SourcedLeadStatus[] = ["new", "emailed", "called", "booked", "converted", "dismissed"];
+const STATUS_FLOW: SourcedLeadStatus[] = ["new", "called", "booked", "converted", "dismissed"];
 
 // ─── Score ring ───────────────────────────────────────────────────────────────
 
@@ -165,7 +165,27 @@ function LeadRow({ lead, index }: { lead: SourcedLeadRow; index: number }) {
 
 // ─── Niche card (on overview grid) ───────────────────────────────────────────
 
-function NicheCard({ group, index, onClick }: { group: NicheGroup; index: number; onClick: () => void }) {
+function NicheCard({
+  group,
+  index,
+  onClick,
+  isDragOver,
+  onDragStart,
+  onDragEnd,
+  onDragOverCard,
+  onDragLeaveCard,
+  onDropCard,
+}: {
+  group: NicheGroup;
+  index: number;
+  onClick: () => void;
+  isDragOver: boolean;
+  onDragStart: (niche: string) => void;
+  onDragEnd: () => void;
+  onDragOverCard: (niche: string, e: DragEvent) => void;
+  onDragLeaveCard: () => void;
+  onDropCard: (targetNiche: string, e: DragEvent) => void;
+}) {
   const scoreColor = group.avgScore >= 80 ? "text-emerald-400" : group.avgScore >= 60 ? "text-brand-purple-light" : "text-amber-400";
 
   return (
@@ -174,15 +194,47 @@ function NicheCard({ group, index, onClick }: { group: NicheGroup; index: number
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, delay: index * 0.05 }}
       onClick={onClick}
-      className="relative overflow-hidden rounded-2xl border border-white/[0.07] bg-white/[0.02] p-5 text-left transition-all hover:border-brand-purple/30 hover:bg-brand-purple/[0.04]"
+      draggable
+      onDragStart={(e) => {
+        const de = e as unknown as DragEvent;
+        de.dataTransfer.setData("text/plain", group.niche);
+        de.dataTransfer.effectAllowed = "move";
+        onDragStart(group.niche);
+      }}
+      onDragEnd={onDragEnd}
+      onDragOver={(e) => {
+        const de = e as unknown as DragEvent;
+        de.preventDefault();
+        de.dataTransfer.dropEffect = "move";
+        onDragOverCard(group.niche, de);
+      }}
+      onDragLeave={onDragLeaveCard}
+      onDrop={(e) => {
+        const de = e as unknown as DragEvent;
+        de.preventDefault();
+        onDropCard(group.niche, de);
+      }}
+      className={cn(
+        "relative overflow-hidden rounded-2xl border p-5 text-left transition-all",
+        isDragOver
+          ? "border-brand-purple/60 bg-brand-purple/[0.12] ring-2 ring-brand-purple/30 scale-[1.02]"
+          : "border-white/[0.07] bg-white/[0.02] hover:border-brand-purple/30 hover:bg-brand-purple/[0.04]",
+      )}
     >
-      <HudBrackets color="rgba(139,92,246,0.15)" size={7} />
+      <HudBrackets color={isDragOver ? "rgba(139,92,246,0.35)" : "rgba(139,92,246,0.15)"} size={7} />
 
-      {/* Niche name */}
+      {isDragOver && (
+        <div className="absolute inset-0 z-10 flex items-center justify-center rounded-2xl bg-brand-purple/10 backdrop-blur-[2px]">
+          <div className="flex items-center gap-2 rounded-xl border border-brand-purple/40 bg-brand-dark/80 px-4 py-2">
+            <Merge className="h-4 w-4 text-brand-purple-light" />
+            <span className="font-inter text-xs font-semibold text-brand-purple-light">Drop to merge here</span>
+          </div>
+        </div>
+      )}
+
       <p className="font-inter text-[0.6rem] font-bold uppercase tracking-[0.18em] text-white/30">Niche</p>
       <h3 className="mt-1 font-sora text-base font-bold text-white leading-tight">{group.niche}</h3>
 
-      {/* Stats row */}
       <div className="mt-4 grid grid-cols-3 gap-3">
         <div>
           <p className="font-inter text-[0.55rem] font-bold uppercase tracking-[0.15em] text-white/25">Leads</p>
@@ -198,13 +250,11 @@ function NicheCard({ group, index, onClick }: { group: NicheGroup; index: number
         </div>
       </div>
 
-      {/* Top score badge */}
       <div className="mt-3 flex items-center gap-1.5">
         <TrendingUp className="h-3 w-3 text-white/20" />
         <span className="font-inter text-xs text-white/30">Top score: <span className="text-white/50">{group.topScore}</span></span>
       </div>
 
-      {/* Hover arrow hint */}
       <div className="absolute right-4 top-1/2 -translate-y-1/2 font-inter text-xs text-white/10 transition group-hover:text-white/30">→</div>
     </motion.button>
   );
@@ -276,6 +326,79 @@ function NicheDetail({ group, onBack }: { group: NicheGroup; onBack: () => void 
   );
 }
 
+// ─── Merge confirmation modal ────────────────────────────────────────────────
+
+function MergeConfirmModal({
+  from,
+  to,
+  fromCount,
+  onConfirm,
+  onCancel,
+  pending,
+}: {
+  from: string;
+  to: string;
+  fromCount: number;
+  onConfirm: () => void;
+  onCancel: () => void;
+  pending: boolean;
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
+      onClick={onCancel}
+    >
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95, y: 8 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.95, y: 8 }}
+        transition={{ duration: 0.2 }}
+        onClick={(e) => e.stopPropagation()}
+        className="relative mx-4 w-full max-w-md overflow-hidden rounded-2xl border border-white/[0.08] bg-[#0E0E24] p-6 shadow-2xl"
+      >
+        <HudBrackets color="rgba(139,92,246,0.2)" size={8} />
+
+        <div className="mb-1 flex items-center gap-2">
+          <Merge className="h-5 w-5 text-brand-purple-light" />
+          <h3 className="font-sora text-lg font-bold text-white">Merge Niches</h3>
+        </div>
+        <p className="mb-5 font-inter text-sm text-white/40">
+          This will move <span className="font-semibold text-white/70">{fromCount} lead{fromCount !== 1 ? "s" : ""}</span> from
+          <span className="font-semibold text-brand-purple-light"> {from}</span> into
+          <span className="font-semibold text-brand-purple-light"> {to}</span>.
+        </p>
+
+        <div className="mb-5 flex items-center justify-center gap-3 rounded-xl border border-white/[0.06] bg-white/[0.02] py-4">
+          <span className="max-w-[140px] truncate rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 font-inter text-xs font-medium text-white/60">{from}</span>
+          <span className="font-inter text-xs text-white/20">→</span>
+          <span className="max-w-[140px] truncate rounded-lg border border-brand-purple/30 bg-brand-purple/10 px-3 py-1.5 font-inter text-xs font-semibold text-brand-purple-light">{to}</span>
+        </div>
+
+        <div className="flex justify-end gap-2">
+          <button
+            onClick={onCancel}
+            disabled={pending}
+            className="rounded-xl border border-white/10 bg-white/[0.03] px-4 py-2 font-inter text-xs font-medium text-white/50 transition hover:border-white/20 hover:text-white/70 disabled:opacity-40"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={onConfirm}
+            disabled={pending}
+            className="flex items-center gap-1.5 rounded-xl border border-brand-purple/40 bg-brand-purple/20 px-4 py-2 font-inter text-xs font-semibold text-brand-purple-light transition hover:bg-brand-purple/30 disabled:opacity-40"
+          >
+            <Merge className="h-3.5 w-3.5" />
+            {pending ? "Merging…" : "Merge"}
+          </button>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
 // ─── Main dashboard ───────────────────────────────────────────────────────────
 
 export function NicheDashboard({
@@ -285,7 +408,44 @@ export function NicheDashboard({
   niches: NicheGroup[];
   totalLeads: number;
 }) {
+  const router = useRouter();
   const [activeNiche, setActiveNiche] = useState<NicheGroup | null>(null);
+  const [draggedNiche, setDraggedNiche] = useState<string | null>(null);
+  const [dragOverNiche, setDragOverNiche] = useState<string | null>(null);
+  const [mergePrompt, setMergePrompt] = useState<{ from: string; to: string } | null>(null);
+  const [mergePending, startMergeTransition] = useTransition();
+
+  const handleMergeRequest = useCallback((from: string, to: string) => {
+    if (from === to) return;
+    setMergePrompt({ from, to });
+  }, []);
+
+  const handleMergeConfirm = useCallback(() => {
+    if (!mergePrompt) return;
+    startMergeTransition(async () => {
+      await mergeNichesAction(mergePrompt.from, mergePrompt.to);
+      setMergePrompt(null);
+      setActiveNiche(null);
+      router.refresh();
+    });
+  }, [mergePrompt, router]);
+
+  const handleDragStart = useCallback((niche: string) => setDraggedNiche(niche), []);
+  const handleDragEnd = useCallback(() => { setDraggedNiche(null); setDragOverNiche(null); }, []);
+  const handleDragOverCard = useCallback((niche: string, e: DragEvent) => {
+    e.preventDefault();
+    setDragOverNiche(niche);
+  }, []);
+  const handleDragLeaveCard = useCallback(() => setDragOverNiche(null), []);
+  const handleDropCard = useCallback((targetNiche: string, e: DragEvent) => {
+    e.preventDefault();
+    const from = e.dataTransfer.getData("text/plain");
+    setDraggedNiche(null);
+    setDragOverNiche(null);
+    if (from && from !== targetNiche) {
+      handleMergeRequest(from, targetNiche);
+    }
+  }, [handleMergeRequest]);
 
   const pieData = niches.map((n) => ({ niche: n.niche, count: n.count, avgScore: n.avgScore }));
 
@@ -340,16 +500,30 @@ export function NicheDashboard({
                       <p className="mt-1 font-inter text-xs text-white/20">Run Pipeline Scout to source leads by niche.</p>
                     </div>
                   ) : (
-                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                      {niches.map((group, i) => (
-                        <NicheCard
-                          key={group.niche}
-                          group={group}
-                          index={i}
-                          onClick={() => setActiveNiche(group)}
-                        />
-                      ))}
-                    </div>
+                    <>
+                      {niches.length > 1 && (
+                        <p className="mb-3 font-inter text-[0.65rem] text-white/20">
+                          <Merge className="mr-1 inline h-3 w-3 -translate-y-px text-white/15" />
+                          Drag a niche onto another to merge their leads
+                        </p>
+                      )}
+                      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                        {niches.map((group, i) => (
+                          <NicheCard
+                            key={group.niche}
+                            group={group}
+                            index={i}
+                            onClick={() => setActiveNiche(group)}
+                            isDragOver={dragOverNiche === group.niche && draggedNiche !== group.niche}
+                            onDragStart={handleDragStart}
+                            onDragEnd={handleDragEnd}
+                            onDragOverCard={handleDragOverCard}
+                            onDragLeaveCard={handleDragLeaveCard}
+                            onDropCard={handleDropCard}
+                          />
+                        ))}
+                      </div>
+                    </>
                   )}
                 </motion.div>
               )}
@@ -384,6 +558,21 @@ export function NicheDashboard({
           </div>
         </div>
       </div>
+
+      {/* Merge confirmation modal */}
+      <AnimatePresence>
+        {mergePrompt && (
+          <MergeConfirmModal
+            key="merge-modal"
+            from={mergePrompt.from}
+            to={mergePrompt.to}
+            fromCount={niches.find((n) => n.niche === mergePrompt.from)?.count ?? 0}
+            onConfirm={handleMergeConfirm}
+            onCancel={() => setMergePrompt(null)}
+            pending={mergePending}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 }

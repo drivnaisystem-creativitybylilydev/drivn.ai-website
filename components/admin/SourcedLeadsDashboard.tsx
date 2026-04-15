@@ -24,14 +24,13 @@ import type { SourcedLeadRow, SourcedLeadStatus } from "@/lib/sourced-lead-db";
 
 const STATUS_META: Record<SourcedLeadStatus, { label: string; color: string; bg: string; border: string }> = {
   new:       { label: "New",       color: "text-brand-purple-light", bg: "bg-brand-purple/10",  border: "border-brand-purple/30" },
-  emailed:   { label: "Emailed",   color: "text-sky-400",            bg: "bg-sky-400/10",        border: "border-sky-400/30" },
   called:    { label: "Called",    color: "text-amber-400",          bg: "bg-amber-400/10",      border: "border-amber-400/30" },
   booked:    { label: "Booked",    color: "text-emerald-400",        bg: "bg-emerald-400/10",    border: "border-emerald-400/30" },
   converted: { label: "Converted", color: "text-emerald-300",        bg: "bg-emerald-300/10",    border: "border-emerald-300/30" },
   dismissed: { label: "Dismissed", color: "text-white/25",           bg: "bg-white/5",           border: "border-white/10" },
 };
 
-const STATUS_FLOW: SourcedLeadStatus[] = ["new", "emailed", "called", "booked", "converted", "dismissed"];
+const STATUS_FLOW: SourcedLeadStatus[] = ["new", "called", "booked", "converted", "dismissed"];
 
 // ─── Score ring ───────────────────────────────────────────────────────────────
 
@@ -199,7 +198,6 @@ export function SourcedLeadsDashboard({ leads }: { leads: SourcedLeadRow[] }) {
 
   const filtered = filter === "all" ? leads.filter((l) => l.status !== "dismissed") : leads.filter((l) => l.status === filter);
   const newCount       = leads.filter((l) => l.status === "new").length;
-  const emailedCount   = leads.filter((l) => l.status === "emailed").length;
   const calledCount    = leads.filter((l) => l.status === "called").length;
   const convertedCount = leads.filter((l) => l.status === "converted").length;
 
@@ -233,7 +231,6 @@ export function SourcedLeadsDashboard({ leads }: { leads: SourcedLeadRow[] }) {
         <div className="mb-8 grid grid-cols-2 gap-3 sm:grid-cols-4">
           {[
             { label: "New",       value: newCount,       color: "text-brand-purple-light" },
-            { label: "Emailed",   value: emailedCount,   color: "text-sky-400" },
             { label: "Called",    value: calledCount,    color: "text-amber-400" },
             { label: "Converted", value: convertedCount, color: "text-emerald-400" },
           ].map((s, i) => (

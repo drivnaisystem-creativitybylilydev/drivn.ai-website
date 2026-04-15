@@ -13,10 +13,8 @@ import {
   Terminal,
   MessageSquare,
   BookOpen,
-  Search,
   ArrowRight,
   Trash2,
-  AlertTriangle,
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -116,19 +114,29 @@ function AgentCard({
         )}
       </div>
 
-      {/* Run button */}
-      <button
-        onClick={() => onRun(agent.id, agent.name)}
-        disabled={running}
-        className="flex w-full items-center justify-center gap-2 rounded-xl border border-brand-purple/25 bg-brand-purple/10 py-2 font-sora text-xs font-semibold text-brand-purple-light transition hover:border-brand-purple/50 hover:bg-brand-purple/20 hover:shadow-[0_0_20px_-6px_rgba(139,92,246,0.5)] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-40"
-      >
-        {running ? (
-          <Loader2 className="h-3.5 w-3.5 animate-spin" />
-        ) : (
-          <Play className="h-3.5 w-3.5" />
-        )}
-        {running ? "Queuing…" : "Run"}
-      </button>
+      {/* Run button / link */}
+      {agent.id === "pipeline-scout" ? (
+        <Link
+          href="/admin/agents/pipeline-scout"
+          className="flex w-full items-center justify-center gap-2 rounded-xl border border-brand-purple/25 bg-brand-purple/10 py-2 font-sora text-xs font-semibold text-brand-purple-light transition hover:border-brand-purple/50 hover:bg-brand-purple/20 hover:shadow-[0_0_20px_-6px_rgba(139,92,246,0.5)]"
+        >
+          <ArrowRight className="h-3.5 w-3.5" />
+          Open Scout
+        </Link>
+      ) : (
+        <button
+          onClick={() => onRun(agent.id, agent.name)}
+          disabled={running}
+          className="flex w-full items-center justify-center gap-2 rounded-xl border border-brand-purple/25 bg-brand-purple/10 py-2 font-sora text-xs font-semibold text-brand-purple-light transition hover:border-brand-purple/50 hover:bg-brand-purple/20 hover:shadow-[0_0_20px_-6px_rgba(139,92,246,0.5)] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-40"
+        >
+          {running ? (
+            <Loader2 className="h-3.5 w-3.5 animate-spin" />
+          ) : (
+            <Play className="h-3.5 w-3.5" />
+          )}
+          {running ? "Queuing…" : "Run"}
+        </button>
+      )}
     </motion.div>
   );
 }
@@ -366,9 +374,6 @@ export function AgentsDashboard({
             )}
           </div>
         </motion.section>
-
-        {/* ── Pipeline Scout ── */}
-        <PipelineScout />
       </div>
 
       {/* ── Toast ── */}
@@ -386,145 +391,6 @@ export function AgentsDashboard({
         )}
       </AnimatePresence>
     </div>
-  );
-}
-
-// ─── Pipeline Scout widget ────────────────────────────────────────────────────
-
-function PipelineScout() {
-  const [query, setQuery] = useState("");
-  const [maxLeads, setMaxLeads] = useState(20);
-  const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState<{ found: number; saved: number; durationMs: number } | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const router = useRouter();
-
-  async function handleRun() {
-    if (!query.trim()) return;
-    setLoading(true);
-    setError(null);
-    setResult(null);
-    try {
-      const res = await fetch("/api/agents/source-leads", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ query: query.trim(), maxLeads }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error ?? "Agent failed");
-      setResult({ found: data.totalFound, saved: data.savedToDb, durationMs: data.durationMs });
-      router.refresh();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed");
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  return (
-    <motion.section
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, delay: 0.45 }}
-      className="mt-10"
-    >
-      <div className="mb-4 flex items-center gap-3">
-        <Search className="h-4 w-4 text-white/30" />
-        <p className="font-sora text-[0.65rem] font-bold uppercase tracking-[0.2em] text-white/40">
-          Pipeline Scout — Live Run
-        </p>
-        <div className="h-px flex-1 bg-white/[0.06]" />
-      </div>
-
-      <div className="relative overflow-hidden rounded-2xl border border-brand-purple/20 bg-brand-purple/[0.04] p-6">
-        <HudBrackets color="rgba(139,92,246,0.3)" size={10} />
-
-        <p className="mb-4 font-inter text-sm text-white/60">
-          Describe the leads you want in plain English. The agent will generate search queries,
-          find businesses on Google Maps, score them, and draft cold emails for the top results.
-        </p>
-
-        <div className="flex flex-col gap-3 sm:flex-row">
-          <input
-            type="text"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && !loading && handleRun()}
-            placeholder='e.g. "dentists in London" or "plumbers in Sydney with no website"'
-            className="flex-1 rounded-xl border border-white/10 bg-white/[0.04] px-4 py-2.5 font-inter text-sm text-white placeholder:text-white/25 focus:border-brand-purple/50 focus:outline-none focus:ring-0"
-          />
-          <select
-            value={maxLeads}
-            onChange={(e) => setMaxLeads(Number(e.target.value))}
-            className="rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2.5 font-inter text-sm text-white/70 focus:border-brand-purple/50 focus:outline-none"
-          >
-            {[10, 20, 30, 40].map((n) => (
-              <option key={n} value={n} className="bg-[#07071a]">{n} leads</option>
-            ))}
-          </select>
-          <button
-            onClick={handleRun}
-            disabled={loading || !query.trim()}
-            className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-violet-900 via-brand-purple to-violet-800 px-6 py-2.5 font-sora text-sm font-bold text-white shadow-[0_0_24px_-4px_rgba(139,92,246,0.65)] transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
-            {loading ? "Sourcing…" : "Find Leads"}
-          </button>
-        </div>
-
-        <AnimatePresence>
-          {loading && (
-            <motion.div
-              initial={{ opacity: 0, y: 4 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0 }}
-              className="mt-4 flex items-center gap-3 font-inter text-sm text-white/40"
-            >
-              <Loader2 className="h-4 w-4 animate-spin text-brand-purple-light" />
-              <span>Master agent running — generating queries, searching Google Maps, scoring leads, drafting emails…</span>
-            </motion.div>
-          )}
-          {result && (
-            <motion.div
-              initial={{ opacity: 0, y: 4 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0 }}
-              className="mt-4 space-y-3"
-            >
-              {result.saved === 0 ? (
-                <div className="flex items-start gap-2 rounded-xl border border-amber-500/25 bg-amber-950/20 px-4 py-3">
-                  <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-400" />
-                  <p className="font-inter text-sm text-amber-300/90">
-                    Found {result.found} businesses but <strong>0 were saved</strong> — check that <code className="rounded bg-black/30 px-1 font-mono text-xs">MONGODB_URI</code> is set in your Vercel environment variables.
-                  </p>
-                </div>
-              ) : (
-                <div className="flex items-center justify-between">
-                  <p className="font-inter text-sm text-emerald-400">
-                    Found {result.found} businesses · {result.saved} saved · {(result.durationMs / 1000).toFixed(1)}s
-                  </p>
-                  <Link
-                    href="/admin/sourced-leads"
-                    className="flex items-center gap-1.5 rounded-xl border border-brand-purple/30 bg-brand-purple/10 px-4 py-2 font-inter text-sm font-medium text-brand-purple-light transition hover:bg-brand-purple/20 hover:text-white"
-                  >
-                    Review leads <ArrowRight className="h-3.5 w-3.5" />
-                  </Link>
-                </div>
-              )}
-            </motion.div>
-          )}
-          {error && (
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="mt-4 font-inter text-sm text-red-400"
-            >
-              {error}
-            </motion.p>
-          )}
-        </AnimatePresence>
-      </div>
-    </motion.section>
   );
 }
 
