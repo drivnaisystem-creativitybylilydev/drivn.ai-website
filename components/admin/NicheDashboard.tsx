@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition, useCallback, type DragEvent } from "react";
+import { useState, useTransition, useCallback, useRef, useEffect, type DragEvent } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -8,8 +8,7 @@ import {
   Globe,
   Star,
   ChevronLeft,
-  CheckCircle2,
-  XCircle,
+  ChevronDown,
   MapPin,
   Zap,
   Users,
@@ -60,12 +59,93 @@ function ScoreRing({ score, size = 40 }: { score: number; size?: number }) {
   );
 }
 
+// ─── Status dropdown ─────────────────────────────────────────────────────────
+
+function StatusDropdown({
+  current,
+  onSelect,
+  disabled,
+}: {
+  current: SourcedLeadStatus;
+  onSelect: (s: SourcedLeadStatus) => void;
+  disabled?: boolean;
+}) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const meta = STATUS_META[current];
+
+  useEffect(() => {
+    if (!open) return;
+    function handleClick(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, [open]);
+
+  return (
+    <div ref={ref} className="relative">
+      <button
+        onClick={(e) => { e.stopPropagation(); setOpen((o) => !o); }}
+        disabled={disabled}
+        className={cn(
+          "flex items-center gap-1.5 rounded-lg border px-2.5 py-1.5 font-inter text-xs font-semibold transition",
+          meta.border, meta.bg, meta.color,
+          disabled && "opacity-40",
+        )}
+      >
+        <span className={cn("h-1.5 w-1.5 rounded-full", meta.color.replace("text-", "bg-"))} />
+        {meta.label}
+        <ChevronDown className={cn("h-3 w-3 transition-transform", open && "rotate-180")} />
+      </button>
+
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0, y: -4, scale: 0.96 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -4, scale: 0.96 }}
+            transition={{ duration: 0.15 }}
+            className="absolute right-0 top-full z-30 mt-1.5 w-40 overflow-hidden rounded-xl border border-white/[0.08] bg-[#12122A] shadow-2xl"
+          >
+            {STATUS_FLOW.map((s) => {
+              const m = STATUS_META[s];
+              const isActive = s === current;
+              return (
+                <button
+                  key={s}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (s !== current) onSelect(s);
+                    setOpen(false);
+                  }}
+                  className={cn(
+                    "flex w-full items-center gap-2 px-3 py-2 text-left font-inter text-xs transition",
+                    isActive
+                      ? cn("font-semibold", m.bg, m.color)
+                      : "text-white/50 hover:bg-white/[0.04] hover:text-white/70",
+                  )}
+                >
+                  <span className={cn(
+                    "h-1.5 w-1.5 shrink-0 rounded-full",
+                    isActive ? m.color.replace("text-", "bg-") : "bg-white/20",
+                  )} />
+                  {m.label}
+                </button>
+              );
+            })}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
 // ─── Lead row (inside niche detail view) ─────────────────────────────────────
 
 function LeadRow({ lead, index }: { lead: SourcedLeadRow; index: number }) {
   const [pending, startTransition] = useTransition();
   const router = useRouter();
-  const meta = STATUS_META[lead.status];
 
   function handleStatus(status: SourcedLeadStatus) {
     startTransition(async () => {
@@ -92,9 +172,6 @@ function LeadRow({ lead, index }: { lead: SourcedLeadRow; index: number }) {
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
             <p className="font-sora text-sm font-semibold text-white">{lead.name}</p>
-            <span className={cn("rounded-full border px-2 py-0.5 font-inter text-[0.6rem] font-bold", meta.border, meta.bg, meta.color)}>
-              {meta.label}
-            </span>
           </div>
 
           <div className="mt-1 flex flex-wrap gap-x-3 gap-y-1 font-inter text-xs text-white/35">
@@ -121,7 +198,6 @@ function LeadRow({ lead, index }: { lead: SourcedLeadRow; index: number }) {
             </span>
           </div>
 
-          {/* Signals */}
           {lead.signals.length > 0 && (
             <div className="mt-2 flex flex-wrap gap-1">
               {lead.signals.map((s) => (
@@ -133,31 +209,11 @@ function LeadRow({ lead, index }: { lead: SourcedLeadRow; index: number }) {
           )}
         </div>
 
-        {/* Status actions */}
-        <div className="flex shrink-0 items-center gap-1.5">
-          {lead.status !== "dismissed" && lead.status !== "converted" && (
-            <>
-              <button
-                onClick={() => {
-                  const next = STATUS_FLOW[STATUS_FLOW.indexOf(lead.status) + 1];
-                  if (next) handleStatus(next);
-                }}
-                disabled={pending}
-                className="flex items-center gap-1 rounded-lg border border-emerald-400/25 bg-emerald-400/10 px-2.5 py-1.5 font-inter text-xs font-medium text-emerald-400 transition hover:bg-emerald-400/20 disabled:opacity-40"
-              >
-                <CheckCircle2 className="h-3 w-3" />
-                {STATUS_FLOW[STATUS_FLOW.indexOf(lead.status) + 1] ?? "Done"}
-              </button>
-              <button
-                onClick={() => handleStatus("dismissed")}
-                disabled={pending}
-                className="rounded-lg border border-white/10 bg-white/5 p-1.5 text-white/30 transition hover:border-red-400/30 hover:bg-red-400/10 hover:text-red-400 disabled:opacity-40"
-              >
-                <XCircle className="h-3 w-3" />
-              </button>
-            </>
-          )}
-        </div>
+        <StatusDropdown
+          current={lead.status}
+          onSelect={handleStatus}
+          disabled={pending}
+        />
       </div>
     </motion.div>
   );
