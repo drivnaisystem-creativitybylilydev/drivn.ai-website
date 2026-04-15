@@ -24,6 +24,8 @@ const NAV_ITEMS = [
   { href: "/admin/sourced-leads", icon: Zap, label: "Sourced Leads", exact: false },
 ];
 
+// Remote Control removed — Finn works from Claude Code directly
+
 function NavItem({
   href,
   icon: Icon,
