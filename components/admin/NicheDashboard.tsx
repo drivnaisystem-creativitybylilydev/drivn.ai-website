@@ -1,0 +1,389 @@
+"use client";
+
+import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  Phone,
+  Globe,
+  Star,
+  ChevronLeft,
+  CheckCircle2,
+  XCircle,
+  MapPin,
+  Zap,
+  Users,
+  TrendingUp,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+import { HudBrackets } from "@/components/admin/hud-primitives";
+import { NichePieChart } from "@/components/admin/NichePieChart";
+import { updateLeadStatusAction } from "@/app/admin/sourced-leads/actions";
+import type { SourcedLeadRow, SourcedLeadStatus, NicheGroup } from "@/lib/sourced-lead-db";
+
+// ─── Status meta ──────────────────────────────────────────────────────────────
+
+const STATUS_META: Record<SourcedLeadStatus, { label: string; color: string; bg: string; border: string }> = {
+  new:       { label: "New",       color: "text-brand-purple-light", bg: "bg-brand-purple/10",  border: "border-brand-purple/30" },
+  emailed:   { label: "Emailed",   color: "text-sky-400",            bg: "bg-sky-400/10",        border: "border-sky-400/30" },
+  called:    { label: "Called",    color: "text-amber-400",          bg: "bg-amber-400/10",      border: "border-amber-400/30" },
+  booked:    { label: "Booked",    color: "text-emerald-400",        bg: "bg-emerald-400/10",    border: "border-emerald-400/30" },
+  converted: { label: "Converted", color: "text-emerald-300",        bg: "bg-emerald-300/10",    border: "border-emerald-300/30" },
+  dismissed: { label: "Dismissed", color: "text-white/25",           bg: "bg-white/5",           border: "border-white/10" },
+};
+
+const STATUS_FLOW: SourcedLeadStatus[] = ["new", "emailed", "called", "booked", "converted", "dismissed"];
+
+// ─── Score ring ───────────────────────────────────────────────────────────────
+
+function ScoreRing({ score, size = 40 }: { score: number; size?: number }) {
+  const color = score >= 80 ? "#34d399" : score >= 60 ? "#a78bfa" : "#f59e0b";
+  const r = (size / 2) - 4;
+  const circ = 2 * Math.PI * r;
+  const dash = (score / 100) * circ;
+
+  return (
+    <div className="relative shrink-0 flex items-center justify-center" style={{ width: size, height: size }}>
+      <svg className="-rotate-90" width={size} height={size}>
+        <circle cx={size/2} cy={size/2} r={r} fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="3" />
+        <motion.circle
+          cx={size/2} cy={size/2} r={r} fill="none"
+          stroke={color} strokeWidth="3"
+          strokeDasharray={circ}
+          initial={{ strokeDashoffset: circ }}
+          animate={{ strokeDashoffset: circ - dash }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+        />
+      </svg>
+      <span className="absolute font-mono font-bold text-white/80" style={{ fontSize: size * 0.175 }}>{score}</span>
+    </div>
+  );
+}
+
+// ─── Lead row (inside niche detail view) ─────────────────────────────────────
+
+function LeadRow({ lead, index }: { lead: SourcedLeadRow; index: number }) {
+  const [pending, startTransition] = useTransition();
+  const router = useRouter();
+  const meta = STATUS_META[lead.status];
+
+  function handleStatus(status: SourcedLeadStatus) {
+    startTransition(async () => {
+      await updateLeadStatusAction(lead.id, status);
+      router.refresh();
+    });
+  }
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: -8 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.25, delay: index * 0.03 }}
+      className={cn(
+        "relative overflow-hidden rounded-xl border bg-white/[0.02] p-4 transition-colors",
+        lead.status === "dismissed" ? "border-white/[0.04] opacity-40" : "border-white/[0.07]",
+      )}
+    >
+      <HudBrackets color="rgba(139,92,246,0.1)" size={5} />
+
+      <div className="flex items-start gap-3">
+        <ScoreRing score={lead.score} size={36} />
+
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-center gap-2">
+            <p className="font-sora text-sm font-semibold text-white">{lead.name}</p>
+            <span className={cn("rounded-full border px-2 py-0.5 font-inter text-[0.6rem] font-bold", meta.border, meta.bg, meta.color)}>
+              {meta.label}
+            </span>
+          </div>
+
+          <div className="mt-1 flex flex-wrap gap-x-3 gap-y-1 font-inter text-xs text-white/35">
+            {lead.phone && (
+              <a href={`tel:${lead.phone}`} className="flex items-center gap-1 transition hover:text-white/60">
+                <Phone className="h-3 w-3" />{lead.phone}
+              </a>
+            )}
+            {lead.website && (
+              <a href={lead.website} target="_blank" rel="noopener noreferrer"
+                className="flex items-center gap-1 transition hover:text-brand-purple-light">
+                <Globe className="h-3 w-3" />website
+              </a>
+            )}
+            {lead.rating && (
+              <span className="flex items-center gap-1">
+                <Star className="h-3 w-3 text-amber-400/70" />
+                {lead.rating} ({lead.reviewCount ?? 0})
+              </span>
+            )}
+            <span className="flex items-center gap-1">
+              <MapPin className="h-3 w-3" />
+              <span className="max-w-[180px] truncate">{lead.address}</span>
+            </span>
+          </div>
+
+          {/* Signals */}
+          {lead.signals.length > 0 && (
+            <div className="mt-2 flex flex-wrap gap-1">
+              {lead.signals.map((s) => (
+                <span key={s} className="rounded-full border border-brand-purple/20 bg-brand-purple/10 px-2 py-0.5 font-inter text-[0.6rem] text-brand-purple-light/70">
+                  {s}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Status actions */}
+        <div className="flex shrink-0 items-center gap-1.5">
+          {lead.status !== "dismissed" && lead.status !== "converted" && (
+            <>
+              <button
+                onClick={() => {
+                  const next = STATUS_FLOW[STATUS_FLOW.indexOf(lead.status) + 1];
+                  if (next) handleStatus(next);
+                }}
+                disabled={pending}
+                className="flex items-center gap-1 rounded-lg border border-emerald-400/25 bg-emerald-400/10 px-2.5 py-1.5 font-inter text-xs font-medium text-emerald-400 transition hover:bg-emerald-400/20 disabled:opacity-40"
+              >
+                <CheckCircle2 className="h-3 w-3" />
+                {STATUS_FLOW[STATUS_FLOW.indexOf(lead.status) + 1] ?? "Done"}
+              </button>
+              <button
+                onClick={() => handleStatus("dismissed")}
+                disabled={pending}
+                className="rounded-lg border border-white/10 bg-white/5 p-1.5 text-white/30 transition hover:border-red-400/30 hover:bg-red-400/10 hover:text-red-400 disabled:opacity-40"
+              >
+                <XCircle className="h-3 w-3" />
+              </button>
+            </>
+          )}
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+// ─── Niche card (on overview grid) ───────────────────────────────────────────
+
+function NicheCard({ group, index, onClick }: { group: NicheGroup; index: number; onClick: () => void }) {
+  const scoreColor = group.avgScore >= 80 ? "text-emerald-400" : group.avgScore >= 60 ? "text-brand-purple-light" : "text-amber-400";
+
+  return (
+    <motion.button
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3, delay: index * 0.05 }}
+      onClick={onClick}
+      className="relative overflow-hidden rounded-2xl border border-white/[0.07] bg-white/[0.02] p-5 text-left transition-all hover:border-brand-purple/30 hover:bg-brand-purple/[0.04]"
+    >
+      <HudBrackets color="rgba(139,92,246,0.15)" size={7} />
+
+      {/* Niche name */}
+      <p className="font-inter text-[0.6rem] font-bold uppercase tracking-[0.18em] text-white/30">Niche</p>
+      <h3 className="mt-1 font-sora text-base font-bold text-white leading-tight">{group.niche}</h3>
+
+      {/* Stats row */}
+      <div className="mt-4 grid grid-cols-3 gap-3">
+        <div>
+          <p className="font-inter text-[0.55rem] font-bold uppercase tracking-[0.15em] text-white/25">Leads</p>
+          <p className="mt-0.5 font-sora text-xl font-bold text-white">{group.count}</p>
+        </div>
+        <div>
+          <p className="font-inter text-[0.55rem] font-bold uppercase tracking-[0.15em] text-white/25">Avg Score</p>
+          <p className={cn("mt-0.5 font-sora text-xl font-bold", scoreColor)}>{group.avgScore}</p>
+        </div>
+        <div>
+          <p className="font-inter text-[0.55rem] font-bold uppercase tracking-[0.15em] text-white/25">New</p>
+          <p className="mt-0.5 font-sora text-xl font-bold text-brand-purple-light">{group.newCount}</p>
+        </div>
+      </div>
+
+      {/* Top score badge */}
+      <div className="mt-3 flex items-center gap-1.5">
+        <TrendingUp className="h-3 w-3 text-white/20" />
+        <span className="font-inter text-xs text-white/30">Top score: <span className="text-white/50">{group.topScore}</span></span>
+      </div>
+
+      {/* Hover arrow hint */}
+      <div className="absolute right-4 top-1/2 -translate-y-1/2 font-inter text-xs text-white/10 transition group-hover:text-white/30">→</div>
+    </motion.button>
+  );
+}
+
+// ─── Niche detail view ────────────────────────────────────────────────────────
+
+function NicheDetail({ group, onBack }: { group: NicheGroup; onBack: () => void }) {
+  const [statusFilter, setStatusFilter] = useState<SourcedLeadStatus | "all">("all");
+
+  const filtered = statusFilter === "all"
+    ? group.leads.filter((l) => l.status !== "dismissed")
+    : group.leads.filter((l) => l.status === statusFilter);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: 20 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: 20 }}
+      transition={{ duration: 0.25 }}
+    >
+      {/* Back + header */}
+      <div className="mb-6 flex items-center gap-3">
+        <button
+          onClick={onBack}
+          className="flex items-center gap-1.5 rounded-xl border border-white/10 bg-white/[0.03] px-3 py-1.5 font-inter text-xs text-white/40 transition hover:border-white/20 hover:text-white/60"
+        >
+          <ChevronLeft className="h-3.5 w-3.5" />
+          All niches
+        </button>
+        <div>
+          <h2 className="font-sora text-lg font-bold text-white">{group.niche}</h2>
+          <p className="font-inter text-xs text-white/30">{group.count} leads · {group.newCount} new</p>
+        </div>
+      </div>
+
+      {/* Status filter */}
+      <div className="mb-4 flex flex-wrap gap-1.5">
+        {(["all", ...STATUS_FLOW] as const).map((s) => (
+          <button
+            key={s}
+            onClick={() => setStatusFilter(s)}
+            className={cn(
+              "rounded-xl border px-3 py-1 font-inter text-xs font-medium transition",
+              statusFilter === s
+                ? "border-brand-purple/50 bg-brand-purple/20 text-brand-purple-light"
+                : "border-white/10 bg-white/[0.02] text-white/40 hover:border-white/20 hover:text-white/60",
+            )}
+          >
+            {s === "all" ? "Active" : STATUS_META[s].label}
+          </button>
+        ))}
+      </div>
+
+      {/* Lead list */}
+      {filtered.length === 0 ? (
+        <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-white/10 py-16">
+          <Zap className="mb-2 h-6 w-6 text-white/10" />
+          <p className="font-inter text-sm text-white/25">No leads in this view</p>
+        </div>
+      ) : (
+        <div className="flex flex-col gap-2">
+          {filtered.map((lead, i) => (
+            <LeadRow key={lead.id} lead={lead} index={i} />
+          ))}
+        </div>
+      )}
+    </motion.div>
+  );
+}
+
+// ─── Main dashboard ───────────────────────────────────────────────────────────
+
+export function NicheDashboard({
+  niches,
+  totalLeads,
+}: {
+  niches: NicheGroup[];
+  totalLeads: number;
+}) {
+  const [activeNiche, setActiveNiche] = useState<NicheGroup | null>(null);
+
+  const pieData = niches.map((n) => ({ niche: n.niche, count: n.count, avgScore: n.avgScore }));
+
+  return (
+    <div className="relative min-h-svh overflow-hidden bg-brand-dark text-white">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_90%_50%_at_50%_-20%,rgba(139,92,246,0.18),transparent_55%)]" />
+
+      <div className="relative z-10 mx-auto max-w-[1400px] px-4 pb-20 pt-8 md:px-8">
+
+        {/* Header */}
+        <motion.header
+          initial={{ opacity: 0, y: -8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          className="mb-8 border-b border-white/[0.07] pb-6"
+        >
+          <p className="font-inter text-[0.6rem] font-bold uppercase tracking-[0.22em] text-brand-purple-light/80">
+            Drivn.AI OS · Pipeline Scout
+          </p>
+          <h1 className="mt-1 bg-gradient-to-r from-white via-white to-brand-purple-light bg-clip-text font-sora text-2xl font-bold tracking-tight text-transparent md:text-3xl">
+            Sourced Leads
+          </h1>
+          <p className="mt-1 font-inter text-sm text-white/40">
+            {totalLeads} leads across {niches.length} niches
+          </p>
+        </motion.header>
+
+        {/* Two-column layout: niche grid + chart */}
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1fr_320px]">
+
+          {/* Left: niche grid or detail */}
+          <div>
+            <AnimatePresence mode="wait">
+              {activeNiche ? (
+                <NicheDetail
+                  key="detail"
+                  group={activeNiche}
+                  onBack={() => setActiveNiche(null)}
+                />
+              ) : (
+                <motion.div
+                  key="grid"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  {niches.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-white/10 py-24">
+                      <Zap className="mb-3 h-8 w-8 text-white/10" />
+                      <p className="font-sora text-sm font-semibold text-white/30">No leads yet</p>
+                      <p className="mt-1 font-inter text-xs text-white/20">Run Pipeline Scout to source leads by niche.</p>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                      {niches.map((group, i) => (
+                        <NicheCard
+                          key={group.niche}
+                          group={group}
+                          index={i}
+                          onClick={() => setActiveNiche(group)}
+                        />
+                      ))}
+                    </div>
+                  )}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+
+          {/* Right: stats + pie chart */}
+          <div className="flex flex-col gap-4">
+
+            {/* Summary stats */}
+            <div className="grid grid-cols-2 gap-3">
+              {[
+                { label: "Total Leads", value: totalLeads, icon: Users, color: "text-white" },
+                { label: "Niches", value: niches.length, icon: TrendingUp, color: "text-brand-purple-light" },
+              ].map(({ label, value, icon: Icon, color }) => (
+                <div key={label} className="relative overflow-hidden rounded-2xl border border-white/[0.06] bg-white/[0.02] p-4">
+                  <HudBrackets color="rgba(255,255,255,0.04)" size={5} />
+                  <Icon className="mb-1 h-4 w-4 text-white/20" />
+                  <p className="font-inter text-[0.6rem] font-bold uppercase tracking-[0.18em] text-white/30">{label}</p>
+                  <p className={cn("mt-1 font-sora text-2xl font-bold tabular-nums", color)}>{value}</p>
+                </div>
+              ))}
+            </div>
+
+            {/* Pie chart — implemented by Cursor */}
+            <div className="relative overflow-hidden rounded-2xl border border-white/[0.06] bg-white/[0.02] p-5">
+              <HudBrackets color="rgba(139,92,246,0.1)" size={6} />
+              <p className="mb-4 font-inter text-[0.6rem] font-bold uppercase tracking-[0.18em] text-white/30">Leads by Niche</p>
+              <NichePieChart data={pieData} />
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

@@ -154,6 +154,39 @@ export async function listSourcedLeads(limit = 100): Promise<SourcedLeadRow[]> {
   }
 }
 
+// ─── Niche grouping ───────────────────────────────────────────────────────────
+
+export interface NicheGroup {
+  niche: string;
+  count: number;
+  avgScore: number;
+  topScore: number;
+  newCount: number;
+  leads: SourcedLeadRow[];
+}
+
+export function groupLeadsByNiche(leads: SourcedLeadRow[]): NicheGroup[] {
+  const map = new Map<string, SourcedLeadRow[]>();
+
+  for (const lead of leads) {
+    const key = lead.category?.trim() || "Uncategorized";
+    const bucket = map.get(key) ?? [];
+    bucket.push(lead);
+    map.set(key, bucket);
+  }
+
+  return Array.from(map.entries())
+    .map(([niche, bucket]) => ({
+      niche,
+      count: bucket.length,
+      avgScore: Math.round(bucket.reduce((s, l) => s + l.score, 0) / bucket.length),
+      topScore: Math.max(...bucket.map((l) => l.score)),
+      newCount: bucket.filter((l) => l.status === "new").length,
+      leads: bucket.sort((a, b) => b.score - a.score),
+    }))
+    .sort((a, b) => b.count - a.count);
+}
+
 export async function updateSourcedLeadStatus(id: string, status: SourcedLeadStatus): Promise<boolean> {
   if (!ObjectId.isValid(id)) return false;
   const db = await getDb();

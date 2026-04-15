@@ -1,8 +1,8 @@
 import { isLeadsAdminAuthenticated } from "@/lib/admin-session";
-import { listSourcedLeads } from "@/lib/sourced-lead-db";
+import { listSourcedLeads, groupLeadsByNiche } from "@/lib/sourced-lead-db";
 import { AdminChrome } from "@/components/admin/AdminChrome";
 import { AdminLoginPanel } from "@/components/admin/AdminLoginPanel";
-import { SourcedLeadsDashboard } from "@/components/admin/SourcedLeadsDashboard";
+import { NicheDashboard } from "@/components/admin/NicheDashboard";
 
 export const dynamic = "force-dynamic";
 
@@ -16,6 +16,12 @@ export default async function SourcedLeadsPage() {
     );
   }
 
-  const leads = await listSourcedLeads(100);
-  return <SourcedLeadsDashboard leads={leads} />;
+  const leads = await listSourcedLeads(200);
+  const niches = groupLeadsByNiche(leads);
+
+  return (
+    <AdminChrome>
+      <NicheDashboard niches={niches} totalLeads={leads.length} />
+    </AdminChrome>
+  );
 }

@@ -1,81 +1,29 @@
-import Anthropic from "@anthropic-ai/sdk";
 import { runApifyGoogleMaps } from "./apify-agent";
 import { scoreAndRankLeads } from "./scoring-agent";
-import { draftEmailsForTopLeads } from "./email-drafting-agent";
 import type { SourcingBrief, SourcingResult } from "./types";
 
-const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY?.trim() });
-
 /**
- * Master agent: takes a natural-language brief, uses Claude to generate
- * targeted search queries, runs the sub-agents, and returns ranked leads
- * with email drafts for the top results.
+ * Master agent: takes a natural-language brief, runs Apify Google Maps
+ * scraper, scores and ranks results, and returns leads with qualifying data.
  */
 export async function runMasterLeadAgent(
   brief: SourcingBrief,
 ): Promise<SourcingResult> {
   const start = Date.now();
-  let totalTokens = 0;
-
-  // ── Step 1: Use Claude to turn the brief into targeted Apify search queries ──
   const maxLeads = brief.maxLeads ?? 50;
-  const numQueries = Math.max(1, Math.ceil(maxLeads / 50));
-  const planPrompt = `You are helping an AI consulting agency (Drivn.AI) find leads.
 
-Their ideal clients: small-to-mid service businesses (5–50 employees, $500K–$5M revenue) in English-speaking markets. Industries: local services, health & wellness, professional services, e-commerce.
+  // ── Step 1: Run Apify Google Maps scraper with the brief query directly ──────
+  const rawBusinesses = await runApifyGoogleMaps([brief.query], maxLeads);
 
-The user's brief: "${brief.query}"
-
-Generate ${numQueries} specific Google Maps search queries that will find businesses matching this brief.
-
-Rules:
-- Each query should be a natural search phrase like "dentists in London" or "plumbers in Sydney"
-- Cover different sub-categories or locations if the brief is broad
-- Be specific enough to find real businesses, not chains or franchises
-- Target English-speaking markets (UK, US, Australia, Canada)
-
-Return ONLY a JSON array of strings. Example: ["dentists in Manchester", "dental clinics in Birmingham"]`;
-
-  const planMsg = await client.messages.create({
-    model: "claude-haiku-4-5-20251001",
-    max_tokens: 256,
-    messages: [{ role: "user", content: planPrompt }],
-  });
-
-  totalTokens += (planMsg.usage.input_tokens ?? 0) + (planMsg.usage.output_tokens ?? 0);
-
-  const planText = planMsg.content[0].type === "text" ? planMsg.content[0].text : "[]";
-  const jsonMatch = planText.match(/\[[\s\S]*\]/);
-  let queries: string[] = [];
-
-  try {
-    queries = jsonMatch ? (JSON.parse(jsonMatch[0]) as string[]) : [];
-  } catch {
-    queries = [brief.query];
-  }
-
-  if (queries.length === 0) queries = [brief.query];
-
-  // ── Step 2: Run Apify Google Maps scraper with generated queries ─────────────
-  const maxPerQuery = Math.ceil(maxLeads / queries.length);
-  const rawBusinesses = await runApifyGoogleMaps(queries, maxPerQuery);
-
-  // ── Step 3: Score and rank all leads ──────────────────────────────────────────
+  // ── Step 2: Score and rank all leads ─────────────────────────────────────────
   const rankedLeads = scoreAndRankLeads(rawBusinesses);
-  const topLeads = rankedLeads.slice(0, maxLeads);
-
-  // ── Step 4: Draft emails for top 10 leads ────────────────────────────────────
-  const leadsWithEmails = await draftEmailsForTopLeads(topLeads, 10);
-
-  // Merge drafted emails back into full ranked list
-  const emailMap = new Map(leadsWithEmails.map((l) => [l.placeId, l]));
-  const finalLeads = topLeads.map((l) => emailMap.get(l.placeId) ?? l);
+  const finalLeads = rankedLeads.slice(0, maxLeads);
 
   return {
     brief,
     leads: finalLeads,
     totalFound: rawBusinesses.length,
-    tokensUsed: totalTokens,
+    tokensUsed: 0,
     durationMs: Date.now() - start,
   };
 }

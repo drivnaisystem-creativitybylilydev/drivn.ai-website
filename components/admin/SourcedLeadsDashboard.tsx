@@ -12,8 +12,6 @@ import {
   XCircle,
   ChevronDown,
   ChevronUp,
-  Copy,
-  Check,
   Zap,
   MapPin,
 } from "lucide-react";
@@ -58,28 +56,6 @@ function ScoreRing({ score }: { score: number }) {
       </svg>
       <span className="absolute font-mono text-[0.6rem] font-bold text-white/80">{score}</span>
     </div>
-  );
-}
-
-// ─── Copy button ──────────────────────────────────────────────────────────────
-
-function CopyButton({ text }: { text: string }) {
-  const [copied, setCopied] = useState(false);
-
-  async function handleCopy() {
-    await navigator.clipboard.writeText(text);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  }
-
-  return (
-    <button
-      onClick={handleCopy}
-      className="flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 font-inter text-xs text-white/50 transition hover:border-brand-purple/30 hover:bg-brand-purple/10 hover:text-brand-purple-light"
-    >
-      {copied ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
-      {copied ? "Copied" : "Copy email"}
-    </button>
   );
 }
 
@@ -208,29 +184,6 @@ function LeadCard({ lead, index }: { lead: SourcedLeadRow; index: number }) {
                 </div>
               </div>
 
-              {/* Email draft */}
-              {lead.emailDraft ? (
-                <div>
-                  <div className="mb-2 flex items-center justify-between">
-                    <p className="font-inter text-[0.6rem] font-bold uppercase tracking-[0.18em] text-white/30">
-                      Email Draft
-                    </p>
-                    <CopyButton text={`Subject: ${lead.emailDraft.subject}\n\n${lead.emailDraft.body}`} />
-                  </div>
-                  <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-3">
-                    <p className="mb-1 font-inter text-xs font-semibold text-white/60">
-                      {lead.emailDraft.subject}
-                    </p>
-                    <p className="font-inter text-xs leading-relaxed text-white/40 whitespace-pre-wrap">
-                      {lead.emailDraft.body}
-                    </p>
-                  </div>
-                </div>
-              ) : (
-                <div className="flex items-center justify-center rounded-xl border border-dashed border-white/10 p-4">
-                  <p className="font-inter text-xs text-white/25">No email draft generated</p>
-                </div>
-              )}
             </div>
           </motion.div>
         )}
