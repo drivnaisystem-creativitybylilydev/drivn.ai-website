@@ -31,6 +31,12 @@ const STATUS_META: Record<SourcedLeadStatus, { label: string; color: string; bg:
   dismissed: { label: "Dismissed", color: "text-white/25",           bg: "bg-white/5",           border: "border-white/10" },
 };
 
+const DEFAULT_STATUS_META = { label: "Unknown", color: "text-white/40", bg: "bg-white/5", border: "border-white/10" };
+
+function getStatusMeta(status: SourcedLeadStatus) {
+  return STATUS_META[status] ?? DEFAULT_STATUS_META;
+}
+
 const STATUS_FLOW: SourcedLeadStatus[] = ["new", "called", "booked", "converted", "dismissed"];
 
 // ─── Score ring ───────────────────────────────────────────────────────────────
@@ -72,7 +78,7 @@ function StatusDropdown({
 }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
-  const meta = STATUS_META[current];
+  const meta = getStatusMeta(current);
 
   useEffect(() => {
     if (!open) return;
@@ -109,7 +115,7 @@ function StatusDropdown({
             className="absolute right-0 top-full z-30 mt-1.5 w-40 overflow-hidden rounded-xl border border-white/[0.08] bg-[#12122A] shadow-2xl"
           >
             {STATUS_FLOW.map((s) => {
-              const m = STATUS_META[s];
+              const m = getStatusMeta(s);
               const isActive = s === current;
               return (
                 <button
@@ -360,7 +366,7 @@ function NicheDetail({ group, onBack }: { group: NicheGroup; onBack: () => void 
                 : "border-white/10 bg-white/[0.02] text-white/40 hover:border-white/20 hover:text-white/60",
             )}
           >
-            {s === "all" ? "Active" : STATUS_META[s].label}
+            {s === "all" ? "Active" : getStatusMeta(s).label}
           </button>
         ))}
       </div>
