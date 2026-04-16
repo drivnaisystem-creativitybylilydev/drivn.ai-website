@@ -24,6 +24,12 @@ const STATUS_META: Record<ClientStatus, { label: string; color: string; bg: stri
   churned:  { label: "Churned",  color: "text-red-400/70",        bg: "bg-red-400/10",         border: "border-red-400/20" },
 };
 
+const DEFAULT_STATUS_META = { label: "Unknown", color: "text-white/40", bg: "bg-white/5", border: "border-white/10" };
+
+function getStatusMeta(status: ClientStatus) {
+  return STATUS_META[status] ?? DEFAULT_STATUS_META;
+}
+
 function fmt(n: number) {
   return n.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
 }
@@ -188,8 +194,8 @@ function ClientTable({ clients }: { clients: ClientRow[] }) {
                       </td>
                       <td className="px-5 py-3">
                         <span className={cn("rounded-full border px-2 py-0.5 font-inter text-[0.6rem] font-bold",
-                          STATUS_META[c.status].border, STATUS_META[c.status].bg, STATUS_META[c.status].color)}>
-                          {STATUS_META[c.status].label}
+                          getStatusMeta(c.status).border, getStatusMeta(c.status).bg, getStatusMeta(c.status).color)}>
+                          {getStatusMeta(c.status).label}
                         </span>
                       </td>
                     </motion.tr>
@@ -236,8 +242,8 @@ function ClientTable({ clients }: { clients: ClientRow[] }) {
                     </td>
                     <td className="px-5 py-3">
                       <span className={cn("rounded-full border px-2 py-0.5 font-inter text-[0.6rem] font-bold",
-                        STATUS_META[c.status].border, STATUS_META[c.status].bg, STATUS_META[c.status].color)}>
-                        {STATUS_META[c.status].label}
+                        getStatusMeta(c.status).border, getStatusMeta(c.status).bg, getStatusMeta(c.status).color)}>
+                        {getStatusMeta(c.status).label}
                       </span>
                     </td>
                     <td className="px-5 py-3">
