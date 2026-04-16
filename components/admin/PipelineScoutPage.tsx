@@ -33,6 +33,12 @@ const STATUS_META: Record<SourcedLeadStatus, { label: string; color: string; bg:
   dismissed: { label: "Dismissed", color: "text-white/25",           bg: "bg-white/5",           border: "border-white/10" },
 };
 
+const DEFAULT_STATUS_META = { label: "Unknown", color: "text-white/40", bg: "bg-white/5", border: "border-white/10" };
+
+function getStatusMeta(status: SourcedLeadStatus) {
+  return STATUS_META[status] ?? DEFAULT_STATUS_META;
+}
+
 const STATUS_FLOW: SourcedLeadStatus[] = ["new", "called", "booked", "converted", "dismissed"];
 
 type SortKey = "score" | "name" | "rating" | "status";
@@ -56,7 +62,7 @@ function ScoreBadge({ score }: { score: number }) {
 function StatusCell({ lead }: { lead: SourcedLeadRow }) {
   const [pending, startTransition] = useTransition();
   const router = useRouter();
-  const meta = STATUS_META[lead.status];
+  const meta = getStatusMeta(lead.status);
 
   function advance() {
     const next = STATUS_FLOW[STATUS_FLOW.indexOf(lead.status) + 1];
@@ -337,7 +343,7 @@ export function PipelineScoutPage({ initialLeads }: { initialLeads: SourcedLeadR
                     : "border-white/10 bg-white/[0.02] text-white/40 hover:border-white/20 hover:text-white/60",
                 )}
               >
-                {s === "all" ? "Active" : STATUS_META[s].label}
+                {s === "all" ? "Active" : getStatusMeta(s).label}
               </button>
             ))}
           </div>
