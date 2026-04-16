@@ -7,7 +7,6 @@ import {
   Phone,
   Globe,
   Star,
-  MessageSquare,
   CheckCircle2,
   XCircle,
   ChevronDown,
