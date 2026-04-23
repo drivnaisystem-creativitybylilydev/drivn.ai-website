@@ -12,7 +12,7 @@ import {
   isLeadsAdminAuthenticated,
 } from "@/lib/admin-session";
 import { LEAD_STATUS_OPTIONS, type LeadStatus } from "@/lib/lead-document";
-import { updateLeadCrmFields } from "@/lib/lead-db";
+import { updateLeadCrmFields, deleteLead } from "@/lib/lead-db";
 
 export async function loginLeadsAdmin(formData: FormData) {
   const password = formData.get("password");
@@ -70,4 +70,24 @@ export async function updateLeadCrmFromAdmin(formData: FormData) {
   });
   revalidatePath("/admin/leads");
   redirect("/admin/leads");
+}
+
+export async function deleteLeadAction(leadId: string) {
+  if (!(await isLeadsAdminAuthenticated())) {
+    return { error: "Unauthorized" };
+  }
+  if (!ObjectId.isValid(leadId.trim())) {
+    return { error: "Invalid lead ID" };
+  }
+  try {
+    const deleted = await deleteLead(leadId.trim());
+    if (!deleted) {
+      return { error: "Lead not found" };
+    }
+    revalidatePath("/admin/leads");
+    return { success: true };
+  } catch (err) {
+    console.error("[leads] deleteLeadAction failed:", err);
+    return { error: "Failed to delete lead" };
+  }
 }

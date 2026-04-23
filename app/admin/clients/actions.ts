@@ -1,7 +1,9 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { insertClient, updateClient, type ClientStatus } from "@/lib/client-db";
+import { isLeadsAdminAuthenticated } from "@/lib/admin-session";
+import { insertClient, updateClient, deleteClient, type ClientStatus } from "@/lib/client-db";
+import { ObjectId } from "mongodb";
 
 function parseStatus(raw: unknown): ClientStatus {
   const valid: ClientStatus[] = ["prospect", "proposal", "active", "paused", "churned"];
@@ -57,5 +59,26 @@ export async function editClientAction(
   } catch (err) {
     console.error("[editClientAction]", err);
     return { error: "Failed to update client." };
+  }
+}
+
+export async function deleteClientAction(clientId: string): Promise<{ error?: string }> {
+  try {
+    if (!(await isLeadsAdminAuthenticated())) {
+      return { error: "Unauthorized" };
+    }
+    if (!ObjectId.isValid(clientId.trim())) {
+      return { error: "Invalid client ID" };
+    }
+    const deleted = await deleteClient(clientId.trim());
+    if (!deleted) {
+      return { error: "Client not found" };
+    }
+    revalidatePath("/admin");
+    revalidatePath("/admin/clients");
+    return {};
+  } catch (err) {
+    console.error("[deleteClientAction]", err);
+    return { error: "Failed to delete client." };
   }
 }

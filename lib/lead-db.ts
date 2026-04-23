@@ -192,3 +192,12 @@ export async function mergeLeadBooking(
   const res = await col.updateOne({ _id: oid }, { $set });
   return res.matchedCount > 0;
 }
+
+export async function deleteLead(leadId: string): Promise<boolean> {
+  if (!ObjectId.isValid(leadId)) return false;
+  const db = await getLeadsDb();
+  if (!db) return false;
+  const col = db.collection<LeadDocument>(COLLECTION);
+  const res = await col.deleteOne({ _id: new ObjectId(leadId) });
+  return res.deletedCount > 0;
+}

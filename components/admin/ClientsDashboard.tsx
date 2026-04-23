@@ -11,7 +11,17 @@ import {
   Users2,
   Mail,
   Pencil,
+  Trash2,
 } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import {
   Dialog,
   DialogContent,
@@ -20,7 +30,7 @@ import {
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import type { ClientRow, ClientStatus } from "@/lib/client-db";
-import { addClientAction, editClientAction } from "@/app/admin/clients/actions";
+import { addClientAction, editClientAction, deleteClientAction } from "@/app/admin/clients/actions";
 import { HudBrackets, AnimatedNumber, ScanLine } from "@/components/admin/hud-primitives";
 
 const STATUS_META: Record<
@@ -109,10 +119,12 @@ function ClientCard({
   client,
   index,
   onEdit,
+  onDelete,
 }: {
   client: ClientRow;
   index: number;
   onEdit: (c: ClientRow) => void;
+  onDelete: (clientId: string) => void;
 }) {
   return (
     <motion.div
@@ -200,13 +212,22 @@ function ClientCard({
               year: "numeric",
             })}
           </p>
-          <button
-            onClick={() => onEdit(client)}
-            className="flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/[0.04] px-3 py-1.5 font-inter text-xs text-white/50 opacity-0 transition-all group-hover:opacity-100 hover:border-brand-purple/30 hover:text-brand-purple-light"
-          >
-            <Pencil className="h-3 w-3" />
-            Edit
-          </button>
+          <div className="flex gap-1.5">
+            <button
+              onClick={() => onEdit(client)}
+              className="flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/[0.04] px-3 py-1.5 font-inter text-xs text-white/50 opacity-0 transition-all group-hover:opacity-100 hover:border-brand-purple/30 hover:text-brand-purple-light"
+            >
+              <Pencil className="h-3 w-3" />
+              Edit
+            </button>
+            <button
+              onClick={() => onDelete(client.id)}
+              className="flex items-center justify-center rounded-lg p-1.5 text-white/50 opacity-0 transition-all group-hover:opacity-100 hover:bg-red-950/40 hover:text-red-400"
+              title="Delete client"
+            >
+              <Trash2 className="h-3 w-3" />
+            </button>
+          </div>
         </div>
       </div>
     </motion.div>
@@ -412,8 +433,31 @@ function ClientDialog({
 // ─── Main dashboard ───────────────────────────────────────────────────────────
 
 export function ClientsDashboard({ clients }: { clients: ClientRow[] }) {
+  const router = useRouter();
   const [addOpen, setAddOpen] = useState(false);
   const [editClient, setEditClient] = useState<ClientRow | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [deleteClientId, setDeleteClientId] = useState<string | null>(null);
+  const [isPending, startTransition] = useTransition();
+
+  const handleDeleteClient = (clientId: string) => {
+    setDeleteClientId(clientId);
+    setDeleteDialogOpen(true);
+  };
+
+  const confirmDelete = () => {
+    if (!deleteClientId) return;
+    startTransition(async () => {
+      const result = await deleteClientAction(deleteClientId);
+      setDeleteDialogOpen(false);
+      setDeleteClientId(null);
+      if (result.error) {
+        alert(`Error: ${result.error}`);
+      } else {
+        router.refresh();
+      }
+    });
+  };
 
   const active = clients.filter((c) => c.status === "active");
   const totalMrr = active.reduce((sum, c) => sum + c.mrr, 0);
@@ -502,7 +546,7 @@ export function ClientsDashboard({ clients }: { clients: ClientRow[] }) {
                 </div>
                 <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
                   {active.map((c, i) => (
-                    <ClientCard key={c.id} client={c} index={i} onEdit={setEditClient} />
+                    <ClientCard key={c.id} client={c} index={i} onEdit={setEditClient} onDelete={handleDeleteClient} />
                   ))}
                 </div>
               </section>
@@ -520,7 +564,7 @@ export function ClientsDashboard({ clients }: { clients: ClientRow[] }) {
                 </div>
                 <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
                   {pipeline.map((c, i) => (
-                    <ClientCard key={c.id} client={c} index={active.length + i} onEdit={setEditClient} />
+                    <ClientCard key={c.id} client={c} index={active.length + i} onEdit={setEditClient} onDelete={handleDeleteClient} />
                   ))}
                 </div>
               </section>
@@ -537,7 +581,7 @@ export function ClientsDashboard({ clients }: { clients: ClientRow[] }) {
                 </div>
                 <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
                   {other.map((c, i) => (
-                    <ClientCard key={c.id} client={c} index={active.length + pipeline.length + i} onEdit={setEditClient} />
+                    <ClientCard key={c.id} client={c} index={active.length + pipeline.length + i} onEdit={setEditClient} onDelete={handleDeleteClient} />
                   ))}
                 </div>
               </section>
@@ -552,6 +596,27 @@ export function ClientsDashboard({ clients }: { clients: ClientRow[] }) {
         onAddOpenChange={setAddOpen}
         onEditClose={() => setEditClient(null)}
       />
+
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent className="border-red-500/30 bg-red-950/20 shadow-[0_0_80px_-20px_rgba(239,68,68,0.5)]">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-red-200">Delete Client</AlertDialogTitle>
+            <AlertDialogDescription className="text-red-100/70">
+              This action cannot be undone. The client will be permanently deleted from your roster.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <div className="flex gap-3 justify-end">
+            <AlertDialogCancel className="border-red-500/30 text-red-200 hover:bg-red-950/40">Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={confirmDelete}
+              disabled={isPending}
+              className="bg-red-600 text-white hover:bg-red-700 disabled:opacity-50"
+            >
+              {isPending ? "Deleting..." : "Delete"}
+            </AlertDialogAction>
+          </div>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

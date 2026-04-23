@@ -146,3 +146,17 @@ export function computeClientStats(clients: ClientRow[]): ClientStats {
 export async function getClientStats(): Promise<ClientStats> {
   return computeClientStats(await listClients());
 }
+
+export async function deleteClient(clientId: string): Promise<boolean> {
+  if (!ObjectId.isValid(clientId)) return false;
+  try {
+    const db = await getDb();
+    if (!db) return false;
+    const col = db.collection<ClientDocument>(COLLECTION);
+    const res = await col.deleteOne({ _id: new ObjectId(clientId) });
+    return res.deletedCount > 0;
+  } catch (err) {
+    console.error("[client-db] deleteClient failed:", err);
+    return false;
+  }
+}

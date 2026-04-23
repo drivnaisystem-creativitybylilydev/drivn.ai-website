@@ -2,29 +2,29 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import {
-  Play,
+  Zap,
+  Database,
+  BarChart3,
+  MessageSquare,
+  FileText,
+  Search,
+  BookOpen,
+  Terminal,
+  Trash2,
   Clock,
   CheckCircle2,
   XCircle,
   Loader2,
-  Zap,
-  Terminal,
-  MessageSquare,
-  BookOpen,
+  Play,
   ArrowRight,
-  Trash2,
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { HudBrackets } from "@/components/admin/hud-primitives";
 import { runAgentAction, deleteAgentRunAction } from "@/app/admin/agents/actions";
 import type { AgentRunRow, AgentRunStatus } from "@/lib/agent-db";
 import { AGENTS } from "@/lib/agent-registry";
-import type { Agent } from "@/lib/agent-registry";
-
-// ─── Status helpers ───────────────────────────────────────────────────────────
 
 const STATUS_META: Record<
   AgentRunStatus,
@@ -36,11 +36,15 @@ const STATUS_META: Record<
   error:     { label: "Error",     color: "text-red-400",     icon: XCircle },
 };
 
-const CATEGORY_META = {
-  ops:     { label: "Ops",     color: "text-violet-400",  border: "border-violet-400/20 bg-violet-400/10" },
-  sales:   { label: "Sales",   color: "text-sky-400",     border: "border-sky-400/20 bg-sky-400/10" },
-  content: { label: "Content", color: "text-emerald-400", border: "border-emerald-400/20 bg-emerald-400/10" },
-};
+const agentConfig = [
+  { id: "jarvis", name: "JARVIS", icon: Zap, description: "AI Chief of Staff providing daily briefs and strategic advice", status: "Active" },
+  { id: "kb-updater", name: "KB Updater", icon: Database, description: "Reads OS folder and syncs CLAUDE.md with latest agency state", status: "Active" },
+  { id: "weekly-review", name: "Weekly Review", icon: BarChart3, description: "Summarizes the week: MRR delta, pipeline changes, open tasks", status: "Active" },
+  { id: "lead-nurture", name: "Lead Nurture", icon: MessageSquare, description: "Finds leads needing follow-up and drafts personalized outreach", status: "Active" },
+  { id: "proposal-writer", name: "Proposal Writer", icon: FileText, description: "Takes a client brief and drafts a full proposal document", status: "Active" },
+  { id: "pipeline-scout", name: "Pipeline Scout", icon: Search, description: "Searches for ICP prospects and adds qualified leads", status: "Active" },
+  { id: "case-study-builder", name: "Case Study Builder", icon: BookOpen, description: "Turns completed projects into polished case studies", status: "Active" },
+];
 
 function relativeTime(iso: string): string {
   const diff = Date.now() - new Date(iso).getTime();
@@ -52,96 +56,96 @@ function relativeTime(iso: string): string {
   return `${Math.floor(h / 24)}d ago`;
 }
 
-// ─── Agent card ───────────────────────────────────────────────────────────────
-
 function AgentCard({
   agent,
   lastRun,
-  index,
   onRun,
   running,
+  index,
 }: {
-  agent: Agent;
+  agent: (typeof agentConfig)[0];
   lastRun?: AgentRunRow;
-  index: number;
   onRun: (id: string, name: string) => void;
   running: boolean;
+  index: number;
 }) {
   const Icon = agent.icon;
-  const cat = CATEGORY_META[agent.category];
   const status = lastRun ? STATUS_META[lastRun.status] : null;
   const StatusIcon = status?.icon;
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 16 }}
+      initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, delay: index * 0.07 }}
-      className="group relative overflow-hidden rounded-2xl border border-white/[0.07] bg-white/[0.025] p-5 transition-colors hover:border-brand-purple/30 hover:bg-brand-purple/[0.04]"
+      transition={{ duration: 0.5, delay: index * 0.1 }}
+      className="group relative h-full"
     >
-      <HudBrackets color="rgba(139,92,246,0.2)" size={8} />
+      {/* Glow effect background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-purple-600/20 to-transparent rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-      {/* Category badge */}
-      <span className={cn("mb-4 inline-flex items-center rounded-full border px-2 py-0.5 font-inter text-[0.55rem] font-bold uppercase tracking-[0.18em]", cat.border, cat.color)}>
-        {cat.label}
-      </span>
+      {/* Card */}
+      <div className="relative h-full bg-slate-900/40 backdrop-blur-xl border border-purple-500/20 rounded-3xl p-8 hover:border-purple-500/40 transition-all duration-300 shadow-[0_0_50px_rgba(124,58,237,0.3)] hover:shadow-[0_0_70px_rgba(124,58,237,0.5)] flex flex-col">
 
-      {/* Icon + name */}
-      <div className="mb-3 flex items-start gap-3">
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-brand-purple/30 bg-brand-purple/10 shadow-[0_0_16px_-4px_rgba(139,92,246,0.5)]">
-          <Icon className="h-5 w-5 text-brand-purple-light" />
+        {/* Icon with glow */}
+        <div className="mb-6">
+          <div className="w-16 h-16 rounded-full bg-purple-500/10 border border-purple-500/30 flex items-center justify-center shadow-[0_0_30px_rgba(124,58,237,0.4)] group-hover:shadow-[0_0_40px_rgba(124,58,237,0.6)] transition-all">
+            <Icon className="w-8 h-8 text-purple-400" />
+          </div>
         </div>
-        <div className="min-w-0">
-          <p className="font-sora text-sm font-semibold text-white">{agent.name}</p>
-          <p className="mt-0.5 font-inter text-xs leading-relaxed text-white/40">{agent.description}</p>
-        </div>
-      </div>
 
-      {/* Last run */}
-      <div className="mb-4 flex items-center gap-2 font-inter text-xs text-white/30">
-        {status && StatusIcon ? (
-          <>
-            <StatusIcon className={cn("h-3 w-3 shrink-0", status.color, lastRun?.status === "running" && "animate-spin")} />
-            <span className={status.color}>{status.label}</span>
-            <span>·</span>
-            <span>{relativeTime(lastRun!.triggeredAt)}</span>
-          </>
-        ) : (
-          <>
-            <Clock className="h-3 w-3 shrink-0" />
-            <span>Never run</span>
-          </>
-        )}
-      </div>
+        {/* Content */}
+        <h3 className="text-2xl font-bold text-white mb-3">{agent.name}</h3>
+        <p className="text-gray-400 leading-relaxed mb-6 flex-1">{agent.description}</p>
 
-      {/* Run button / link */}
-      {agent.id === "pipeline-scout" ? (
-        <Link
-          href="/admin/agents/pipeline-scout"
-          className="flex w-full items-center justify-center gap-2 rounded-xl border border-brand-purple/25 bg-brand-purple/10 py-2 font-sora text-xs font-semibold text-brand-purple-light transition hover:border-brand-purple/50 hover:bg-brand-purple/20 hover:shadow-[0_0_20px_-6px_rgba(139,92,246,0.5)]"
-        >
-          <ArrowRight className="h-3.5 w-3.5" />
-          Open Scout
-        </Link>
-      ) : (
-        <button
-          onClick={() => onRun(agent.id, agent.name)}
-          disabled={running}
-          className="flex w-full items-center justify-center gap-2 rounded-xl border border-brand-purple/25 bg-brand-purple/10 py-2 font-sora text-xs font-semibold text-brand-purple-light transition hover:border-brand-purple/50 hover:bg-brand-purple/20 hover:shadow-[0_0_20px_-6px_rgba(139,92,246,0.5)] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-40"
-        >
-          {running ? (
-            <Loader2 className="h-3.5 w-3.5 animate-spin" />
-          ) : (
-            <Play className="h-3.5 w-3.5" />
+        {/* Status and Last Run */}
+        <div className="space-y-4">
+          <div className="inline-flex items-center px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-medium">
+            ✓ {agent.status}
+          </div>
+
+          {status && StatusIcon && lastRun && (
+            <div className="flex items-center gap-2 text-xs text-gray-500">
+              <StatusIcon className={cn("h-3 w-3", status.color)} />
+              <span>{status.label}</span>
+              <span>·</span>
+              <span>{relativeTime(lastRun.triggeredAt)}</span>
+            </div>
           )}
-          {running ? "Queuing…" : "Run"}
-        </button>
-      )}
+
+          {/* Action button */}
+          {agent.id === "pipeline-scout" ? (
+            <Link href="/admin/agents/pipeline-scout" className="w-full">
+              <button className="w-full flex items-center justify-center gap-2 rounded-xl border border-purple-500/30 bg-purple-500/10 py-2.5 font-semibold text-purple-300 transition-all hover:border-purple-500/50 hover:bg-purple-500/20 active:scale-95">
+                <ArrowRight className="h-4 w-4" />
+                Open Scout
+              </button>
+            </Link>
+          ) : agent.id === "jarvis" ? (
+            <Link href="/admin/agents/jarvis" className="w-full">
+              <button className="w-full flex items-center justify-center gap-2 rounded-xl border border-purple-500/30 bg-purple-500/10 py-2.5 font-semibold text-purple-300 transition-all hover:border-purple-500/50 hover:bg-purple-500/20 active:scale-95">
+                <ArrowRight className="h-4 w-4" />
+                Chat with Jarvis
+              </button>
+            </Link>
+          ) : (
+            <button
+              onClick={() => onRun(agent.id, agent.name)}
+              disabled={running}
+              className="w-full flex items-center justify-center gap-2 rounded-xl border border-purple-500/30 bg-purple-500/10 py-2.5 font-semibold text-purple-300 transition-all hover:border-purple-500/50 hover:bg-purple-500/20 disabled:opacity-50 disabled:cursor-not-allowed active:scale-95"
+            >
+              {running ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Play className="h-4 w-4" />
+              )}
+              {running ? "Running..." : "Run"}
+            </button>
+          )}
+        </div>
+      </div>
     </motion.div>
   );
 }
-
-// ─── Run log row ──────────────────────────────────────────────────────────────
 
 function RunLogRow({ run, index, onDelete }: { run: AgentRunRow; index: number; onDelete: (id: string) => void }) {
   const meta = STATUS_META[run.status];
@@ -155,43 +159,23 @@ function RunLogRow({ run, index, onDelete }: { run: AgentRunRow; index: number; 
       className="group flex items-center gap-4 border-b border-white/[0.04] py-3 last:border-0"
     >
       <StatusIcon className={cn("h-4 w-4 shrink-0", meta.color, run.status === "running" && "animate-spin")} />
-
       <div className="min-w-0 flex-1">
         <div className="flex items-baseline gap-2">
-          <span className="font-sora text-sm font-semibold text-white/90">{run.agentName}</span>
-          {run.summary && (
-            <span className="truncate font-inter text-xs text-white/35">{run.summary}</span>
-          )}
+          <span className="font-semibold text-white/90">{run.agentName}</span>
+          {run.summary && <span className="truncate text-xs text-white/35">{run.summary}</span>}
         </div>
       </div>
-
       <div className="flex shrink-0 items-center gap-3">
-        <span className={cn("font-inter text-xs font-medium", meta.color)}>{meta.label}</span>
-        {run.durationMs && (
-          <span className="font-mono text-xs text-white/25">{(run.durationMs / 1000).toFixed(1)}s</span>
-        )}
-        <span className="font-mono text-xs text-white/25">{relativeTime(run.triggeredAt)}</span>
-        <span className={cn(
-          "rounded-full px-2 py-0.5 font-inter text-[0.6rem] font-bold uppercase tracking-wide",
-          run.triggeredBy === "manual"   ? "bg-white/5 text-white/30" :
-          run.triggeredBy === "schedule" ? "bg-sky-400/10 text-sky-400/70" :
-                                           "bg-violet-400/10 text-violet-400/70"
-        )}>
-          {run.triggeredBy}
-        </span>
-        <button
-          onClick={() => onDelete(run.id)}
-          className="rounded-lg p-1 text-white/20 opacity-0 transition hover:bg-red-950/40 hover:text-red-400 group-hover:opacity-100"
-          title="Delete run"
-        >
+        <span className={cn("text-xs font-medium", meta.color)}>{meta.label}</span>
+        {run.durationMs && <span className="text-xs text-white/25">{(run.durationMs / 1000).toFixed(1)}s</span>}
+        <span className="text-xs text-white/25">{relativeTime(run.triggeredAt)}</span>
+        <button onClick={() => onDelete(run.id)} className="rounded-lg p-1 text-white/20 opacity-0 transition hover:bg-red-950/40 hover:text-red-400 group-hover:opacity-100" title="Delete run">
           <Trash2 className="h-3.5 w-3.5" />
         </button>
       </div>
     </motion.div>
   );
 }
-
-// ─── Main dashboard ───────────────────────────────────────────────────────────
 
 export function AgentsDashboard({
   runs,
@@ -232,196 +216,170 @@ export function AgentsDashboard({
     });
   }
 
-  const ops     = AGENTS.filter((a) => a.category === "ops");
-  const sales   = AGENTS.filter((a) => a.category === "sales");
-  const content = AGENTS.filter((a) => a.category === "content");
-
-  const totalRuns = runs.length;
-  const completedRuns = runs.filter((r) => r.status === "completed").length;
-  const errorRuns = runs.filter((r) => r.status === "error").length;
-
   return (
-    <div className="relative min-h-svh overflow-hidden bg-brand-dark text-white">
+    <div className="relative min-h-svh bg-[#0a0a14] text-white overflow-hidden">
       {/* Background gradients */}
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_90%_50%_at_50%_-20%,rgba(139,92,246,0.18),transparent_55%)]" />
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_40%_50%_at_90%_60%,rgba(56,189,248,0.05),transparent_50%)]" />
+      <div className="absolute inset-0 bg-gradient-to-br from-purple-900/10 via-transparent to-transparent pointer-events-none" />
+      <div className="absolute top-0 left-1/4 w-96 h-96 bg-purple-600/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-600/5 rounded-full blur-3xl pointer-events-none" />
 
-      <div className="relative z-10 mx-auto max-w-[1600px] px-4 pb-20 pt-8 md:px-8">
-
-        {/* ── Header ── */}
-        <motion.header
-          initial={{ opacity: 0, y: -8 }}
+      <div className="relative z-10">
+        {/* Hero Section */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
-          className="mb-8 flex flex-col gap-4 border-b border-white/[0.07] pb-6 md:flex-row md:items-end md:justify-between"
+          transition={{ duration: 0.6 }}
+          className="max-w-7xl mx-auto px-4 pt-20 pb-16 text-center"
         >
-          <div>
-            <p className="font-inter text-[0.6rem] font-bold uppercase tracking-[0.22em] text-brand-purple-light/80">
-              Drivn.AI OS · Agents
-            </p>
-            <h1 className="mt-1 bg-gradient-to-r from-white via-white to-brand-purple-light bg-clip-text font-sora text-2xl font-bold tracking-tight text-transparent md:text-3xl">
-              Agent Workforce
-            </h1>
-            <p className="mt-1 font-inter text-sm text-white/40">
-              {AGENTS.length} agents · {totalRuns} total runs · {completedRuns} completed
-            </p>
-          </div>
+          <h1 className="text-5xl md:text-6xl font-bold text-white mb-6 bg-gradient-to-r from-white via-purple-200 to-white bg-clip-text text-transparent">
+            AI Agent System
+          </h1>
+          <p className="text-xl text-gray-400 max-w-2xl mx-auto">
+            Your automated business intelligence and operations team working 24/7
+          </p>
+        </motion.div>
 
-          {/* System status */}
-          <div className="flex items-center gap-2 rounded-xl border border-white/[0.06] bg-white/[0.02] px-4 py-2.5">
-            <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" />
-            </span>
-            <span className="font-inter text-xs text-white/50">
-              Remote Control <span className="text-amber-400">— connect env to enable</span>
-            </span>
-            <Terminal className="h-3.5 w-3.5 text-white/20" />
-          </div>
-        </motion.header>
+        {/* Agent Pyramid */}
+        <div className="max-w-6xl mx-auto px-4 pb-20">
+          <div className="relative">
+            {/* SVG connecting lines */}
+            <svg className="absolute inset-0 w-full h-full pointer-events-none overflow-visible" viewBox="0 0 100 100" preserveAspectRatio="none" style={{ minHeight: "600px" }}>
+              <defs>
+                <linearGradient id="lineGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" style={{ stopColor: "rgba(124,58,237,0.4)" }} />
+                  <stop offset="100%" style={{ stopColor: "rgba(124,58,237,0.2)" }} />
+                </linearGradient>
+              </defs>
+              {/* Lines from Jarvis to second level */}
+              <line x1="50" y1="8" x2="25" y2="32" stroke="url(#lineGradient)" strokeWidth="0.5" />
+              <line x1="50" y1="8" x2="75" y2="32" stroke="url(#lineGradient)" strokeWidth="0.5" />
 
-        {/* ── Stats bar ── */}
-        <div className="mb-10 grid grid-cols-3 gap-3 sm:grid-cols-3">
-          {[
-            { label: "Total Runs",  value: totalRuns,     color: "text-white" },
-            { label: "Completed",   value: completedRuns, color: "text-emerald-400" },
-            { label: "Errors",      value: errorRuns,     color: errorRuns > 0 ? "text-red-400" : "text-white/30" },
-          ].map((stat, i) => (
-            <motion.div
-              key={stat.label}
-              initial={{ opacity: 0, scale: 0.96 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.35, delay: i * 0.06 }}
-              className="relative overflow-hidden rounded-2xl border border-white/[0.06] bg-white/[0.02] px-5 py-4"
-            >
-              <HudBrackets color="rgba(255,255,255,0.06)" size={6} />
-              <p className="font-inter text-[0.6rem] font-bold uppercase tracking-[0.2em] text-white/35">{stat.label}</p>
-              <p className={cn("mt-1 font-sora text-2xl font-bold tabular-nums", stat.color)}>{stat.value}</p>
-            </motion.div>
-          ))}
+              {/* Lines from second level to third level */}
+              <line x1="25" y1="40" x2="12.5" y2="64" stroke="url(#lineGradient)" strokeWidth="0.5" />
+              <line x1="25" y1="40" x2="37.5" y2="64" stroke="url(#lineGradient)" strokeWidth="0.5" />
+              <line x1="75" y1="40" x2="62.5" y2="64" stroke="url(#lineGradient)" strokeWidth="0.5" />
+              <line x1="75" y1="40" x2="87.5" y2="64" stroke="url(#lineGradient)" strokeWidth="0.5" />
+            </svg>
+
+            {/* Jarvis - Top level */}
+            <div className="flex justify-center mb-32">
+              <div className="w-80">
+                <AgentCard
+                  agent={agentConfig[0]}
+                  lastRun={lastRuns[agentConfig[0].id]}
+                  onRun={handleRun}
+                  running={pending && runningId === agentConfig[0].id}
+                  index={0}
+                />
+              </div>
+            </div>
+
+            {/* Second level - 2 agents */}
+            <div className="flex justify-between px-8 mb-32">
+              <div className="w-80">
+                <AgentCard
+                  agent={agentConfig[1]}
+                  lastRun={lastRuns[agentConfig[1].id]}
+                  onRun={handleRun}
+                  running={pending && runningId === agentConfig[1].id}
+                  index={1}
+                />
+              </div>
+              <div className="w-80">
+                <AgentCard
+                  agent={agentConfig[2]}
+                  lastRun={lastRuns[agentConfig[2].id]}
+                  onRun={handleRun}
+                  running={pending && runningId === agentConfig[2].id}
+                  index={2}
+                />
+              </div>
+            </div>
+
+            {/* Third level - 4 agents */}
+            <div className="flex justify-between gap-4 px-0">
+              <div className="w-64">
+                <AgentCard
+                  agent={agentConfig[3]}
+                  lastRun={lastRuns[agentConfig[3].id]}
+                  onRun={handleRun}
+                  running={pending && runningId === agentConfig[3].id}
+                  index={3}
+                />
+              </div>
+              <div className="w-64">
+                <AgentCard
+                  agent={agentConfig[4]}
+                  lastRun={lastRuns[agentConfig[4].id]}
+                  onRun={handleRun}
+                  running={pending && runningId === agentConfig[4].id}
+                  index={4}
+                />
+              </div>
+              <div className="w-64">
+                <AgentCard
+                  agent={agentConfig[5]}
+                  lastRun={lastRuns[agentConfig[5].id]}
+                  onRun={handleRun}
+                  running={pending && runningId === agentConfig[5].id}
+                  index={5}
+                />
+              </div>
+              <div className="w-64">
+                <AgentCard
+                  agent={agentConfig[6]}
+                  lastRun={lastRuns[agentConfig[6].id]}
+                  onRun={handleRun}
+                  running={pending && runningId === agentConfig[6].id}
+                  index={6}
+                />
+              </div>
+            </div>
+          </div>
         </div>
 
-        {/* ── Ops agents ── */}
-        <Section label="Operations" icon={Zap} delay={0.1}>
-          {ops.map((a, i) => (
-            <AgentCard
-              key={a.id}
-              agent={a}
-              lastRun={lastRuns[a.id]}
-              index={i}
-              onRun={handleRun}
-              running={pending && runningId === a.id}
-            />
-          ))}
-        </Section>
-
-        {/* ── Sales agents ── */}
-        <Section label="Sales" icon={MessageSquare} delay={0.2}>
-          {sales.map((a, i) => (
-            <AgentCard
-              key={a.id}
-              agent={a}
-              lastRun={lastRuns[a.id]}
-              index={i}
-              onRun={handleRun}
-              running={pending && runningId === a.id}
-            />
-          ))}
-        </Section>
-
-        {/* ── Content agents ── */}
-        <Section label="Content" icon={BookOpen} delay={0.3}>
-          {content.map((a, i) => (
-            <AgentCard
-              key={a.id}
-              agent={a}
-              lastRun={lastRuns[a.id]}
-              index={i}
-              onRun={handleRun}
-              running={pending && runningId === a.id}
-            />
-          ))}
-        </Section>
-
-        {/* ── Run log ── */}
-        <motion.section
-          initial={{ opacity: 0, y: 12 }}
+        {/* Run Log Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.4 }}
-          className="mt-10"
+          transition={{ duration: 0.6, delay: 0.3 }}
+          className="max-w-7xl mx-auto px-4 pb-20"
         >
-          <div className="mb-4 flex items-center gap-3">
-            <Terminal className="h-4 w-4 text-white/30" />
-            <p className="font-sora text-[0.65rem] font-bold uppercase tracking-[0.2em] text-white/40">
-              Run Log
-            </p>
-            <div className="h-px flex-1 bg-white/[0.06]" />
-            <span className="font-mono text-xs text-white/20">{runs.length}</span>
+          <div className="mb-6 flex items-center gap-3">
+            <Terminal className="h-5 w-5 text-purple-400" />
+            <h2 className="text-2xl font-bold text-white">Run Log</h2>
+            <span className="text-gray-500">({runs.length})</span>
           </div>
 
-          <div className="relative overflow-hidden rounded-2xl border border-white/[0.07] bg-white/[0.02] px-5">
-            <HudBrackets color="rgba(255,255,255,0.06)" size={8} />
+          <div className="bg-slate-900/40 backdrop-blur-xl border border-purple-500/20 rounded-3xl shadow-[0_0_50px_rgba(124,58,237,0.3)] p-8">
             {runs.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-16 text-center">
-                <Terminal className="mb-3 h-8 w-8 text-white/10" />
-                <p className="font-sora text-sm font-semibold text-white/30">No runs yet</p>
-                <p className="mt-1 font-inter text-xs text-white/20">
-                  Run an agent above to see activity here.
-                </p>
+              <div className="text-center py-12">
+                <Terminal className="h-8 w-8 text-white/20 mx-auto mb-3" />
+                <p className="text-gray-400">No runs yet. Execute an agent to see activity here.</p>
               </div>
             ) : (
-              runs.map((run, i) => <RunLogRow key={run.id} run={run} index={i} onDelete={handleDeleteRun} />)
+              <div className="space-y-0">
+                {runs.slice(0, 10).map((run, i) => (
+                  <RunLogRow key={run.id} run={run} index={i} onDelete={handleDeleteRun} />
+                ))}
+              </div>
             )}
           </div>
-        </motion.section>
+        </motion.div>
       </div>
 
-      {/* ── Toast ── */}
-      <AnimatePresence>
-        {toast && (
-          <motion.div
-            initial={{ opacity: 0, y: 16, scale: 0.96 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 8, scale: 0.96 }}
-            transition={{ duration: 0.2 }}
-            className="fixed bottom-6 left-1/2 z-50 -translate-x-1/2 rounded-2xl border border-brand-purple/30 bg-[#07071a] px-5 py-3 font-inter text-sm text-white shadow-[0_0_40px_-8px_rgba(139,92,246,0.6)]"
-          >
-            {toast}
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* Toast notification */}
+      {toast && (
+        <motion.div
+          initial={{ opacity: 0, y: 16, scale: 0.96 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: 8, scale: 0.96 }}
+          transition={{ duration: 0.2 }}
+          className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 rounded-2xl border border-purple-500/30 bg-slate-900/90 backdrop-blur-xl px-5 py-3 text-sm text-white shadow-[0_0_40px_rgba(124,58,237,0.3)]"
+        >
+          {toast}
+        </motion.div>
+      )}
     </div>
-  );
-}
-
-// ─── Section wrapper ──────────────────────────────────────────────────────────
-
-function Section({
-  label,
-  icon: Icon,
-  delay,
-  children,
-}: {
-  label: string;
-  icon: React.ComponentType<{ className?: string }>;
-  delay: number;
-  children: React.ReactNode;
-}) {
-  return (
-    <motion.section
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, delay }}
-      className="mb-8"
-    >
-      <div className="mb-4 flex items-center gap-3">
-        <Icon className="h-3.5 w-3.5 text-white/30" />
-        <p className="font-sora text-[0.65rem] font-bold uppercase tracking-[0.2em] text-white/40">
-          {label}
-        </p>
-        <div className="h-px flex-1 bg-white/[0.06]" />
-      </div>
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">{children}</div>
-    </motion.section>
   );
 }

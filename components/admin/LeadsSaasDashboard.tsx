@@ -1,12 +1,21 @@
 "use client";
 
-import { Fragment, useState } from "react";
+import { Fragment, useState, useTransition } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ChevronRight, Sparkles } from "lucide-react";
+import { ChevronRight, Sparkles, Trash2 } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { LEAD_FIELD_KEYS, type LeadPayload } from "@/lib/lead-submission";
 import { LEAD_FIELD_LABELS } from "@/lib/lead-labels";
-import { logoutLeadsAdmin } from "@/app/admin/leads/actions";
+import { logoutLeadsAdmin, deleteLeadAction } from "@/app/admin/leads/actions";
 import { LeadCrmForm } from "@/components/admin/LeadCrmForm";
 import { LeadExpandedPanel } from "@/components/admin/LeadExpandedPanel";
 
@@ -112,6 +121,26 @@ export function LeadsSaasDashboard({
   stats: LeadAdminStats;
 }) {
   const [openId, setOpenId] = useState<string | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [deleteLeadId, setDeleteLeadId] = useState<string | null>(null);
+  const [isPending, startTransition] = useTransition();
+
+  const handleDeleteLead = (leadId: string) => {
+    setDeleteLeadId(leadId);
+    setDeleteDialogOpen(true);
+  };
+
+  const confirmDelete = () => {
+    if (!deleteLeadId) return;
+    startTransition(async () => {
+      const result = await deleteLeadAction(deleteLeadId);
+      setDeleteDialogOpen(false);
+      setDeleteLeadId(null);
+      if (result.error) {
+        alert(`Error: ${result.error}`);
+      }
+    });
+  };
 
   return (
     <div className="mx-auto max-w-[1680px] px-3 pb-12 pt-8 sm:px-6 md:px-8 md:pt-10">
@@ -227,17 +256,22 @@ export function LeadsSaasDashboard({
                   return (
                     <Fragment key={row.id}>
                       <tr
-                        className="group cursor-pointer border-b border-white/[0.06] transition-colors hover:bg-white/[0.04]"
-                        onClick={() => setOpenId(open ? null : row.id)}
+                        className="group border-b border-white/[0.06] transition-colors hover:bg-white/[0.04]"
                       >
                         <td className="px-2 py-3 align-middle">
-                          <motion.span
-                            animate={{ rotate: open ? 90 : 0 }}
-                            transition={{ type: "spring", stiffness: 400, damping: 28 }}
-                            className="inline-flex text-brand-purple-light/85"
+                          <button
+                            type="button"
+                            onClick={() => setOpenId(open ? null : row.id)}
+                            className="cursor-pointer"
                           >
-                            <ChevronRight className="h-5 w-5" />
-                          </motion.span>
+                            <motion.span
+                              animate={{ rotate: open ? 90 : 0 }}
+                              transition={{ type: "spring", stiffness: 400, damping: 28 }}
+                              className="inline-flex text-brand-purple-light/85"
+                            >
+                              <ChevronRight className="h-5 w-5" />
+                            </motion.span>
+                          </button>
                         </td>
                         <td className="whitespace-nowrap px-3 py-3 font-mono text-xs text-white/55">
                           {new Date(row.created_at).toLocaleString()}
@@ -259,6 +293,17 @@ export function LeadsSaasDashboard({
                             </td>
                           );
                         })}
+                        <td className="px-3 py-3 align-middle text-right">
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteLead(row.id)}
+                            className="inline-flex items-center justify-center rounded-lg p-1 text-white/30 opacity-0 transition hover:bg-red-950/40 hover:text-red-400 group-hover:opacity-100"
+                            title="Delete lead"
+                            disabled={isPending}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        </td>
                       </tr>
                       {open ? (
                         <tr className="border-b border-white/[0.08] bg-black/30">
@@ -387,6 +432,27 @@ export function LeadsSaasDashboard({
           </div>
         </div>
       )}
+
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Lead</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete this lead? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <div className="flex gap-3 justify-end">
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={confirmDelete}
+              disabled={isPending}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              {isPending ? "Deleting..." : "Delete"}
+            </AlertDialogAction>
+          </div>
+        </AlertDialogContent>
+      </AlertDialog>
 
       <p className="mt-12 text-center">
         <Link
