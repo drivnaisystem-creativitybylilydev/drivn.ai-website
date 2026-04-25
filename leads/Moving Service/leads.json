@@ -1,0 +1,28 @@
+[
+  {
+    "name": "JB Enterprises movers",
+    "placeId": "jb-enterprises-movers-14717-nordhoff-st,-los-angeles,-california-91402",
+    "address": "14717 nordhoff st, Los Angeles, California 91402",
+    "phone": "8183357469",
+    "website": null,
+    "email": null,
+    "rating": 4.9,
+    "reviewCount": null,
+    "score": 70,
+    "status": "new",
+    "source": "instagram"
+  },
+  {
+    "name": "On It Movers",
+    "placeId": "on-it-movers-mass",
+    "address": "Mass",
+    "phone": "(857) 557-8844 or (617) 752-2571",
+    "website": "https://onitmovers.com/",
+    "email": "service@onitmovers.com",
+    "rating": 5,
+    "reviewCount": null,
+    "score": 85,
+    "status": "new",
+    "source": "instagram"
+  }
+]

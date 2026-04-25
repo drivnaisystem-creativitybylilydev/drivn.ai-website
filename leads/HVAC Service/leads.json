@@ -1,0 +1,54 @@
+[
+  {
+    "name": "McClaren Heating & Air Conditioning, Inc.",
+    "placeId": "mcclaren-heating-&-air-conditioning,-inc.-bridgewater,-ma",
+    "address": "Bridgewater, MA",
+    "phone": "781-447-0136",
+    "website": "https://mcclarenhvac.net/",
+    "email": "awmcclaren@mcclarenhvac.net",
+    "rating": 4.9,
+    "reviewCount": 632,
+    "score": 100,
+    "status": "new",
+    "source": "instagram"
+  },
+  {
+    "name": "Matthew's A/C Services LLC",
+    "placeId": "matthew's-a/c-services-llc-west-florida",
+    "address": "West Florida",
+    "phone": "239-770-7555",
+    "website": null,
+    "email": null,
+    "rating": null,
+    "reviewCount": null,
+    "score": 50,
+    "status": "new",
+    "source": "instagram"
+  },
+  {
+    "name": "Renew Mechanical",
+    "placeId": "renew-mechanical-ohio,-ci",
+    "address": "Ohio, CI",
+    "phone": "(513) 951-8539",
+    "website": "https://renewmechanical.net/",
+    "email": "office@renewmechanical.net",
+    "rating": 4.8,
+    "reviewCount": 44,
+    "score": 95,
+    "status": "new",
+    "source": "instagram"
+  },
+  {
+    "name": "Inshore Heating and Air",
+    "placeId": "inshore-heating-and-air-florida",
+    "address": "Florida",
+    "phone": "18507904132",
+    "website": "https://inshoreheatingandair.com/",
+    "email": null,
+    "rating": 5,
+    "reviewCount": 6,
+    "score": 80,
+    "status": "new",
+    "source": "instagram"
+  }
+]

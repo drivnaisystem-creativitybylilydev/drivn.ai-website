@@ -1,0 +1,28 @@
+[
+  {
+    "name": "Gregory S. DeVincent Electrical Services, LLC",
+    "placeId": "gregory-s.-devincent-electrical-services,-llc-attleboro",
+    "address": "Attleboro",
+    "phone": "508-400-7631",
+    "website": "https://www.gsdelectricalservices.com/",
+    "email": "greg@gsdelectricalservices.com",
+    "rating": 4.6,
+    "reviewCount": 9,
+    "score": 80,
+    "status": "new",
+    "source": "instagram"
+  },
+  {
+    "name": "Schultz Electric",
+    "placeId": "schultz-electric-glendive,-mt",
+    "address": "Glendive, MT",
+    "phone": "(406) 939-2604",
+    "website": null,
+    "email": "schultz@midrivers.com",
+    "rating": null,
+    "reviewCount": null,
+    "score": 55,
+    "status": "new",
+    "source": "instagram"
+  }
+]

@@ -1,0 +1,28 @@
+[
+  {
+    "name": "Diamond Paws Pet Grooming",
+    "placeId": "diamond-paws-pet-grooming-ma",
+    "address": "MA",
+    "phone": "17748012907",
+    "website": "https://diamondpawsmobile.com/ + https://diamond-paw.com/",
+    "email": null,
+    "rating": 4.7,
+    "reviewCount": 44,
+    "score": 85,
+    "status": "new",
+    "source": "instagram"
+  },
+  {
+    "name": "A Pups Dream Dog Grooming LLC",
+    "placeId": "a-pups-dream-dog-grooming-llc-long-beach,-ca",
+    "address": "Long Beach, CA",
+    "phone": "15622208000",
+    "website": "https://apupsdreamgrooming.com/",
+    "email": null,
+    "rating": 5,
+    "reviewCount": 98,
+    "score": 95,
+    "status": "new",
+    "source": "instagram"
+  }
+]

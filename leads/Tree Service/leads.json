@@ -1,0 +1,80 @@
+[
+  {
+    "name": "Bahnck Tree and Lawn Care",
+    "placeId": "bahnck-tree-and-lawn-care-ma",
+    "address": "MA",
+    "phone": "12156518716",
+    "website": "http://www.bahnck.com/",
+    "email": null,
+    "rating": 5,
+    "reviewCount": 6,
+    "score": 80,
+    "status": "new",
+    "source": "instagram"
+  },
+  {
+    "name": "Warwick Tree Services",
+    "placeId": "warwick-tree-services-rhode-island",
+    "address": "Rhode Island",
+    "phone": "(401) 443-3132",
+    "website": "https://www.warwicktree.com/",
+    "email": null,
+    "rating": 3.3,
+    "reviewCount": 272,
+    "score": 80,
+    "status": "new",
+    "source": "instagram"
+  },
+  {
+    "name": "Select Tree Service",
+    "placeId": "select-tree-service-cali",
+    "address": "Cali",
+    "phone": "(619)-251-0479",
+    "website": "https://selecttreesvce.com/",
+    "email": null,
+    "rating": 4.7,
+    "reviewCount": 23,
+    "score": 85,
+    "status": "new",
+    "source": "instagram"
+  },
+  {
+    "name": "J&H Global Tree Services, LLC",
+    "placeId": "j&h-global-tree-services,-llc-tampa,-fl",
+    "address": "Tampa, FL",
+    "phone": "18138202124",
+    "website": null,
+    "email": null,
+    "rating": 4.7,
+    "reviewCount": 12,
+    "score": 65,
+    "status": "new",
+    "source": "instagram"
+  },
+  {
+    "name": "Reilly's Tree Service",
+    "placeId": "reilly's-tree-service-unknown",
+    "address": "",
+    "phone": "615-801-2496",
+    "website": "https://reillys-tree-services.weebly.com",
+    "email": "reillys.tree.services@gmail.com",
+    "rating": null,
+    "reviewCount": null,
+    "score": 65,
+    "status": "new",
+    "source": "instagram"
+  },
+  {
+    "name": "j.m.dooleystumpgrinding",
+    "placeId": "j.m.dooleystumpgrinding-unknown",
+    "address": "",
+    "phone": null,
+    "website": null,
+    "email": null,
+    "rating": null,
+    "reviewCount": null,
+    "score": 50,
+    "status": "new",
+    "source": "instagram"
+  }
+]

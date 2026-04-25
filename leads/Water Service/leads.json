@@ -1,0 +1,41 @@
+[
+  {
+    "name": "Honest Water Co",
+    "placeId": "honest-water-co-texas",
+    "address": "Texas",
+    "phone": "18175330907",
+    "website": "https://honestwaterco.com/",
+    "email": null,
+    "rating": 4.9,
+    "reviewCount": 277,
+    "score": 100,
+    "status": "new",
+    "source": "instagram"
+  },
+  {
+    "name": "Foy Septic",
+    "placeId": "foy-septic-ne,-georgia",
+    "address": "NE, Georgia",
+    "phone": "17063192997",
+    "website": "https://foyseptic.com/",
+    "email": "foyseptic@gmail.com",
+    "rating": 5,
+    "reviewCount": 3,
+    "score": 85,
+    "status": "new",
+    "source": "instagram"
+  },
+  {
+    "name": "Life Time Solutions",
+    "placeId": "life-time-solutions-unknown",
+    "address": "",
+    "phone": "(540) 455-7510",
+    "website": "https://lifetimecleanwater.com/services/",
+    "email": null,
+    "rating": null,
+    "reviewCount": null,
+    "score": 60,
+    "status": "new",
+    "source": "instagram"
+  }
+]

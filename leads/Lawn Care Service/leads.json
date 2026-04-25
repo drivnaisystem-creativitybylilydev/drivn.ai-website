@@ -1,0 +1,93 @@
+[
+  {
+    "name": "Gonzalez Lawn Care Services",
+    "placeId": "gonzalez-lawn-care-services-unknown",
+    "address": "",
+    "phone": "(509) 4803693",
+    "website": null,
+    "email": null,
+    "rating": null,
+    "reviewCount": null,
+    "score": 50,
+    "status": "new",
+    "source": "instagram"
+  },
+  {
+    "name": "Niz Lawn Care",
+    "placeId": "niz-lawn-care-unknown",
+    "address": "",
+    "phone": "(336) 566-1690",
+    "website": null,
+    "email": null,
+    "rating": null,
+    "reviewCount": null,
+    "score": 50,
+    "status": "new",
+    "source": "instagram"
+  },
+  {
+    "name": "Osbarn Lawn & Landworks",
+    "placeId": "osbarn-lawn-&-landworks-unknown",
+    "address": "",
+    "phone": "662-934-2052",
+    "website": null,
+    "email": null,
+    "rating": null,
+    "reviewCount": null,
+    "score": 50,
+    "status": "new",
+    "source": "instagram"
+  },
+  {
+    "name": "Oliver Lawncare Service",
+    "placeId": "oliver-lawncare-service-florida",
+    "address": "Florida",
+    "phone": "470 302 0956",
+    "website": "https://oliverlawncareservices.com/",
+    "email": null,
+    "rating": null,
+    "reviewCount": null,
+    "score": 60,
+    "status": "new",
+    "source": "instagram"
+  },
+  {
+    "name": "Sutherland Organic Solutions",
+    "placeId": "sutherland-organic-solutions-rhode-island",
+    "address": "Rhode Island",
+    "phone": "(401) 764-0740",
+    "website": "https://www.soslawn.com/",
+    "email": null,
+    "rating": 4.6,
+    "reviewCount": 37,
+    "score": 85,
+    "status": "new",
+    "source": "instagram"
+  },
+  {
+    "name": "Carefree Lawn Care LLC",
+    "placeId": "carefree-lawn-care-llc-unknown",
+    "address": "",
+    "phone": "(315) 437-0490",
+    "website": "https://carefreelawncny.com/",
+    "email": null,
+    "rating": 5,
+    "reviewCount": 24,
+    "score": 90,
+    "status": "new",
+    "source": "instagram"
+  },
+  {
+    "name": "Heyer Lawn Care",
+    "placeId": "heyer-lawn-care-iowa",
+    "address": "Iowa",
+    "phone": "16412579796",
+    "website": "https://www.heyerlawncare.com/about",
+    "email": "heyerlawncare@gmail.com",
+    "rating": 5,
+    "reviewCount": 4,
+    "score": 85,
+    "status": "new",
+    "source": "instagram"
+  }
+]

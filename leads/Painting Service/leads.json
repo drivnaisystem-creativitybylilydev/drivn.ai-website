@@ -1,0 +1,28 @@
+[
+  {
+    "name": "ecocleanpainting",
+    "placeId": "ecocleanpainting-california",
+    "address": "California",
+    "phone": "(805) 835-9747",
+    "website": "https://ecocleanpainting.com/",
+    "email": "beau@ecocleanpainting.com",
+    "rating": 4.8,
+    "reviewCount": 47,
+    "score": 95,
+    "status": "new",
+    "source": "instagram"
+  },
+  {
+    "name": "LORENA'S PAINTING",
+    "placeId": "lorena's-painting-unknown",
+    "address": "",
+    "phone": "828-470-8873",
+    "website": null,
+    "email": null,
+    "rating": null,
+    "reviewCount": null,
+    "score": 50,
+    "status": "new",
+    "source": "instagram"
+  }
+]

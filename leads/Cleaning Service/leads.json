@@ -1,0 +1,54 @@
+[
+  {
+    "name": "FPS Cleaning Services",
+    "placeId": "fps-cleaning-services-rhode-island",
+    "address": "Rhode Island",
+    "phone": "(401) 642-5310",
+    "website": "https://www.fpscleaningservices.com/",
+    "email": "admin@fpscleaningservices.com",
+    "rating": 5,
+    "reviewCount": 25,
+    "score": 95,
+    "status": "new",
+    "source": "instagram"
+  },
+  {
+    "name": "Mayers Maids",
+    "placeId": "mayers-maids-plano,-texas",
+    "address": "Plano, Texas",
+    "phone": "(469) 231-9250",
+    "website": "https://mayersmaids.com/contact/",
+    "email": "mayersmaid@gmail.com",
+    "rating": 4.9,
+    "reviewCount": 113,
+    "score": 100,
+    "status": "new",
+    "source": "instagram"
+  },
+  {
+    "name": "Quality Maintenance Services, Inc.",
+    "placeId": "quality-maintenance-services,-inc.-ny",
+    "address": "NY",
+    "phone": "(845) 344-1299",
+    "website": "https://www.qualitymaintsvc.com/",
+    "email": "qmsofc@gmail.com",
+    "rating": null,
+    "reviewCount": null,
+    "score": 65,
+    "status": "new",
+    "source": "instagram"
+  },
+  {
+    "name": "Clean Sweep Solutions",
+    "placeId": "clean-sweep-solutions-ny",
+    "address": "NY",
+    "phone": "(917)972-5873",
+    "website": "https://www.cleansweepsolutionsny.com/",
+    "email": null,
+    "rating": null,
+    "reviewCount": null,
+    "score": 60,
+    "status": "new",
+    "source": "instagram"
+  }
+]
