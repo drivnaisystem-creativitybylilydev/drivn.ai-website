@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drivn.AI Vision Interview</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #0a0a14 0%, #1a0a2e 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #a78bfa 0%, #c084fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header p {
+            color: #9ca3af;
+            font-size: 1.1em;
+        }
+
+        .form-section {
+            background: rgba(30, 27, 75, 0.5);
+            border: 1px solid rgba(168, 85, 247, 0.2);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+        }
+
+        .section-title {
+            font-size: 1.4em;
+            font-weight: 600;
+            color: #c084fc;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid rgba(168, 85, 247, 0.3);
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group:last-child {
+            margin-bottom: 0;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #e5e7eb;
+            font-size: 0.95em;
+        }
+
+        .label-number {
+            color: #a78bfa;
+            font-weight: 600;
+            margin-right: 5px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="number"],
+        textarea {
+            width: 100%;
+            padding: 12px 15px;
+            background: rgba(55, 48, 163, 0.2);
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            border-radius: 8px;
+            color: #ffffff;
+            font-family: inherit;
+            font-size: 0.95em;
+            transition: all 0.3s;
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="number"]:focus,
+        textarea:focus {
+            outline: none;
+            border-color: rgba(168, 85, 247, 0.6);
+            background: rgba(55, 48, 163, 0.3);
+            box-shadow: 0 0 20px rgba(168, 85, 247, 0.2);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(168, 85, 247, 0.2);
+        }
+
+        button {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-submit {
+            flex: 1;
+            background: linear-gradient(135deg, #a78bfa 0%, #c084fc 100%);
+            color: #0a0a14;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(168, 85, 247, 0.4);
+        }
+
+        .btn-reset {
+            background: rgba(168, 85, 247, 0.2);
+            color: #c084fc;
+            border: 1px solid rgba(168, 85, 247, 0.3);
+        }
+
+        .btn-reset:hover {
+            background: rgba(168, 85, 247, 0.3);
+        }
+
+        .hint {
+            font-size: 0.85em;
+            color: #9ca3af;
+            margin-top: 5px;
+            font-style: italic;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #1a1640 0%, #2d1b69 100%);
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            border-radius: 12px;
+            padding: 40px;
+            max-width: 900px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            margin-top: 40px;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid rgba(168, 85, 247, 0.2);
+        }
+
+        .modal-header h2 {
+            font-size: 1.8em;
+            background: linear-gradient(135deg, #a78bfa 0%, #c084fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: #9ca3af;
+            font-size: 2em;
+            cursor: pointer;
+            padding: 0;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .close-btn:hover {
+            color: #c084fc;
+        }
+
+        .results-section {
+            margin-bottom: 30px;
+        }
+
+        .results-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #c084fc;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(168, 85, 247, 0.2);
+        }
+
+        .result-item {
+            background: rgba(55, 48, 163, 0.2);
+            border-left: 3px solid #a78bfa;
+            padding: 15px;
+            margin-bottom: 12px;
+            border-radius: 4px;
+        }
+
+        .result-label {
+            color: #a78bfa;
+            font-weight: 600;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+
+        .result-value {
+            color: #e5e7eb;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .copy-section {
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(168, 85, 247, 0.2);
+        }
+
+        .copy-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .copy-buttons button {
+            flex: 1;
+            padding: 10px 20px;
+            background: rgba(168, 85, 247, 0.2);
+            color: #c084fc;
+            border: 1px solid rgba(168, 85, 247, 0.3);
+        }
+
+        .copy-buttons button:hover {
+            background: rgba(168, 85, 247, 0.3);
+        }
+
+        .success-message {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: #6ee7b7;
+            padding: 12px 15px;
+            border-radius: 6px;
+            margin-top: 10px;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Drivn.AI Vision Interview</h1>
+            <p>Define the complete offering, pricing, and strategy</p>
+        </div>
+
+        <form id="visionForm">
+            <!-- THE FULL VISION -->
+            <div class="form-section">
+                <div class="section-title">The Full Vision</div>
+
+                <div class="form-group">
+                    <label><span class="label-number">1.</span> Core Offering — What's the complete package?</label>
+                    <textarea name="coreOffering" placeholder="When a home service contractor signs up, what do they get out of the box? What's minimum viable vs. full suite? How do these pieces work together?"></textarea>
+                    <p class="hint">Describe the base offering and how all components integrate</p>
+                </div>
+
+                <div class="form-group">
+                    <label><span class="label-number">2.</span> The AI Receptionist — How does it work?</label>
+                    <textarea name="aiReceptionist" placeholder="Inbound: Does it answer calls, handle scheduling, take messages? Outbound: Follow-ups, reminders, review requests? Integrations? Intelligence level?"></textarea>
+                    <p class="hint">Include both inbound and outbound capabilities</p>
+                </div>
+
+                <div class="form-group">
+                    <label><span class="label-number">3.</span> Customer Support Chatbot</label>
+                    <textarea name="chatbot" placeholder="Website widget + messaging? What does it do? FAQ answers, triage, ticket creation? Integration with existing systems?"></textarea>
+                    <p class="hint">Describe functionality and platform coverage</p>
+                </div>
+
+                <div class="form-group">
+                    <label><span class="label-number">4.</span> Quoting Bot</label>
+                    <textarea name="quotingBot" placeholder="How it works? Rule-based or AI-generated? Photo analysis? How does it reduce sales cycle? Real-time quotes or scheduled?"></textarea>
+                    <p class="hint">Focus on how it impacts the sales process</p>
+                </div>
+
+                <div class="form-group">
+                    <label><span class="label-number">5.</span> Lead Generation (Paid Ads)</label>
+                    <textarea name="leadGen" placeholder="Do you run their ads or they manage it? Handle landing pages? Follow-up sequences? Lead qualification? Integration with other tools?"></textarea>
+                    <p class="hint">Clarify your role and integration points</p>
+                </div>
+
+                <div class="form-group">
+                    <label><span class="label-number">6.</span> Google Review Agent</label>
+                    <textarea name="reviewAgent" placeholder="Automatic requests post-job? SMS/email sequences? Respond to bad reviews? Integration with reputation management?"></textarea>
+                    <p class="hint">Describe the full review lifecycle</p>
+                </div>
+            </div>
+
+            <!-- POSITIONING & VALUE PROP -->
+            <div class="form-section">
+                <div class="section-title">Positioning & Value Prop</div>
+
+                <div class="form-group">
+                    <label><span class="label-number">7.</span> The Core Problem You're Solving</label>
+                    <textarea name="coreProblem" placeholder="Is it 'not enough leads', 'waste the leads they get', or both? At what stage of their business does each problem matter most?"></textarea>
+                    <p class="hint">What's the primary pain point?</p>
+                </div>
+
+                <div class="form-group">
+                    <label><span class="label-number">8.</span> Customer Segments — Are all home contractors the same?</label>
+                    <textarea name="customerSegments" placeholder="Segment by revenue? By stage (struggling vs. drowning in leads)? By service type? Do different segments need different solutions?"></textarea>
+                    <p class="hint">Who's the ideal customer vs. secondary markets?</p>
+                </div>
+
+                <div class="form-group">
+                    <label><span class="label-number">9.</span> Competition — Who are they comparing you to?</label>
+                    <textarea name="competition" placeholder="Live answering services? DIY tools? Lead gen agencies? All-in-one platforms (Jobber, ServiceTitan)? What's your competitive advantage?"></textarea>
+                    <p class="hint">Who do you compete against and how do you win?</p>
+                </div>
+            </div>
+
+            <!-- PRICING & PACKAGING -->
+            <div class="form-section">
+                <div class="section-title">Pricing & Packaging</div>
+
+                <div class="form-group">
+                    <label><span class="label-number">10.</span> Pricing Structure — How are you thinking about this?</label>
+                    <textarea name="pricingStructure" placeholder="Single price or modular? Setup fee + monthly? Volume-based pricing? Budget contractor willing to pay? Minimum customer lifetime value?"></textarea>
+                    <p class="hint">Include all pricing tiers and how customers choose</p>
+                </div>
+
+                <div class="form-group">
+                    <label><span class="label-number">11.</span> Implementation & Delivery</label>
+                    <textarea name="implementation" placeholder="Setup time? Tech stack (Make.com, APIs, custom code)? White-label or branded? How much ongoing support? Self-service or hands-on?"></textarea>
+                    <p class="hint">How does a customer actually get started?</p>
+                </div>
+            </div>
+
+            <!-- OPERATIONAL STRATEGY -->
+            <div class="form-section">
+                <div class="section-title">Operational Strategy</div>
+
+                <div class="form-group">
+                    <label><span class="label-number">12.</span> Scaling Path — How do you scale this?</label>
+                    <textarea name="scalingPath" placeholder="Productized (build once, replicate) or customize per client? Unit economics? Cost to deliver vs. revenue? When does your time become the constraint?"></textarea>
+                    <p class="hint">Think about repeatability and profitability</p>
+                </div>
+
+                <div class="form-group">
+                    <label><span class="label-number">13.</span> Niche Validation</label>
+                    <textarea name="nicheValidation" placeholder="Does 'home service contractor' still make sense with this broad offer? Test all at once or specific type first (HVAC)? Or open it up to any business?"></textarea>
+                    <p class="hint">Should we stay focused or expand the TAM?</p>
+                </div>
+            </div>
+
+            <!-- FINAL QUESTIONS -->
+            <div class="form-section">
+                <div class="section-title">Final Vision Questions</div>
+
+                <div class="form-group">
+                    <label><span class="label-number">14.</span> What's success in 6 months?</label>
+                    <textarea name="sixMonthGoal" placeholder="Revenue target? Number of clients? Which services generate most value? What metrics matter most?"></textarea>
+                    <p class="hint">Be specific with numbers</p>
+                </div>
+
+                <div class="form-group">
+                    <label><span class="label-number">15.</span> What's the absolute maxed-out Drivn.AI look like?</label>
+                    <textarea name="maxedOut" placeholder="What would you build if money/time weren't constraints? What's the deluxe package worth to a $1M+ contractor? What's the vision?"></textarea>
+                    <p class="hint">Dream big. What does the endgame look like?</p>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button type="submit" class="btn-submit">Submit & View Results</button>
+                <button type="reset" class="btn-reset">Clear All</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Results Modal -->
+    <div id="resultsModal" class="modal">
+        <div style="width: 100%; display: flex; justify-content: center;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Your Vision Interview Results</h2>
+                    <button class="close-btn" onclick="closeModal()">&times;</button>
+                </div>
+
+                <div id="resultsContainer"></div>
+
+                <div class="copy-section">
+                    <h3 style="color: #c084fc; margin-bottom: 15px;">Export Your Answers</h3>
+                    <div class="copy-buttons">
+                        <button type="button" onclick="copyAsMarkdown()">Copy as Markdown</button>
+                        <button type="button" onclick="downloadAsMarkdown()">Download as .md File</button>
+                    </div>
+                    <div id="copyMessage"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            { key: 'coreOffering', title: 'Core Offering', section: 'The Full Vision' },
+            { key: 'aiReceptionist', title: 'AI Receptionist', section: 'The Full Vision' },
+            { key: 'chatbot', title: 'Customer Support Chatbot', section: 'The Full Vision' },
+            { key: 'quotingBot', title: 'Quoting Bot', section: 'The Full Vision' },
+            { key: 'leadGen', title: 'Lead Generation (Paid Ads)', section: 'The Full Vision' },
+            { key: 'reviewAgent', title: 'Google Review Agent', section: 'The Full Vision' },
+            { key: 'coreProblem', title: 'Core Problem', section: 'Positioning & Value Prop' },
+            { key: 'customerSegments', title: 'Customer Segments', section: 'Positioning & Value Prop' },
+            { key: 'competition', title: 'Competition', section: 'Positioning & Value Prop' },
+            { key: 'pricingStructure', title: 'Pricing Structure', section: 'Pricing & Packaging' },
+            { key: 'implementation', title: 'Implementation & Delivery', section: 'Pricing & Packaging' },
+            { key: 'scalingPath', title: 'Scaling Path', section: 'Operational Strategy' },
+            { key: 'nicheValidation', title: 'Niche Validation', section: 'Operational Strategy' },
+            { key: 'sixMonthGoal', title: '6-Month Success Goals', section: 'Final Vision' },
+            { key: 'maxedOut', title: 'Maxed-Out Drivn.AI Vision', section: 'Final Vision' }
+        ];
+
+        document.getElementById('visionForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            displayResults();
+            openModal();
+        });
+
+        function displayResults() {
+            const resultsContainer = document.getElementById('resultsContainer');
+            let html = '';
+            let currentSection = '';
+
+            questions.forEach((q, index) => {
+                const value = document.querySelector(`[name="${q.key}"]`).value;
+
+                if (q.section !== currentSection) {
+                    if (currentSection !== '') html += '</div>';
+                    html += `<div class="results-section"><div class="results-title">${q.section}</div>`;
+                    currentSection = q.section;
+                }
+
+                html += `
+                    <div class="result-item">
+                        <div class="result-label">${index + 1}. ${q.title}</div>
+                        <div class="result-value">${value || '(No answer provided)'}</div>
+                    </div>
+                `;
+            });
+            html += '</div>';
+            resultsContainer.innerHTML = html;
+        }
+
+        function openModal() {
+            document.getElementById('resultsModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('resultsModal').classList.remove('active');
+        }
+
+        function copyAsMarkdown() {
+            let markdown = '# Drivn.AI Vision Interview Results\n\n';
+            let currentSection = '';
+
+            questions.forEach((q, index) => {
+                const value = document.querySelector(`[name="${q.key}"]`).value;
+
+                if (q.section !== currentSection) {
+                    markdown += `\n## ${q.section}\n\n`;
+                    currentSection = q.section;
+                }
+
+                markdown += `**${index + 1}. ${q.title}**\n${value || '(No answer provided)'}\n\n`;
+            });
+
+            navigator.clipboard.writeText(markdown).then(() => {
+                showCopyMessage('Copied to clipboard! ✓');
+            });
+        }
+
+        function downloadAsMarkdown() {
+            let markdown = '# Drivn.AI Vision Interview Results\n\n';
+            let currentSection = '';
+
+            questions.forEach((q, index) => {
+                const value = document.querySelector(`[name="${q.key}"]`).value;
+
+                if (q.section !== currentSection) {
+                    markdown += `\n## ${q.section}\n\n`;
+                    currentSection = q.section;
+                }
+
+                markdown += `**${index + 1}. ${q.title}**\n${value || '(No answer provided)'}\n\n`;
+            });
+
+            const blob = new Blob([markdown], { type: 'text/markdown' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `drivn-vision-interview-${new Date().toISOString().split('T')[0]}.md`;
+            a.click();
+        }
+
+        function showCopyMessage(text) {
+            const msg = document.getElementById('copyMessage');
+            msg.innerHTML = `<div class="success-message">${text}</div>`;
+            setTimeout(() => {
+                msg.innerHTML = '';
+            }, 3000);
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('resultsModal').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+    </script>
+</body>
+</html>

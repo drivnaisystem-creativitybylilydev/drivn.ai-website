@@ -16,10 +16,12 @@ import {
   Merge,
   Search,
   X,
+  Plus,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { HudBrackets } from "@/components/admin/hud-primitives";
 import { NichePieChart } from "@/components/admin/NichePieChart";
+import { AddBusinessModal } from "@/components/admin/AddBusinessModal";
 import { updateLeadStatusAction, mergeNichesAction } from "@/app/admin/sourced-leads/actions";
 import type { SourcedLeadRow, SourcedLeadStatus, NicheGroup } from "@/lib/sourced-lead-db";
 
@@ -482,6 +484,7 @@ export function NicheDashboard({
   const [mergePrompt, setMergePrompt] = useState<{ from: string; to: string } | null>(null);
   const [mergePending, startMergeTransition] = useTransition();
   const [searchQuery, setSearchQuery] = useState("");
+  const [showAddModal, setShowAddModal] = useState(false);
 
   const handleMergeRequest = useCallback((from: string, to: string) => {
     if (from === to) return;
@@ -543,8 +546,18 @@ export function NicheDashboard({
               </p>
             </div>
 
-            {/* Search bar */}
-            <div className="relative w-full md:max-w-xs">
+            <div className="flex flex-col gap-3 md:flex-row md:items-center">
+              {/* Add Business Button */}
+              <button
+                onClick={() => setShowAddModal(true)}
+                className="flex items-center justify-center gap-1.5 rounded-lg border border-brand-purple/40 bg-brand-purple/20 px-4 py-2 font-inter text-sm font-semibold text-brand-purple-light transition hover:bg-brand-purple/30 md:justify-start"
+              >
+                <Plus className="h-4 w-4" />
+                Add Business
+              </button>
+
+              {/* Search bar */}
+              <div className="relative w-full md:max-w-xs">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-white/30" />
                 <input
@@ -565,6 +578,7 @@ export function NicheDashboard({
                     <X className="h-4 w-4" />
                   </button>
                 )}
+              </div>
               </div>
             </div>
           </div>
@@ -668,6 +682,17 @@ export function NicheDashboard({
             onConfirm={handleMergeConfirm}
             onCancel={() => setMergePrompt(null)}
             pending={mergePending}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Add business modal */}
+      <AnimatePresence>
+        {showAddModal && (
+          <AddBusinessModal
+            key="add-modal"
+            onClose={() => setShowAddModal(false)}
+            onSuccess={() => setShowAddModal(false)}
           />
         )}
       </AnimatePresence>
