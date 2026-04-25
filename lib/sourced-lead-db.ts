@@ -20,7 +20,7 @@ export interface SourcedLeadDocument {
   emailDraft?: { subject: string; body: string };
   sourcingQuery: string;
   status: SourcedLeadStatus;
-  source: "google_maps" | "apify";
+  source: "google_maps" | "apify" | "manual";
   createdAt: Date;
   updatedAt: Date;
 }
@@ -41,7 +41,7 @@ export interface SourcedLeadRow {
   emailDraft?: { subject: string; body: string };
   sourcingQuery: string;
   status: SourcedLeadStatus;
-  source: "google_maps" | "apify";
+  source: "google_maps" | "apify" | "manual";
   createdAt: string;
   updatedAt: string;
 }
