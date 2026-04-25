@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { motion } from "framer-motion";
 import {
   Plus,
@@ -127,16 +128,17 @@ function ClientCard({
   onDelete: (clientId: string) => void;
 }) {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 16 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, delay: 0.05 * index, ease: "easeOut" }}
-      className="group relative overflow-hidden rounded-2xl border border-white/[0.07] bg-white/[0.025] p-5 transition-colors hover:border-brand-purple/20 hover:bg-white/[0.04]"
-      style={{
-        backgroundImage:
-          "radial-gradient(ellipse 120% 80% at 50% -10%, rgba(139,92,246,0.05), transparent 60%)",
-      }}
-    >
+    <Link href={`/admin/clients/${client.id}`} className="block">
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.05 * index, ease: "easeOut" }}
+        className="group relative overflow-hidden rounded-2xl border border-white/[0.07] bg-white/[0.025] p-5 transition-colors hover:border-brand-purple/20 hover:bg-white/[0.04] cursor-pointer"
+        style={{
+          backgroundImage:
+            "radial-gradient(ellipse 120% 80% at 50% -10%, rgba(139,92,246,0.05), transparent 60%)",
+        }}
+      >
       {/* Subtle grid bg */}
       <div
         className="pointer-events-none absolute inset-0 opacity-[0.025]"
@@ -212,16 +214,22 @@ function ClientCard({
               year: "numeric",
             })}
           </p>
-          <div className="flex gap-1.5">
+          <div className="flex gap-1.5" onClick={(e) => e.stopPropagation()}>
             <button
-              onClick={() => onEdit(client)}
+              onClick={(e) => {
+                e.preventDefault();
+                onEdit(client);
+              }}
               className="flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/[0.04] px-3 py-1.5 font-inter text-xs text-white/50 opacity-0 transition-all group-hover:opacity-100 hover:border-brand-purple/30 hover:text-brand-purple-light"
             >
               <Pencil className="h-3 w-3" />
               Edit
             </button>
             <button
-              onClick={() => onDelete(client.id)}
+              onClick={(e) => {
+                e.preventDefault();
+                onDelete(client.id);
+              }}
               className="flex items-center justify-center rounded-lg p-1.5 text-white/50 opacity-0 transition-all group-hover:opacity-100 hover:bg-red-950/40 hover:text-red-400"
               title="Delete client"
             >
@@ -230,7 +238,8 @@ function ClientCard({
           </div>
         </div>
       </div>
-    </motion.div>
+      </motion.div>
+    </Link>
   );
 }
 

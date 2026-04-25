@@ -107,6 +107,20 @@ export async function listClients(limit = 200): Promise<ClientRow[]> {
   }
 }
 
+export async function getClientById(clientId: string): Promise<ClientRow | null> {
+  if (!ObjectId.isValid(clientId)) return null;
+  try {
+    const db = await getDb();
+    if (!db) return null;
+    const col = db.collection<ClientDocument>(COLLECTION);
+    const doc = await col.findOne({ _id: new ObjectId(clientId) });
+    return doc ? normalizeRow(doc as ClientDocument & { _id: ObjectId }) : null;
+  } catch (err) {
+    console.error("[client-db] getClientById failed:", err);
+    return null;
+  }
+}
+
 export async function updateClient(
   clientId: string,
   fields: Partial<Omit<ClientDocument, "_id" | "createdAt">>,
