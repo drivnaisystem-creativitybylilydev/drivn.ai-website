@@ -14,6 +14,8 @@ import {
   Users,
   TrendingUp,
   Merge,
+  Search,
+  X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { HudBrackets } from "@/components/admin/hud-primitives";
@@ -324,12 +326,15 @@ function NicheCard({
 
 // ─── Niche detail view ────────────────────────────────────────────────────────
 
-function NicheDetail({ group, onBack }: { group: NicheGroup; onBack: () => void }) {
+function NicheDetail({ group, onBack, searchQuery = "" }: { group: NicheGroup; onBack: () => void; searchQuery?: string }) {
   const [statusFilter, setStatusFilter] = useState<SourcedLeadStatus | "all">("all");
 
-  const filtered = statusFilter === "all"
+  const filtered = (statusFilter === "all"
     ? group.leads.filter((l) => l.status !== "dismissed")
-    : group.leads.filter((l) => l.status === statusFilter);
+    : group.leads.filter((l) => l.status === statusFilter)
+  ).filter((l) =>
+    searchQuery === "" || l.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <motion.div
@@ -476,6 +481,7 @@ export function NicheDashboard({
   const [dragOverNiche, setDragOverNiche] = useState<string | null>(null);
   const [mergePrompt, setMergePrompt] = useState<{ from: string; to: string } | null>(null);
   const [mergePending, startMergeTransition] = useTransition();
+  const [searchQuery, setSearchQuery] = useState("");
 
   const handleMergeRequest = useCallback((from: string, to: string) => {
     if (from === to) return;
@@ -524,15 +530,44 @@ export function NicheDashboard({
           transition={{ duration: 0.4 }}
           className="mb-8 border-b border-white/[0.07] pb-6"
         >
-          <p className="font-inter text-[0.6rem] font-bold uppercase tracking-[0.22em] text-brand-purple-light/80">
-            Drivn.AI OS · Pipeline Scout
-          </p>
-          <h1 className="mt-1 bg-gradient-to-r from-white via-white to-brand-purple-light bg-clip-text font-sora text-2xl font-bold tracking-tight text-transparent md:text-3xl">
-            Sourced Leads
-          </h1>
-          <p className="mt-1 font-inter text-sm text-white/40">
-            {totalLeads} leads across {niches.length} niches
-          </p>
+          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div>
+              <p className="font-inter text-[0.6rem] font-bold uppercase tracking-[0.22em] text-brand-purple-light/80">
+                Drivn.AI OS · Pipeline Scout
+              </p>
+              <h1 className="mt-1 bg-gradient-to-r from-white via-white to-brand-purple-light bg-clip-text font-sora text-2xl font-bold tracking-tight text-transparent md:text-3xl">
+                Sourced Leads
+              </h1>
+              <p className="mt-1 font-inter text-sm text-white/40">
+                {totalLeads} leads across {niches.length} niches
+              </p>
+            </div>
+
+            {/* Search bar */}
+            <div className="relative w-full md:max-w-xs">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-white/30" />
+                <input
+                  type="text"
+                  placeholder="Search by business name..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className={cn(
+                    "w-full rounded-xl border border-white/10 bg-white/[0.03] py-2 pl-9 pr-9 font-inter text-sm text-white placeholder-white/30 transition",
+                    "focus:border-brand-purple/50 focus:bg-white/[0.05] focus:outline-none focus:ring-2 focus:ring-brand-purple/20",
+                  )}
+                />
+                {searchQuery && (
+                  <button
+                    onClick={() => setSearchQuery("")}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 transition hover:text-white/60"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
         </motion.header>
 
         {/* Two-column layout: niche grid + chart */}
@@ -546,6 +581,7 @@ export function NicheDashboard({
                   key="detail"
                   group={activeNiche}
                   onBack={() => setActiveNiche(null)}
+                  searchQuery={searchQuery}
                 />
               ) : (
                 <motion.div
