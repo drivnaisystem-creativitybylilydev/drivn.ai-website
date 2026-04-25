@@ -212,3 +212,57 @@ export async function updateSourcedLeadStatus(id: string, status: SourcedLeadSta
   );
   return res.matchedCount > 0;
 }
+
+export async function createManualLead(data: {
+  name: string;
+  address?: string;
+  phone?: string;
+  website?: string;
+  email?: string;
+  category: string;
+  rating?: number;
+  reviewCount?: number;
+}): Promise<string> {
+  const db = await getDb();
+  if (!db) throw new Error("MONGODB_URI not configured");
+
+  const col = db.collection<SourcedLeadDocument>(COLLECTION);
+
+  // Check for duplicate by name
+  const existing = await col.findOne({ name: data.name });
+  if (existing) {
+    throw new Error(`Business "${data.name}" already exists`);
+  }
+
+  const now = new Date();
+
+  // Calculate score based on available fields
+  let score = 50;
+  if (data.rating) score += Math.min(data.rating * 10, 30);
+  if (data.reviewCount && data.reviewCount > 0) score += Math.min(data.reviewCount * 0.5, 15);
+  if (data.website) score += 3;
+  if (data.email) score += 2;
+  score = Math.min(Math.max(score, 0), 100);
+
+  const doc: Omit<SourcedLeadDocument, "_id"> = {
+    placeId: `manual_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    name: data.name,
+    address: data.address || "",
+    phone: data.phone,
+    website: data.website,
+    email: data.email,
+    rating: data.rating,
+    reviewCount: data.reviewCount,
+    category: data.category,
+    score: Math.round(score),
+    signals: [],
+    sourcingQuery: data.category,
+    status: "new" as const,
+    source: "manual" as const,
+    createdAt: now,
+    updatedAt: now,
+  };
+
+  const result = await col.insertOne(doc as SourcedLeadDocument);
+  return result.insertedId.toHexString();
+}

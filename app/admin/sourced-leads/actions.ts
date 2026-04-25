@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { updateSourcedLeadStatus, mergeNicheCategories, type SourcedLeadStatus } from "@/lib/sourced-lead-db";
+import { updateSourcedLeadStatus, mergeNicheCategories, createManualLead, type SourcedLeadStatus } from "@/lib/sourced-lead-db";
 
 export async function updateLeadStatusAction(
   id: string,
@@ -28,5 +28,25 @@ export async function mergeNichesAction(
   } catch (err) {
     console.error("[mergeNichesAction]", err);
     return { error: "Failed to merge niches." };
+  }
+}
+
+export async function addBusinessAction(data: {
+  name: string;
+  address?: string;
+  phone?: string;
+  website?: string;
+  email?: string;
+  category: string;
+  rating?: number;
+  reviewCount?: number;
+}): Promise<{ id?: string; error?: string }> {
+  try {
+    const id = await createManualLead(data);
+    revalidatePath("/admin/sourced-leads");
+    return { id };
+  } catch (err) {
+    console.error("[addBusinessAction]", err);
+    return { error: err instanceof Error ? err.message : "Failed to add business." };
   }
 }
