@@ -2,8 +2,11 @@ const fs = require("fs");
 const path = require("path");
 const { MongoClient } = require("mongodb");
 
-const MONGODB_URI =
-  "mongodb+srv://drivnaisystem_db_user:Finn_2005@drivn-website.sgh6j34.mongodb.net/drivn?retryWrites=true&w=majority";
+const MONGODB_URI = process.env.MONGODB_URI;
+if (!MONGODB_URI) {
+  console.error("❌ MONGODB_URI environment variable not set");
+  process.exit(1);
+}
 
 const OS_LEADS_PATH = path.join(
   __dirname,
