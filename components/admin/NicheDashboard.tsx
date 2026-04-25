@@ -17,11 +17,14 @@ import {
   Search,
   X,
   Plus,
+  LayoutList,
+  LayoutGrid,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { HudBrackets } from "@/components/admin/hud-primitives";
 import { NichePieChart } from "@/components/admin/NichePieChart";
 import { AddBusinessModal } from "@/components/admin/AddBusinessModal";
+import { LeadsList } from "@/components/admin/LeadsList";
 import { updateLeadStatusAction, mergeNichesAction } from "@/app/admin/sourced-leads/actions";
 import type { SourcedLeadRow, SourcedLeadStatus, NicheGroup } from "@/lib/sourced-lead-db";
 
@@ -485,6 +488,7 @@ export function NicheDashboard({
   const [mergePending, startMergeTransition] = useTransition();
   const [searchQuery, setSearchQuery] = useState("");
   const [showAddModal, setShowAddModal] = useState(false);
+  const [listView, setListView] = useState(false);
 
   const handleMergeRequest = useCallback((from: string, to: string) => {
     if (from === to) return;
@@ -546,15 +550,41 @@ export function NicheDashboard({
               </p>
             </div>
 
-            <div className="flex flex-col gap-3 md:flex-row md:items-center">
-              {/* Add Business Button */}
-              <button
-                onClick={() => setShowAddModal(true)}
-                className="flex items-center justify-center gap-1.5 rounded-lg border border-brand-purple/40 bg-brand-purple/20 px-4 py-2 font-inter text-sm font-semibold text-brand-purple-light transition hover:bg-brand-purple/30 md:justify-start"
-              >
-                <Plus className="h-4 w-4" />
-                Add Business
-              </button>
+            <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+              <div className="flex flex-col gap-3 md:flex-row md:items-center">
+                {/* Add Business Button */}
+                <button
+                  onClick={() => setShowAddModal(true)}
+                  className="flex items-center justify-center gap-1.5 whitespace-nowrap rounded-lg border border-brand-purple/40 bg-brand-purple/20 px-4 py-2 font-inter text-sm font-semibold text-brand-purple-light transition hover:bg-brand-purple/30 md:justify-start"
+                >
+                  <Plus className="h-4 w-4" />
+                  Add Business
+                </button>
+
+                {/* View toggle */}
+                <div className="flex items-center rounded-lg border border-white/10 bg-white/[0.03] p-1">
+                  <button
+                    onClick={() => setListView(false)}
+                    className={cn(
+                      "rounded px-3 py-1.5 transition",
+                      !listView ? "bg-white/10 text-white" : "text-white/40 hover:text-white/60"
+                    )}
+                    title="Card view"
+                  >
+                    <LayoutGrid className="h-4 w-4" />
+                  </button>
+                  <button
+                    onClick={() => setListView(true)}
+                    className={cn(
+                      "rounded px-3 py-1.5 transition",
+                      listView ? "bg-white/10 text-white" : "text-white/40 hover:text-white/60"
+                    )}
+                    title="List view"
+                  >
+                    <LayoutList className="h-4 w-4" />
+                  </button>
+                </div>
+              </div>
 
               {/* Search bar */}
               <div className="relative w-full md:max-w-xs">
@@ -584,27 +614,30 @@ export function NicheDashboard({
           </div>
         </motion.header>
 
-        {/* Two-column layout: niche grid + chart */}
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1fr_320px]">
+        {/* Two-column layout: niche grid + chart (or full width for list) */}
+        <div className={listView ? "" : "grid grid-cols-1 gap-8 lg:grid-cols-[1fr_320px]"}>
 
-          {/* Left: niche grid or detail */}
+          {/* Left: niche grid, detail, or list view */}
           <div>
-            <AnimatePresence mode="wait">
-              {activeNiche ? (
-                <NicheDetail
-                  key="detail"
-                  group={activeNiche}
-                  onBack={() => setActiveNiche(null)}
-                  searchQuery={searchQuery}
-                />
-              ) : (
-                <motion.div
-                  key="grid"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.2 }}
-                >
+            {listView ? (
+              <LeadsList leads={niches.flatMap((n) => n.leads)} />
+            ) : (
+              <AnimatePresence mode="wait">
+                {activeNiche ? (
+                  <NicheDetail
+                    key="detail"
+                    group={activeNiche}
+                    onBack={() => setActiveNiche(null)}
+                    searchQuery={searchQuery}
+                  />
+                ) : (
+                  <motion.div
+                    key="grid"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                  >
                   {niches.length === 0 ? (
                     <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-white/10 py-24">
                       <Zap className="mb-3 h-8 w-8 text-white/10" />
@@ -620,7 +653,13 @@ export function NicheDashboard({
                         </p>
                       )}
                       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                        {niches.map((group, i) => (
+                        {niches
+                          .filter((group) =>
+                            searchQuery === "" ||
+                            group.niche.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                            group.leads.some((l) => l.name.toLowerCase().includes(searchQuery.toLowerCase()))
+                          )
+                          .map((group, i) => (
                           <NicheCard
                             key={group.niche}
                             group={group}
@@ -637,13 +676,14 @@ export function NicheDashboard({
                       </div>
                     </>
                   )}
-                </motion.div>
-              )}
-            </AnimatePresence>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            )}
           </div>
 
-          {/* Right: stats + pie chart */}
-          <div className="flex flex-col gap-4">
+          {/* Right: stats + pie chart (hidden in list view) */}
+          {!listView && <div className="flex flex-col gap-4">
 
             {/* Summary stats */}
             <div className="grid grid-cols-2 gap-3">
@@ -667,7 +707,7 @@ export function NicheDashboard({
               <NichePieChart data={pieData} />
             </div>
 
-          </div>
+          </div>}
         </div>
       </div>
 

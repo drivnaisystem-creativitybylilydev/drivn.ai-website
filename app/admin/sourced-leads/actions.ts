@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { updateSourcedLeadStatus, mergeNicheCategories, createManualLead, type SourcedLeadStatus } from "@/lib/sourced-lead-db";
+import { updateSourcedLeadStatus, mergeNicheCategories, createManualLead, updateLeadNotes, bulkUpdateStatus, type SourcedLeadStatus } from "@/lib/sourced-lead-db";
 
 export async function updateLeadStatusAction(
   id: string,
@@ -48,5 +48,33 @@ export async function addBusinessAction(data: {
   } catch (err) {
     console.error("[addBusinessAction]", err);
     return { error: err instanceof Error ? err.message : "Failed to add business." };
+  }
+}
+
+export async function updateLeadNotesAction(
+  id: string,
+  notes: string,
+): Promise<{ error?: string }> {
+  try {
+    await updateLeadNotes(id, notes);
+    revalidatePath("/admin/sourced-leads");
+    return {};
+  } catch (err) {
+    console.error("[updateLeadNotesAction]", err);
+    return { error: "Failed to update notes." };
+  }
+}
+
+export async function bulkUpdateStatusAction(
+  ids: string[],
+  status: SourcedLeadStatus,
+): Promise<{ updated?: number; error?: string }> {
+  try {
+    const updated = await bulkUpdateStatus(ids, status);
+    revalidatePath("/admin/sourced-leads");
+    return { updated };
+  } catch (err) {
+    console.error("[bulkUpdateStatusAction]", err);
+    return { error: "Failed to update leads." };
   }
 }

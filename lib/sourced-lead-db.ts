@@ -21,6 +21,7 @@ export interface SourcedLeadDocument {
   sourcingQuery: string;
   status: SourcedLeadStatus;
   source: "google_maps" | "apify" | "manual";
+  notes?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -42,6 +43,7 @@ export interface SourcedLeadRow {
   sourcingQuery: string;
   status: SourcedLeadStatus;
   source: "google_maps" | "apify" | "manual";
+  notes?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -78,6 +80,7 @@ function normalizeRow(doc: SourcedLeadDocument & { _id: ObjectId }): SourcedLead
     sourcingQuery: doc.sourcingQuery,
     status: doc.status,
     source: doc.source,
+    notes: doc.notes,
     createdAt: doc.createdAt.toISOString(),
     updatedAt: doc.updatedAt.toISOString(),
   };
@@ -265,4 +268,32 @@ export async function createManualLead(data: {
 
   const result = await col.insertOne(doc as SourcedLeadDocument);
   return result.insertedId.toHexString();
+}
+
+export async function updateLeadNotes(id: string, notes: string): Promise<boolean> {
+  if (!ObjectId.isValid(id)) return false;
+  const db = await getDb();
+  if (!db) return false;
+  const col = db.collection<SourcedLeadDocument>(COLLECTION);
+  const res = await col.updateOne(
+    { _id: new ObjectId(id) },
+    { $set: { notes, updatedAt: new Date() } },
+  );
+  return res.matchedCount > 0;
+}
+
+export async function bulkUpdateStatus(
+  ids: string[],
+  status: SourcedLeadStatus,
+): Promise<number> {
+  const db = await getDb();
+  if (!db) return 0;
+  const col = db.collection<SourcedLeadDocument>(COLLECTION);
+  const validIds = ids.filter((id) => ObjectId.isValid(id)).map((id) => new ObjectId(id));
+  if (validIds.length === 0) return 0;
+  const res = await col.updateMany(
+    { _id: { $in: validIds } },
+    { $set: { status, updatedAt: new Date() } },
+  );
+  return res.modifiedCount;
 }

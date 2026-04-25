@@ -362,5 +362,31 @@
     "score": 80,
     "status": "new",
     "source": "instagram"
+  },
+  {
+    "name": "Rafas Body Shop",
+    "placeId": "manual_1777136139664_tuugt27hq",
+    "address": "",
+    "phone": "19158773730",
+    "website": "",
+    "email": "rafasbodynpaint@gmail.com",
+    "rating": null,
+    "reviewCount": null,
+    "score": 50,
+    "status": "new",
+    "source": "manual"
+  },
+  {
+    "name": "Chamito Towing",
+    "placeId": "manual_1777136141384_owxkckvmg",
+    "address": "",
+    "phone": "617-816-9136",
+    "website": "",
+    "email": "",
+    "rating": null,
+    "reviewCount": null,
+    "score": 50,
+    "status": "new",
+    "source": "manual"
   }
 ]

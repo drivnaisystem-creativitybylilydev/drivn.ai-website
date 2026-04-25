@@ -76,5 +76,18 @@
     "score": 50,
     "status": "new",
     "source": "instagram"
+  },
+  {
+    "name": "Warick Tree Services",
+    "placeId": "manual_1777136140782_9bjonp93y",
+    "address": "",
+    "phone": "(401) 443-3132",
+    "website": "",
+    "email": "",
+    "rating": null,
+    "reviewCount": null,
+    "score": 50,
+    "status": "new",
+    "source": "manual"
   }
 ]

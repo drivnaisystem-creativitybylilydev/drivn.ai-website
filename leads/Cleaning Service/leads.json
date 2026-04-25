@@ -50,5 +50,18 @@
     "score": 60,
     "status": "new",
     "source": "instagram"
+  },
+  {
+    "name": "NuLocs",
+    "placeId": "manual_1777136140585_2dgc6onsf",
+    "address": "",
+    "phone": "407 577 1769",
+    "website": "",
+    "email": "nulocs.co@gmail.com",
+    "rating": null,
+    "reviewCount": null,
+    "score": 50,
+    "status": "new",
+    "source": "manual"
   }
 ]

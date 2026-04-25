@@ -1,0 +1,41 @@
+[
+  {
+    "name": "Long Neck Landscaping",
+    "placeId": "manual_1777136141280_o6xqu0ejk",
+    "address": "",
+    "phone": "302-947-2409",
+    "website": "",
+    "email": "",
+    "rating": null,
+    "reviewCount": null,
+    "score": 50,
+    "status": "new",
+    "source": "manual"
+  },
+  {
+    "name": "Jade Landscaping LLC",
+    "placeId": "manual_1777136141772_dmtberfu5",
+    "address": "",
+    "phone": "(513)-869-3962",
+    "website": "",
+    "email": "",
+    "rating": null,
+    "reviewCount": null,
+    "score": 50,
+    "status": "new",
+    "source": "manual"
+  },
+  {
+    "name": "479Poolcare",
+    "placeId": "manual_1777136142208_56r0i4a66",
+    "address": "",
+    "phone": "(479)3663242",
+    "website": "",
+    "email": "",
+    "rating": null,
+    "reviewCount": null,
+    "score": 50,
+    "status": "new",
+    "source": "manual"
+  }
+]

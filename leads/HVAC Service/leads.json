@@ -50,5 +50,18 @@
     "score": 80,
     "status": "new",
     "source": "instagram"
+  },
+  {
+    "name": "Capital Clean Air",
+    "placeId": "manual_1777136140983_ve3fzzh7f",
+    "address": "",
+    "phone": "(984) 225-8196",
+    "website": "",
+    "email": "",
+    "rating": null,
+    "reviewCount": null,
+    "score": 50,
+    "status": "new",
+    "source": "manual"
   }
 ]

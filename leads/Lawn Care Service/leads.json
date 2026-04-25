@@ -89,5 +89,18 @@
     "score": 85,
     "status": "new",
     "source": "instagram"
+  },
+  {
+    "name": "Scoopin Poop",
+    "placeId": "manual_1777136140484_chwu3wfjr",
+    "address": "",
+    "phone": "(252)-564-9132",
+    "website": "",
+    "email": "Brice@scoopinpoop252.com",
+    "rating": null,
+    "reviewCount": null,
+    "score": 50,
+    "status": "new",
+    "source": "manual"
   }
 ]
