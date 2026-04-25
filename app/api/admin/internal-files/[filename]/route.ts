@@ -4,8 +4,6 @@ import path from "path";
 // Map of file names to their actual paths in the OS
 const FILE_MAP: Record<string, string> = {
   "COMPLETE-OPERATING-SYSTEM": "/Users/finnschueler/Desktop/Drivn.AI OS/COMPLETE-OPERATING-SYSTEM.md",
-  "STAGE-3-CLIENT-DASHBOARD-ARCHITECTURE": "/Users/finnschueler/Desktop/Drivn.AI OS/knowledge-base/STAGE-3-CLIENT-DASHBOARD-ARCHITECTURE.md",
-  "DATABASE-STRATEGY": "/Users/finnschueler/Desktop/Drivn.AI OS/knowledge-base/DATABASE-STRATEGY.md",
   "OS-PROJECT-DASHBOARD": "/Users/finnschueler/Desktop/Drivn.AI OS/knowledge-base/OS-PROJECT-DASHBOARD.md",
 };
 

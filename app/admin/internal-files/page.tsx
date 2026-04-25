@@ -18,16 +18,6 @@ const DOCS = [
     description: "Full workflow from lead sourcing to signed client. Jarvis commands, agent breakdown, and 60-day sprint.",
   },
   {
-    name: "STAGE-3-CLIENT-DASHBOARD-ARCHITECTURE",
-    title: "Stage 3 Dashboard Architecture",
-    description: "Real-time metric collection infrastructure. 7 data sources, MongoDB schema, API integrations, Supabase per client.",
-  },
-  {
-    name: "DATABASE-STRATEGY",
-    title: "Database Strategy",
-    description: "Why Supabase per client. Cost breakdown. Master MongoDB for internal data, Supabase for client metrics.",
-  },
-  {
     name: "OS-PROJECT-DASHBOARD",
     title: "OS Project Dashboard",
     description: "Internal project tracking. Kanban view, financial dashboard, team allocation, deliverables tracking.",
