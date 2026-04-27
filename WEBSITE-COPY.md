@@ -70,9 +70,9 @@ More booked jobs. More revenue. Fewer hours spent on admin. We measure it. You f
 
 ---
 
-## Case Studies Section — "Results That Matter"
+## Case Studies Section — "Some of our past work"
 
-**Section heading:** Results That Matter
+**Section heading:** Some of our past work
 
 ### Case Study 1: NoTime Storage
 **Subheading:** College Move-In Service

@@ -20,6 +20,11 @@ export type CaseStudy = {
   outcome: string;
   /** Short line for cards / meta */
   resultSummary: string;
+  /** Homepage card: one bold line per point (centered) */
+  cardResultLines: string[];
+  /** Homepage case study card logo (path under /public) */
+  cardLogoSrc: string;
+  cardLogoAlt: string;
 };
 
 export const caseStudies: CaseStudy[] = [
@@ -43,6 +48,9 @@ export const caseStudies: CaseStudy[] = [
     outcome:
       "Qualified demand now converts on the clock, not when someone happens to check the inbox. The business scales through peaks without hiring into the spike.",
     resultSummary: "50 → 200+ bookings per semester. No additional staff.",
+    cardResultLines: ["50 → 200+ bookings per semester.", "No additional staff."],
+    cardLogoSrc: "/case-studies/notime-storage/notime-storage-logo.png",
+    cardLogoAlt: "NoTime Storage logo",
   },
   {
     slug: "creativity-by-lilly",
@@ -65,6 +73,13 @@ export const caseStudies: CaseStudy[] = [
       "Margins stay in the business. The team spends time on product and clients, not re-keying orders between tools.",
     resultSummary:
       "Margins reclaimed. Workflow streamlined. Zero platform fees on direct sales.",
+    cardResultLines: [
+      "Margins reclaimed.",
+      "Workflow streamlined.",
+      "Zero platform fees on direct sales.",
+    ],
+    cardLogoSrc: "/case-studies/creativity-by-lily/Logo.png",
+    cardLogoAlt: "Creativity by Lilly Co logo",
   },
 ];
 
