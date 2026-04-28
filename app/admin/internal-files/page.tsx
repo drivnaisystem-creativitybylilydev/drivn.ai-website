@@ -743,7 +743,113 @@ Per-Client Supabase ← Real-time metrics pushed here
 - If you need cross-client reporting, single MongoDB is easier (but adds security complexity)
 - If clients are very small (free tier), Master MongoDB only to save costs`;
 
+const SALES_PLAYBOOK = `[See /sales/SALES-PLAYBOOK.md in your OS folder — Drivn.AI Sales Playbook with the complete 3-stage funnel (Cold Call → Discovery Call → Close). Includes core mindset (diagnostic selling), key metrics, ICP, pricing framework, red/green flags, and common patterns.]`;
+
 const DOCS: DocFile[] = [
+  {
+    name: "SALES-PLAYBOOK",
+    title: "Sales Playbook",
+    description: "Complete 3-stage sales funnel. Cold call → discovery call → close. Diagnostic selling mindset, metrics, pricing framework.",
+    content: `# Drivn.AI Sales Playbook
+
+**Note:** Full version is in your OS folder at \`/sales/SALES-PLAYBOOK.md\`
+
+## The 3-Stage Funnel
+
+\`\`\`
+COLD CALL (3-5 min)
+  ↓
+DISCOVERY CALL + AI AUDIT (20-30 min)
+  ↓
+CLOSE CALL (15 min)
+  ↓
+SIGNED + IMPLEMENTATION
+\`\`\`
+
+---
+
+## Core Mindset: Diagnostic Selling
+
+You're a **business doctor**, not a salesman.
+
+**Salesman:** "Here's our product, you should buy it."
+**Doctor:** "Let me ask questions, then tell you what I'm seeing."
+
+---
+
+## The 3 Stages
+
+### Stage 1: Cold Call (3-5 min)
+- Pattern interrupt opener
+- Credibility hook
+- Curiosity question
+- 3 qualify questions
+- Pivot to discovery or live audit
+
+**See:** \`COLD-CALL-SCRIPT.md\`
+
+### Stage 2: Discovery Call (20-30 min)
+- Business basics
+- Lead flow deep dive (biggest money leaks)
+- Revenue & marketing spend
+- Tech stack
+- Team capacity
+- Live money summary
+- Run AI Audit if they're hot
+
+**See:** \`DISCOVERY-CALL-FRAMEWORK.md\`
+
+### Stage 3: Close Call (15-20 min)
+- Present audit health score + top 3 leaks ($)
+- Map leaks → Drivn.AI solutions
+- ROI math
+- Close
+
+**See:** \`CLOSE-FRAMEWORK.md\`
+
+---
+
+## Pricing Framework
+
+**Setup Fee:** 40% of annual value recovered
+
+**Example:**
+Prospect loses $50K/month = $600K/year
+Recover 30% = $180K/year
+Setup = 40% × $180K = $72K
+
+**Monthly Retainer:** $500-$1,500/mo
+
+**Payback Target:** 6-12 months
+
+---
+
+## ICP — Ideal Customer Profile
+
+- **Decision maker:** Owner, GM, Ops Manager
+- **Company size:** 5-50 employees
+- **Industry:** Home services (roofing, HVAC, plumbing, landscaping, etc.)
+- **Revenue:** $500K - $5M annually
+- **Pain:** Missed calls, low conversion, manual admin, no follow-up system
+
+---
+
+## Key Metrics
+
+**Weekly:** Cold calls made (20-30), discovery booked (5-7), close rate (60% of discoveries)
+
+**Monthly:** Deal close rate (30-50%), average deal size, customer LTV
+
+**Quarterly:** Sales cycle length, cost per acquisition, repeat business %
+
+---
+
+## See Also
+- \`COLD-CALL-SCRIPT.md\` — Full cold call script with objection handling
+- \`DISCOVERY-CALL-FRAMEWORK.md\` — Diagnostic questions that reveal revenue leaks
+- \`CLOSE-FRAMEWORK.md\` — Presentation, ROI math, proposal template
+`,
+  },
   {
     name: "AGENT-BREAKDOWN",
     title: "Agent Breakdown & ROI",
@@ -773,6 +879,396 @@ const DOCS: DocFile[] = [
     title: "Database Strategy",
     description: "Supabase per client vs single MongoDB. Security, cost, and implementation comparison.",
     content: DATABASE_STRATEGY,
+  },
+  {
+    name: "COLD-CALL-SCRIPT",
+    title: "Cold Call Script",
+    description: "3-5 minute script to book discovery calls or run AI audit live. Pattern interrupt, credibility, qualify, pivot. Objection handling.",
+    content: `# Cold Call Script
+
+**See full version:** \`/sales/COLD-CALL-SCRIPT.md\` in your OS folder
+
+---
+
+## The Formula
+
+1. **Pattern Interrupt** (10-15 sec) — grab attention
+2. **Credibility** (20-30 sec) — why you're calling
+3. **Curiosity Hook** (10-15 sec) — their pain
+4. **Qualify** (30-45 sec) — 3 quick questions
+5. **Pivot** (30 sec) — to discovery or audit
+
+**Total: 3-5 minutes**
+
+---
+
+## Pattern Interrupt Openers
+
+**Option A (missed calls):**
+> "Hey [Name], quick question before you hang up — do you know how many calls your business gets after hours?"
+
+**Option B (lead leakage):**
+> "Hey [Name], what percentage of your phone leads actually turn into jobs?"
+
+**Option C (competitor):**
+> "Hi [Name], I was looking at [competitor]'s reviews and saw they have way more 5-stars than you. Any idea why?"
+
+---
+
+## Credibility Hook
+
+> "Cool. So we work with [niche] companies to fix exactly that — the calls, the conversion, the follow-up. Usually what we find is there's 15-20% of revenue just sitting on the table. Takes me 30 seconds to see if it's your situation too."
+
+---
+
+## Qualify (3 Questions)
+
+1. "How many people are on your team?"
+2. "Are you the owner / decision maker on operations?"
+3. "On a scale of 1-10, how frustrating is the lead loss / admin stuff?"
+
+**Listen for:**
+- 6+ pain = hot lead
+- Owner on call = can decide
+- 5-50 people = in ICP sweet spot
+
+---
+
+## Pivot — 2 Paths
+
+**Path A: HOT (6+ pain, owner, engaged)**
+> "Look, I can show you something right now — takes 10 minutes. I'll look at your specific numbers and show you exactly where the money is going. Worth 10 minutes?"
+
+**Path B: WARM (qualified but needs more time)**
+> "Here's what I'd suggest — let's book a proper 20-minute call where I can really understand your business. At the end, I'll have a specific audit for you with a dollar number on what you're leaving. Does Wednesday or Thursday this week work better?"
+
+---
+
+## Common Objections
+
+**"I'm not interested"**
+→ "That's fair — quick question though, what IS your biggest source of new jobs right now?"
+
+**"Send me something"**
+→ "Happy to — but anything I send is generic. Takes 10 minutes on a call to make it relevant. Can we do that now or book a time?"
+
+**"I already have someone handling this"**
+→ "Awesome, what are they doing? Specifically — are they answering calls after hours?"
+
+**"How much does it cost?"**
+→ "Depends on what you need. That's why the audit matters — we figure out scope first, then I'll quote it."
+
+**"I need to talk to my partner"**
+→ "For sure. Can they hop on now? Or let me send a calendar link for both of you — 20 minutes, we'll audit your numbers, you'll both walk away knowing exactly where the opportunity is."
+
+---
+
+## Pro Tips
+
+**DO:**
+- Research them first (website, reviews, Google Maps)
+- Call at 10-11am or 2-3pm (best answer rates)
+- Sound casual, not corporate
+- Have their website open (reference something)
+- End with them saying yes
+
+**DON'T:**
+- Start with "Hi, I'm calling about AI solutions"
+- Talk longer than they do
+- Mention features (talk revenue only)
+- Accept "send me something" without a follow-up date
+
+---
+
+**See full script with word-for-word examples by niche:** \`/sales/COLD-CALL-SCRIPT.md\`
+`,
+  },
+  {
+    name: "DISCOVERY-CALL-FRAMEWORK",
+    title: "Discovery Call Framework",
+    description: "5 diagnostic question categories that reveal revenue leaks. Make them quantify the loss themselves. Lead flow, revenue, tech, team capacity.",
+    content: `# Discovery Call Framework
+
+**See full version:** \`/sales/DISCOVERY-CALL-FRAMEWORK.md\` in your OS folder
+
+---
+
+## Core Principle
+
+**Every question has a calculation attached.**
+
+You're not asking for information. You're asking questions that lead *them* to realize how much money they're losing.
+
+---
+
+## The Flow (35-45 minutes)
+
+1. **Frame** (2 min) — "I'll ask about 5 areas, then we'll add up where the leaks are"
+2. **Business basics** (2 min)
+3. **Lead flow deep dive** (12 min) ← BIGGEST MONEY LEAKAGE
+4. **Revenue & marketing** (8 min)
+5. **Tech stack & tools** (5 min)
+6. **Team & ops capacity** (5 min)
+7. **Live money summary** (3 min)
+
+---
+
+## Section 1: Lead Flow (THE KEY SECTION)
+
+> "How many calls per week do you think you're getting?"
+
+Write: **X calls**
+
+> "Of those X calls, how many actually turn into a booked job?"
+
+Write: **Y% conversion**
+
+> "So [X × (1-Y%)] calls aren't booking. What happens to those?"
+
+**MAKE THEM DO THE MATH:**
+> "What's your average job worth?"
+
+Answer: **$J**
+
+> "So roughly [X × (1-Y%) × $J × 4] per month in calls that didn't turn into jobs. Fair?"
+
+**This is the aha moment.** They just quantified their loss.
+
+---
+
+## Section 2: After-Hours Calls
+
+> "Do you answer calls after hours or on weekends?"
+
+If NO:
+> "So if someone calls Friday night, what happens? And what's that costing you?"
+
+Calculate: **[missed after-hours calls/week × job value × 4] = $/month lost**
+
+---
+
+## Section 3: Website Leads
+
+> "When someone fills out your website form, what happens?"
+
+Usually: "If it's during the day we call back. If it's 10pm, they get an automated email."
+
+> "How many leads come through per week? And how many don't hear from you same-day?"
+
+**Another money leak.** They're connecting dots.
+
+---
+
+## Section 4: Revenue & Marketing
+
+> "What does an average job pay you?"
+
+> "What are you currently spending on marketing per month?"
+
+> "Do you know your cost per lead?"
+
+Usually: "Not really"
+
+> "So you're spending $M per month but don't know your ROI?"
+
+---
+
+## Section 5: Tech Stack
+
+> "How do you keep track of customers? CRM, spreadsheet, in your head?"
+
+> "How much time/week does scheduling take?"
+
+> "Are you using any AI tools right now?"
+
+Almost always: No
+
+---
+
+## Section 6: Team & Capacity
+
+> "How many hours/week does your team spend on scheduling, follow-up, admin stuff?"
+
+> "If you could cut that in half, what would that mean?"
+
+---
+
+## Live Money Summary (THE CLOSE OF DISCOVERY)
+
+> "Let me add this up. You're losing roughly [$ from missed calls] + [$ from website leads] + [$ in admin time]. That's [$TOTAL]/month. Does that number feel right?"
+
+**If yes:** "That's what we fix."
+
+**If hesitant:** "What number feels more right?"
+
+---
+
+## Red Flags During Call
+
+🚩 They don't know their numbers (won't be honest)
+🚩 Keep saying "I don't know" (disengaged)
+🚩 Minimize the problem despite admitting 5 pain points (denial)
+🚩 "We tried this before and it didn't work" without saying what (problem)
+
+---
+
+## Green Flags
+
+✅ Keep call going past scheduled time (engaged)
+✅ Pull out calculator or pen (taking it seriously)
+✅ Ask "how much does this cost?" (buying signal)
+✅ Mention their team/partner (thinking about implementing)
+✅ Ask "when could we start?" (ready to move)
+
+---
+
+**See full framework with all 5 question categories and detailed examples:** \`/sales/DISCOVERY-CALL-FRAMEWORK.md\`
+`,
+  },
+  {
+    name: "CLOSE-FRAMEWORK",
+    title: "Close Framework",
+    description: "Present audit findings, map leaks to solutions, ROI math, pricing, proposal template, objection handling.",
+    content: `# Close Framework
+
+**See full version:** \`/sales/CLOSE-FRAMEWORK.md\` in your OS folder
+
+---
+
+## The Close Setup
+
+**When:** 1-3 days after discovery call
+
+**Duration:** 15-20 minutes
+
+**Before call:**
+- [ ] Have their audit (health score, opportunity, build spec)
+- [ ] Have proposal template filled in
+- [ ] Know their 3 biggest revenue leaks ($)
+- [ ] Have ROI calculations ready
+
+---
+
+## 5-Minute Setup
+
+> "Hey [Name], thanks for taking the time. I've put together the audit based on our call yesterday. You're going to see three things: your health score, the top 3 revenue leaks in dollar amounts, and exactly what I'd recommend we build to fix them. Then I'll walk you through the investment and timeline. Sound good?"
+
+---
+
+## PART 1: Health Score (2 min)
+
+**If 70+:** "You've got a strong baseline. The gaps are smaller, which means quick wins."
+
+**If 40-70:** "You've got significant opportunity. Clear things we can fix with immediate impact."
+
+**If below 40:** "You're leaving a lot on the table. Good news — big opportunity. We can make a major difference."
+
+---
+
+## PART 2: Top 3 Revenue Leaks (3 min)
+
+**Format: Leak → Dollar Impact → Why it matters**
+
+> "You're losing calls after hours. 10% of your 20 calls/week × $2,500/job = $2,000/week = $8,000/month."
+
+> "Your booking conversion is 25%, low for your niche. Getting to 40% = 3 extra jobs/week × $2,500 = $30,000/month."
+
+> "Your team spends 25 hours/week on scheduling. At $20/hr, that's $500/week = $1,000/month we can recover."
+
+> "So we're looking at $8K + $30K + $1K = $39K/month opportunity."
+
+---
+
+## PART 3: The Solution (3 min)
+
+**Lead with highest-impact item first.**
+
+> "**#1: AI Receptionist for after-hours calls.** Answers 24/7, takes messages, gets them to you instantly. Zero missed calls. Impact: $8K/month. Setup: 1 week."
+
+> "**#2: Booking automation.** Phone + web forms auto-fill your calendar. Removes manual scheduling. Impact: Save 10 hours/week in labor. Setup: 1 week."
+
+> "**#3: Automated follow-up.** Text sequences keep non-booked leads engaged. Improves conversion. Impact: $30K/month as conversion improves. Ongoing."
+
+---
+
+## PART 4: Investment (3 min)
+
+**Setup Fee:**
+> "For this build, setup is $[X]. You're recovering $39K/month = $468K/year. We charge 40% of annual value. So roughly $75K."
+
+> "But let's start with phase 1 (the after-hours piece) for $[X]. Proves ROI. Then we layer in the others."
+
+**Monthly Retainer:**
+> "After setup, $[Y]/month for ongoing management. If phase 1 recovers $8K/month, payback is [X ÷ 8K] months."
+
+---
+
+## PART 5: Handle Objections
+
+**"That's a lot of money"**
+→ "Compared to the $[39K]/month you're losing, it's recapturing what's already yours."
+
+**"Can we do a pilot?"**
+→ "Absolutely. Start with #1 — 1-week setup, results in 30 days. Then decide on next phase."
+
+**"We need to think about it"**
+→ "Of course. What specifically? The ROI, the timing, or something missing from the plan?"
+
+**"Can you lower the price?"**
+→ "Price is based on value created. But we can shrink scope: just phase 1 first at $[lower amount]."
+
+**"I need to talk to my partner"**
+→ "Smart. I'll send you and [partner] a one-pager, and we get all 3 on a 20-min call [day/time]."
+
+---
+
+## PART 6: The Close
+
+> "So here's what I'm hearing: The ROI makes sense, you want to start, next week is good timing. Is that right?"
+
+**If yes:**
+> "Perfect. I'll send you a 1-page contract by end of day. Sign and send back, then we kick off immediately. After-hours system live within 1 week. Fair?"
+
+**If final objection:**
+Handle it fast, then close again.
+
+---
+
+## Proposal Template Structure
+
+- Executive summary (opportunity recap)
+- Phase 1: What you'll build (AI Receptionist, etc.), impact, investment, timeline
+- Phase 2: Next piece
+- Phase 3: Optional layer
+- Total investment (setup + monthly retainer)
+- ROI math (payback period)
+- Terms (30-day pilot, scaling options)
+- Next steps
+
+---
+
+## After They Sign
+
+**Send immediately:**
+1. Contract + thank you
+2. Kickoff call calendar invite
+3. Welcome email with setup instructions
+
+---
+
+## Tracking Your Close Rate
+
+After each close call, note:
+- Date, company, outcome
+- If lost: what was the objection?
+- Deal size if signed
+
+Track weekly. If below 30%, discovery wasn't clear enough.
+
+---
+
+**See full close framework with proposal template, all objection handling, and post-close tracking:** \`/sales/CLOSE-FRAMEWORK.md\`
+`,
   },
 ];
 
