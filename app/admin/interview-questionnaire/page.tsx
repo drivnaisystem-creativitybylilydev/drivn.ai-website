@@ -2,9 +2,8 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 import { HudBrackets } from "@/components/admin/hud-primitives";
-import { Save, Download, Copy, AlertCircle } from "lucide-react";
+import { Download, Copy, AlertCircle } from "lucide-react";
 
 const INTERVIEW_SECTIONS = [
   {
@@ -199,7 +198,7 @@ export default function InterviewQuestionnairePage() {
                 <p className="text-sm text-amber-100/80">
                   1. <strong>Record with iPhone Voice Memos</strong> (Settings → Privacy → Microphone, allow access first)
                   2. <strong>Download this questionnaire</strong> and bring printed or on tablet
-                  3. <strong>Customize the questions</strong> with their industry (e.g., replace "staff" with "team")
+                  3. <strong>Customize the questions</strong> with their industry (e.g., replace &quot;staff&quot; with &quot;team&quot;)
                   4. <strong>Take notes in the Notes section below</strong> during the call
                   5. <strong>After the call, transcribe</strong> using Otter.ai or Apple Transcription
                 </p>
@@ -368,7 +367,7 @@ export default function InterviewQuestionnairePage() {
           <li>Which of those could AI realistically solve today?</li>
           <li>What would they pay monthly to solve each pain point?</li>
           <li>Are these problems unique to them or industry-wide?</li>
-          <li>What's the urgency level?</li>
+          <li>What&apos;s the urgency level?</li>
           <li>Is this niche viable for Drivn.AI, or just market research?</li>
         </ul>
       </div>

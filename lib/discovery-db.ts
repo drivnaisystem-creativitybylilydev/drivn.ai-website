@@ -30,6 +30,7 @@ export type DiscoverySessionRow = Omit<DiscoverySession, "_id" | "createdAt" | "
 
 async function getCollection() {
   const db = await getDb();
+  if (!db) throw new Error("Failed to connect to database");
   return db.collection<DiscoverySession>("discovery_sessions");
 }
 
