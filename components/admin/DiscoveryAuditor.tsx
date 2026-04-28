@@ -822,7 +822,7 @@ function PredictiveObjectionCard({
         onClick={() => setExpanded(!expanded)}
         className="w-full flex items-center justify-between px-4 py-3 hover:bg-brand-purple/[0.12] transition-colors"
       >
-        <p className="text-sm font-medium text-white text-left">Might say: "{objection}"</p>
+        <p className="text-sm font-medium text-white text-left">Might say: &ldquo;{objection}&rdquo;</p>
         <ChevronDown
           className={cn(
             "h-4 w-4 text-brand-purple-light shrink-0 transition-transform",

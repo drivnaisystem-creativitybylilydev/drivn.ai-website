@@ -744,8 +744,6 @@ Per-Client Supabase ← Real-time metrics pushed here
 - If you need cross-client reporting, single MongoDB is easier (but adds security complexity)
 - If clients are very small (free tier), Master MongoDB only to save costs`;
 
-const SALES_PLAYBOOK = `[See /sales/SALES-PLAYBOOK.md in your OS folder — Drivn.AI Sales Playbook with the complete 3-stage funnel (Cold Call → Discovery Call → Close). Includes core mindset (diagnostic selling), key metrics, ICP, pricing framework, red/green flags, and common patterns.]`;
-
 const DOCS: DocFile[] = [
   {
     name: "SALES-PLAYBOOK",
