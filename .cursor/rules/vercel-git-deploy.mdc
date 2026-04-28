@@ -1,0 +1,10 @@
+---
+description: When git push to main does not trigger a Vercel production deployment for drivn-ai-website (Git webhook / integration).
+alwaysApply: false
+---
+
+# Vercel deploy after `git push`
+
+Read the full checklist in **`docs/VERCEL-GIT-DEPLOY.md`** (single source of truth: isolation steps, dashboard URLs, copy-paste prompt).
+
+Summary: if `git ls-remote` shows the new SHA but Vercel does not build, run **`npx vercel deploy --prod`**. If that works, reconnect Git in Vercel and verify GitHub webhook deliveries; if it fails, fix the build first.

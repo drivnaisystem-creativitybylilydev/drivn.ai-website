@@ -5,6 +5,7 @@ import {
   FileText,
   Search,
   BookOpen,
+  ClipboardList,
 } from "lucide-react";
 
 export const AGENTS = [
@@ -41,6 +42,13 @@ export const AGENTS = [
     name: "Pipeline Scout",
     description: "Searches for ICP prospects, adds qualified leads to dashboard",
     icon: Search,
+    category: "sales" as const,
+  },
+  {
+    id: "discovery-auditor",
+    name: "Discovery Auditor",
+    description: "Analyzes call transcripts and questionnaires to generate audit reports",
+    icon: ClipboardList,
     category: "sales" as const,
   },
   {

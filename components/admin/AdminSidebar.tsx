@@ -13,6 +13,7 @@ import {
   ArrowLeft,
   Zap,
   BookOpen,
+  ClipboardList,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -22,6 +23,7 @@ const NAV_ITEMS = [
   { href: "/admin/clients", icon: Briefcase, label: "Clients", exact: false },
   { href: "/admin/revenue", icon: TrendingUp, label: "Revenue", exact: false },
   { href: "/admin/agents", icon: Terminal, label: "Agents", exact: false },
+  { href: "/admin/discovery", icon: ClipboardList, label: "Discovery", exact: false },
   { href: "/admin/sourced-leads", icon: Zap, label: "Sourced Leads", exact: false },
   { href: "/admin/internal-files", icon: BookOpen, label: "Internal Files", exact: false },
 ];
