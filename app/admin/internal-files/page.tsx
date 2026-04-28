@@ -325,6 +325,261 @@ Stage 3 is the complete client dashboard with real-time metrics flowing from 7+ 
 4. **Client visibility?** Show all 7 data sources in one unified view.
 5. **Alerts?** Notify client if missed calls > 5 in a day or 0 appointments in 3 days.`;
 
+const AGENT_BREAKDOWN = `# Drivn.AI Agent Breakdown
+*What each agent does, when to use it, and where it creates value*
+
+---
+
+## **JARVIS — AI Chief of Staff**
+
+**What It Does:**
+- Strategic advisor for high-stakes decisions
+- Reads your entire knowledge base (OS, CLAUDE.md, agency context)
+- Evaluates client opportunities, pricing, build priorities
+- Challenges weak assumptions and flags risks
+- Quantifies decisions with ROI math
+
+**When to Use It:**
+- Should I take this client? What price?
+- How do I hit my $1K MRR goal?
+- What agent or feature should I build next?
+- Is this decision aligned with my strategy?
+- Review progress against quarterly goals
+
+**Time Saved:**
+- 30 min/decision on strategy calls (vs. manual thinking)
+- Eliminates analysis paralysis on borderline clients
+- Ensures every build decision has ROI math attached
+
+**Revenue Impact:**
+- **Direct:** Helps justify 10-15% price increases ($2-3K MRR gain)
+- **Indirect:** Better client selection (fewer bad fits)
+- **Strategic:** Forces you to think in terms of revenue, not just delivery
+
+**Cost:** ~$0.04 per query (Haiku model)
+
+---
+
+## **PIPELINE SCOUT — Lead Sourcing Automation**
+
+**What It Does:**
+- Searches for ICP (Ideal Customer Profile) prospects
+- Scrapes Google Maps, Apify, and other lead sources
+- Auto-scores leads based on fit, rating, reviews, signals
+- Adds qualified leads directly to your dashboard
+- Tracks source (Google Maps, Apify, manual)
+
+**When to Use It:**
+- Daily/weekly to build pipeline
+- When starting a new niche test
+- To backfill empty niches (e.g., "find 50 roofing contractors in Florida")
+- Quarterly to replenish cold leads
+
+**Time Saved:**
+- **Manual sourcing:** 2-4 hours/week → **Agent:** 30 min to set up, then automated
+- Eliminates repetitive Google Maps/LinkedIn searching
+- Auto-scores mean you don't spend time reading reviews manually
+
+**Revenue Impact:**
+- **Direct:** Qualified leads → faster sales cycle (close 10% more deals)
+- **Indirect:** Fresh pipeline reduces feast/famine cycles
+- **Leverage:** Pay-per-execution means zero upfront cost for sourcing
+
+**Current State:**
+- 402 leads across 21 niches
+- Migration to Apify in progress (4x cheaper than current method, includes emails)
+
+**Cost:** ~$0.02-0.05 per lead (depending on source)
+
+---
+
+## **LEAD NURTURE — Sales Follow-Up Automation**
+
+**What It Does:**
+- Identifies leads needing follow-up (30, 60, 90+ days since contact)
+- Drafts personalized outreach messages (email, SMS, call scripts)
+- Considers lead context (rating, reviews, signals) in messaging
+- Prioritizes by fit score (warm leads first)
+- Logs activity back to dashboard
+
+**When to Use It:**
+- 2-3x per week to keep pipeline moving
+- When you have stale leads you've lost momentum on
+- To automate the \"remind me to follow up\" burden
+- Before closing a month (don't want dead leads in pipeline)
+
+**Time Saved:**
+- **Manual follow-up:** 1 hour/week → **Agent:** 5 minutes to review + send
+- Removes decision fatigue on who to contact
+- Ensures no lead falls through the cracks due to forgetting
+
+**Revenue Impact:**
+- **Direct:** Re-engages leads you forgot about (recover 5-10 deals/quarter)
+- **Indirect:** Faster close rates (warm contacts → faster conversion)
+- **Soft:** Builds predictable sales rhythm (less chaos)
+
+**Cost:** ~$0.01 per lead nuture (Haiku model)
+
+---
+
+## **PROPOSAL WRITER — Sales Content Generation**
+
+**What It Does:**
+- Takes a client brief (goals, budget, timeline, pain points)
+- Generates full proposal doc (scope, deliverables, timeline, pricing, terms)
+- Matches your typical offer structure
+- Customizes for client segment (startup, SMB, enterprise)
+- Produces Word/PDF-ready output
+
+**When to Use It:**
+- After a prospect says \"send me a proposal\"
+- When you have a qualified lead and want to move fast
+- To create variations (different price tiers, timelines)
+- When you're too busy to write manually
+
+**Time Saved:**
+- **Manual proposal:** 1.5-2 hours → **Agent:** 5 minutes to fill brief, 2 minutes to review
+- Ensures consistent quality and structure
+- Eliminates blank-page syndrome
+
+**Revenue Impact:**
+- **Direct:** Faster sales cycle (proposal in 10 min vs. 2 days = 50% faster close)
+- **Indirect:** Higher close rate (polished proposal looks professional)
+- **Strategic:** Experiment with pricing quickly (test $5K vs. $7K without rewriting)
+
+**Cost:** ~$0.03 per proposal (includes custom formatting)
+
+---
+
+## **CASE STUDY BUILDER — Content Marketing**
+
+**What It Does:**
+- Takes a completed project (deliverables, results, client feedback)
+- Turns it into a polished case study (problem, solution, results, quote)
+- Optimizes for web: narrative arc, metrics, testimonial placement
+- Exports as blog post (Markdown) or PDF
+- Can be used for website, LinkedIn, sales deck
+
+**When to Use It:**
+- After completing a client project (Week 1 go-live)
+- When you have strong metrics/testimonials to showcase
+- To build social proof library (1-2 per month target)
+- Before launching a new service line
+
+**Time Saved:**
+- **Manual case study:** 3-4 hours → **Agent:** 30 minutes to gather info, 10 min to polish
+- Removes tedious editing and rewriting
+- Creates consistent case study format
+
+**Revenue Impact:**
+- **Direct:** Builds authority (case studies → higher perceived value → 10-20% price premium)
+- **Indirect:** SEO content (case studies rank, drive inbound leads)
+- **Long-term:** Social proof snowball (3-4 case studies = portfolio effect)
+
+**Cost:** ~$0.04 per case study
+
+---
+
+## **KB UPDATER — Knowledge Base Sync**
+
+**What It Does:**
+- Reads all files in your OS folder
+- Syncs agency state to CLAUDE.md (a living snapshot of current status)
+- Captures: MRR, clients, projects, open tasks, decision history
+- Makes institutional knowledge accessible to all agents
+- Keeps Jarvis context fresh and accurate
+
+**When to Use It:**
+- Daily (automated via schedule)
+- After major changes (new client, major decision, milestone hit)
+- Before running other agents (ensures context is current)
+
+**Time Saved:**
+- **Manual documentation:** 30 min/week → **Agent:** automated, 2 min to review
+- Eliminates stale documentation
+- Keeps institutional memory alive
+
+**Revenue Impact:**
+- **Indirect:** Better agent decisions because context is current
+- **Soft:** Speeds up onboarding new team members
+- **Strategic:** Enables handoff/scaling (everything documented)
+
+**Cost:** ~$0.05 per sync
+
+---
+
+## **WEEKLY REVIEW — Operations Dashboard**
+
+**What It Does:**
+- Summarizes the week: MRR delta, pipeline changes, open tasks
+- Extracts key metrics (leads sourced, calls made, proposals sent, deals closed)
+- Flags bottlenecks (e.g., \"stuck on 3 proposals for 5 days\")
+- Compares vs. goals (on track for $1K MRR? For 4 clients/month?)
+- Outputs a readable weekly summary for Slack or email
+
+**When to Use It:**
+- Every Friday (automated)
+- Before Monday planning (know where you stand)
+- Mid-month check-in (course correction)
+- To track trends (are you accelerating? decelerating?)
+
+**Time Saved:**
+- **Manual reporting:** 45 min → **Agent:** 5 min to review
+- Removes guessing on metrics
+- Speeds up decision-making (data at hand)
+
+**Revenue Impact:**
+- **Indirect:** Faster course correction (catch MRR dips early)
+- **Strategic:** Accountability (forced to measure progress)
+- **Soft:** Morale (see wins collected, not just day-to-day chaos)
+
+**Cost:** ~$0.02 per report
+
+---
+
+## **Agent ROI Summary**
+
+| Agent | Weekly Use | Time Saved/Week | Revenue Impact | Cost/Month |
+|-------|-----------|---|---|---|
+| **Jarvis** | 1-2 queries | 1 hour | $500-2K (better decisions) | $1-2 |
+| **Pipeline Scout** | 2x/week | 7 hours | $2-5K (pipeline growth) | $20-50 |
+| **Lead Nurture** | 3x/week | 2.5 hours | $1-3K (recovered deals) | $5-10 |
+| **Proposal Writer** | 1-2x/week | 3 hours | $2-7K (faster close) | $3-5 |
+| **Case Study Builder** | 1x/month | 3 hours | $2-5K (authority, SEO) | $1-2 |
+| **KB Updater** | Daily | 5 hours/month | $500-1K (context) | $3 |
+| **Weekly Review** | 1x/week | 2 hours/month | $500-1K (course correct) | $1 |
+| **TOTAL** | | ~13 hours/week | **$8-25K/month potential** | **~$34-70/month** |
+
+---
+
+## **How to Maximize Agent Value**
+
+### 1. **Run them in sequence**
+   - KB Updater first (fresh context)
+   - Then Pipeline Scout (get leads)
+   - Then Lead Nurture (follow up on warm leads)
+   - Then Proposal Writer (close)
+   - Then Case Study Builder (showcase win)
+
+### 2. **Chain decisions to Jarvis**
+   - Ask Jarvis: \"Should I pursue [niche] based on pipeline Scout's leads?\"
+   - Jarvis will consider: ICP fit, pricing, resource constraints, goal alignment
+
+### 3. **Use Weekly Review as checkpoint**
+   - Friday: Run Weekly Review
+   - See what's working, what's stuck
+   - Monday: Adjust agent priorities based on bottleneck
+
+### 4. **Iterate the brief**
+   - First case study might be rough
+   - Second is better (you know what agents need)
+   - By 5th, you have a formula
+
+### 5. **Cost-per-outcome thinking**
+   - Pipeline Scout costs $30/week but brings $2-5K in potential revenue
+   - Proposal Writer costs $5/week but accelerates deals by 2 days = real revenue impact
+   - Agents are only \"expensive\" if underutilized`;
+
 const DATABASE_STRATEGY = `# Database Strategy: Supabase per Client vs Single MongoDB
 
 ---
@@ -489,6 +744,12 @@ Per-Client Supabase ← Real-time metrics pushed here
 - If clients are very small (free tier), Master MongoDB only to save costs`;
 
 const DOCS: DocFile[] = [
+  {
+    name: "AGENT-BREAKDOWN",
+    title: "Agent Breakdown & ROI",
+    description: "What each AI agent does, when to use it, time saved, and revenue impact. Jarvis, Pipeline Scout, Lead Nurture, Proposal Writer, Case Study Builder, KB Updater, Weekly Review.",
+    content: AGENT_BREAKDOWN,
+  },
   {
     name: "COMPLETE-OPERATING-SYSTEM",
     title: "Complete Operating System",
