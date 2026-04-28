@@ -9,6 +9,7 @@ interface DocFile {
   title: string;
   description: string;
   content: string;
+  category: "sales" | "operations" | "architecture";
 }
 
 // Content from OS folder - embedded directly
@@ -750,6 +751,7 @@ const DOCS: DocFile[] = [
     name: "SALES-PLAYBOOK",
     title: "Sales Playbook",
     description: "Complete 3-stage sales funnel. Cold call → discovery call → close. Diagnostic selling mindset, metrics, pricing framework.",
+    category: "sales",
     content: `# Drivn.AI Sales Playbook
 
 **Note:** Full version is in your OS folder at \`/sales/SALES-PLAYBOOK.md\`
@@ -854,36 +856,42 @@ Setup = 40% × $180K = $72K
     name: "AGENT-BREAKDOWN",
     title: "Agent Breakdown & ROI",
     description: "What each AI agent does, when to use it, time saved, and revenue impact. Jarvis, Pipeline Scout, Lead Nurture, Proposal Writer, Case Study Builder, KB Updater, Weekly Review.",
+    category: "operations",
     content: AGENT_BREAKDOWN,
   },
   {
     name: "COMPLETE-OPERATING-SYSTEM",
     title: "Complete Operating System",
     description: "Full workflow from lead sourcing to signed client. Jarvis commands, agent breakdown, and 60-day sprint.",
+    category: "operations",
     content: COMPLETE_OPERATING_SYSTEM,
   },
   {
     name: "OS-PROJECT-DASHBOARD",
     title: "OS Project Dashboard",
     description: "Internal project tracking. Kanban view, financial dashboard, team allocation, deliverables tracking.",
+    category: "operations",
     content: OS_PROJECT_DASHBOARD,
   },
   {
     name: "STAGE-3-CLIENT-DASHBOARD",
     title: "Stage 3: Client Dashboard Architecture",
     description: "Real-time metrics collection from 7+ data sources. Phone, appointments, website, reviews, AI, SMS, revenue.",
+    category: "architecture",
     content: STAGE_3_CLIENT_DASHBOARD,
   },
   {
     name: "DATABASE-STRATEGY",
     title: "Database Strategy",
     description: "Supabase per client vs single MongoDB. Security, cost, and implementation comparison.",
+    category: "architecture",
     content: DATABASE_STRATEGY,
   },
   {
     name: "COLD-CALL-SCRIPT",
     title: "Cold Call Script",
     description: "3-5 minute script to book discovery calls or run AI audit live. Pattern interrupt, credibility, qualify, pivot. Objection handling.",
+    category: "sales",
     content: `# Cold Call Script
 
 **See full version:** \`/sales/COLD-CALL-SCRIPT.md\` in your OS folder
@@ -987,6 +995,7 @@ Setup = 40% × $180K = $72K
     name: "DISCOVERY-CALL-FRAMEWORK",
     title: "Discovery Call Framework",
     description: "5 diagnostic question categories that reveal revenue leaks. Make them quantify the loss themselves. Lead flow, revenue, tech, team capacity.",
+    category: "sales",
     content: `# Discovery Call Framework
 
 **See full version:** \`/sales/DISCOVERY-CALL-FRAMEWORK.md\` in your OS folder
@@ -1129,6 +1138,7 @@ Almost always: No
     name: "CLOSE-FRAMEWORK",
     title: "Close Framework",
     description: "Present audit findings, map leaks to solutions, ROI math, pricing, proposal template, objection handling.",
+    category: "sales",
     content: `# Close Framework
 
 **See full version:** \`/sales/CLOSE-FRAMEWORK.md\` in your OS folder
@@ -1273,8 +1283,16 @@ Track weekly. If below 30%, discovery wasn't clear enough.
 ];
 
 export default function InternalFilesPage() {
-  const [selectedDoc, setSelectedDoc] = useState(DOCS[0].name);
+  const [category, setCategory] = useState<"all" | "sales" | "operations" | "architecture">("sales");
+  const [selectedDoc, setSelectedDoc] = useState(DOCS.find(d => d.category === "sales")?.name || DOCS[0].name);
+
+  const visibleDocs = category === "all" ? DOCS : DOCS.filter(d => d.category === category);
+
+  // Reset selectedDoc if it's not in the current category
   const currentDoc = DOCS.find((d) => d.name === selectedDoc);
+  if (currentDoc && !visibleDocs.includes(currentDoc)) {
+    setSelectedDoc(visibleDocs[0]?.name || DOCS[0].name);
+  }
 
   return (
     <div className="space-y-6 p-8">
@@ -1284,11 +1302,29 @@ export default function InternalFilesPage() {
         <p className="text-white/60">Process documentation, architecture guides, and operational playbooks</p>
       </div>
 
+      {/* Category Filter */}
+      <div className="flex gap-2">
+        {(["all", "sales", "operations", "architecture"] as const).map((cat) => (
+          <button
+            key={cat}
+            onClick={() => setCategory(cat)}
+            className={cn(
+              "px-4 py-2 rounded-lg text-sm font-medium transition-all capitalize",
+              category === cat
+                ? "bg-brand-purple text-white"
+                : "border border-white/20 text-white/70 hover:border-white/40 hover:text-white/90"
+            )}
+          >
+            {cat}
+          </button>
+        ))}
+      </div>
+
       {/* Layout: Sidebar + Content */}
       <div className="grid grid-cols-4 gap-6">
         {/* Sidebar: File List */}
         <div className="col-span-1 space-y-2">
-          {DOCS.map((doc) => (
+          {visibleDocs.map((doc) => (
             <button
               key={doc.name}
               onClick={() => setSelectedDoc(doc.name)}

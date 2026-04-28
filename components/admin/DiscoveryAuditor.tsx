@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { HudBrackets } from "./hud-primitives";
-import { AlertCircle, Copy, FileText, Loader2, Upload } from "lucide-react";
+import { AlertCircle, Copy, FileText, Loader2, Upload, ChevronDown } from "lucide-react";
 
 interface DiscoveryOutput {
   healthScore: number;
@@ -92,11 +92,57 @@ const NICHE_QUESTIONS: Record<string, string[]> = {
   ],
 };
 
+const REACTIVE_OBJECTIONS = {
+  pricing: [
+    { objection: "That's too expensive", response: "I hear that. But let's look at it this way — you're losing $[X]/month in revenue right now. This recovers that. The investment pays for itself in [Y] months, then you're just paying the retainer for pure profit. Fair comparison?" },
+    { objection: "Can you lower the price?", response: "Price is based on the value we create. Instead of discounting, what if we shrink the scope? Start with just the biggest leak (#1), prove ROI in 30 days, then layer in the others. That's $[lower amount] to start." },
+    { objection: "What's the ROI on this?", response: "Great question. You're losing $[X]/month. Recover 30% of that = $[Y]/month in new revenue. Setup is $[Z]. Payback is [Z/Y] months. Then you're ahead by $[Y]/month indefinitely." },
+    { objection: "I can't afford this right now", response: "I get it. Here's the thing though — how much will this cost you waiting? $[X]/month in lost revenue. When would be a good time to revisit this?" },
+  ],
+  "we're-fine": [
+    { objection: "Business is going well, don't need AI", response: "That's awesome. But you mentioned losing [X] leads per month. At $[Y] per job, that's $[Z] per month. Would recovering that be worth 20 minutes to explore?" },
+    { objection: "We already have a receptionist", response: "Great. What about after hours? You said you don't have 24/7 coverage. How much is that costing you in missed after-hours calls?" },
+    { objection: "We respond to all our leads", response: "Perfect. How long does it typically take? And how many fall through before you get back to them?" },
+    { objection: "We've been doing this for 20 years without it", response: "Makes sense. The market's changed though. Your competitors are implementing this right now. The question isn't whether you can survive without it — it's whether you want to stay ahead." },
+  ],
+  skepticism: [
+    { objection: "AI doesn't work for service businesses", response: "I'd have said the same thing. But look — we're not using AI to replace your team. We're using it to handle the stuff that's costing you money: after-hours calls, follow-ups, scheduling. Simple stuff, high impact." },
+    { objection: "We tried automation before and it didn't work", response: "I hear that. What did you try? Because there's a big difference between generic automation and solving your specific leaks. Let me show you what we'd actually build for you." },
+    { objection: "I don't trust AI", response: "Legit concern. Here's the deal — you don't have to trust it. You see the results in 30 days. After-hours calls are answered, leads get followed up. Either it works or we pause. No long contract." },
+    { objection: "This sounds like a fad", response: "Maybe it is. But your competitors aren't waiting to find out. And honestly, you're losing $[X]/month right now. If it works, you recover that. If it doesn't, you know in 30 days." },
+  ],
+  timing: [
+    { objection: "Not the right time, we're too busy", response: "I get it. But that's actually the problem — you're too busy. That's why we do this. How much time is the team spending on scheduling and follow-up right now? That's what we're automating." },
+    { objection: "Let me think about it", response: "Of course. Quick question though — what specifically are you thinking about? The ROI, the timing, or something missing from the plan? Let's solve it right now." },
+    { objection: "Call me next quarter", response: "Happy to. But how much are you leaving on the table between now and then? $[X]/month × 3 months = $[Y] in lost revenue while you think about it. Worth revisiting before then?" },
+    { objection: "We have other priorities right now", response: "What's the priority? Because this isn't about adding something new — it's about recovering money that's already yours. Once we show you the ROI, you'll see why it should be the priority." },
+  ],
+  "buy-in": [
+    { objection: "I need to talk to my partner", response: "Smart. Can they hop on right now? Or I'll send you both a one-pager and we can do a 20-minute call together. You'll both walk away seeing exactly where the opportunity is." },
+    { objection: "I want to see it working first / want a pilot", response: "Absolutely the right call. Here's what I propose: We start with the biggest ROI piece (#1 — [solution]). One week to set up, 30 days to prove it. If you hate it, we stop. But I'm confident you'll see results immediately." },
+    { objection: "What if my team rejects it?", response: "Good question. Usually the team loves it because it saves THEM time. The people doing scheduling and follow-up? They'll be thrilled. We'll handle the training and transition." },
+    { objection: "We'd need to integrate with [tool] first", response: "We handle integrations. What tool? [Listen]. Most tools we already integrate with. Even if it's a custom one, we can make it work. Let's not let integration be the blocker." },
+  ],
+};
+
+const REACTIVE_OBJECTIONS_BY_CATEGORY = [
+  { category: "pricing", label: "Pricing Objections" },
+  { category: "we're-fine", label: "We're Doing Fine" },
+  { category: "skepticism", label: "Skepticism / Trust" },
+  { category: "timing", label: "Timing / Priority" },
+  { category: "buy-in", label: "Buy-In / Process" },
+];
+
 export function DiscoveryAuditor({ initialSessions }: { initialSessions: DiscoverySession[] }) {
-  const [tab, setTab] = useState<"input" | "results" | "history">("input");
+  const [tab, setTab] = useState<"input" | "results" | "history" | "objections">("input");
   const [currentSession, setCurrentSession] = useState<DiscoverySession | null>(null);
   const [sessions, setSessions] = useState(initialSessions);
   const [isPending, startTransition] = useTransition();
+
+  // Objections state
+  const [objectionSearch, setObjectionSearch] = useState("");
+  const [objectionCategory, setObjectionCategory] = useState<string>("all");
+  const [expandedObjection, setExpandedObjection] = useState<string | null>(null);
 
   // Form state
   const [transcriptText, setTranscriptText] = useState("");
@@ -198,7 +244,7 @@ export function DiscoveryAuditor({ initialSessions }: { initialSessions: Discove
 
       {/* Tabs */}
       <div className="flex gap-2 border-b border-white/10">
-        {(["input", "results", "history"] as const).map((t) => (
+        {(["input", "results", "history", "objections"] as const).map((t) => (
           <button
             key={t}
             onClick={() => setTab(t)}
@@ -492,6 +538,153 @@ export function DiscoveryAuditor({ initialSessions }: { initialSessions: Discove
         </div>
       )}
 
+      {/* Tab: Objections */}
+      {tab === "objections" && (
+        <div className="space-y-8">
+          {/* Predictive Objections */}
+          <div className="space-y-4">
+            <h2 className="font-semibold text-white text-lg">Predictive Objections</h2>
+            <p className="text-sm text-white/60">Based on {formData.businessName || "their"} answers, they might say:</p>
+
+            {formData.businessName ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {formData.bookingConversion && parseInt(formData.bookingConversion) < 50 && (
+                  <PredictiveObjectionCard
+                    objection="We're doing fine, don't need this"
+                    response={`You're at ${formData.bookingConversion}% conversion. That means ${Math.round((parseInt(formData.callsPerWeek || "0") || 0) * (1 - parseInt(formData.bookingConversion) / 100))} calls/week aren't booking. At $${formData.painPoint || "2500"} per job, that's roughly $${Math.round((parseInt(formData.callsPerWeek || "0") || 0) * (1 - parseInt(formData.bookingConversion) / 100) * 4 * 2500)}/month sitting on the table. Is that acceptable?`}
+                  />
+                )}
+
+                {formData.phone24_7 === "no" && (
+                  <PredictiveObjectionCard
+                    objection="We call back next day, that's good enough"
+                    response={`After-hours calls are lost revenue. Even if you call back the next day, you've lost the urgency and they've called 3 other contractors. What's your average job worth? Let's calculate what that's costing you.`}
+                  />
+                )}
+
+                {formData.respondsToReviews === "no" && (
+                  <PredictiveObjectionCard
+                    objection="Reviews don't affect our business"
+                    response={`Actually, 72% of customers check reviews before calling. Not responding tells them you don't care. How many leads are you losing to lower-rated competitors?`}
+                  />
+                )}
+
+                {formData.marketingSpend && (
+                  <PredictiveObjectionCard
+                    objection="We're already spending on marketing"
+                    response={`You're spending $${formData.marketingSpend}/month. But if your conversion is only ${formData.bookingConversion}%, you're wasting a lot of that on unconverted leads. This fixes the conversion side.`}
+                  />
+                )}
+
+                {!formData.bookingConversion && !formData.phone24_7 && formData.callsPerWeek === "" && (
+                  <div className="col-span-full rounded-lg border border-white/10 bg-white/[0.02] p-4 text-center">
+                    <p className="text-sm text-white/60">Fill in the questionnaire to see predicted objections with their real numbers.</p>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="rounded-lg border border-white/10 bg-white/[0.02] p-4 text-center">
+                <p className="text-sm text-white/60">Enter a business name to see predicted objections.</p>
+              </div>
+            )}
+          </div>
+
+          {/* Reactive Objections */}
+          <div className="space-y-4">
+            <h2 className="font-semibold text-white text-lg">Objection Handling Library</h2>
+
+            {/* Search */}
+            <input
+              type="text"
+              placeholder="Search objections (e.g., 'price', 'busy', 'trust')..."
+              value={objectionSearch}
+              onChange={(e) => setObjectionSearch(e.target.value)}
+              className="w-full rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-white placeholder-white/40 focus:border-brand-purple/50 focus:ring-2 focus:ring-brand-purple/20"
+            />
+
+            {/* Category filter */}
+            <div className="flex flex-wrap gap-2">
+              <button
+                onClick={() => setObjectionCategory("all")}
+                className={cn(
+                  "px-3 py-1 rounded-full text-xs font-medium transition-colors",
+                  objectionCategory === "all"
+                    ? "bg-brand-purple/30 text-brand-purple-light border border-brand-purple/50"
+                    : "bg-white/[0.05] text-white/60 hover:bg-white/[0.1]"
+                )}
+              >
+                All
+              </button>
+              {REACTIVE_OBJECTIONS_BY_CATEGORY.map((cat) => (
+                <button
+                  key={cat.category}
+                  onClick={() => setObjectionCategory(cat.category)}
+                  className={cn(
+                    "px-3 py-1 rounded-full text-xs font-medium transition-colors",
+                    objectionCategory === cat.category
+                      ? "bg-brand-purple/30 text-brand-purple-light border border-brand-purple/50"
+                      : "bg-white/[0.05] text-white/60 hover:bg-white/[0.1]"
+                  )}
+                >
+                  {cat.label}
+                </button>
+              ))}
+            </div>
+
+            {/* Objections list */}
+            <div className="space-y-2">
+              {REACTIVE_OBJECTIONS_BY_CATEGORY.map((cat) => {
+                if (objectionCategory !== "all" && objectionCategory !== cat.category) return null;
+
+                const objections = REACTIVE_OBJECTIONS[cat.category as keyof typeof REACTIVE_OBJECTIONS] || [];
+                const filtered = objections.filter(
+                  (obj) =>
+                    objectionSearch === "" ||
+                    obj.objection.toLowerCase().includes(objectionSearch.toLowerCase()) ||
+                    obj.response.toLowerCase().includes(objectionSearch.toLowerCase())
+                );
+
+                if (filtered.length === 0) return null;
+
+                return (
+                  <div key={cat.category} className="space-y-2">
+                    {filtered.map((obj, idx) => (
+                      <div
+                        key={idx}
+                        className="rounded-lg border border-white/10 bg-white/[0.02] overflow-hidden"
+                      >
+                        <button
+                          onClick={() =>
+                            setExpandedObjection(
+                              expandedObjection === `${cat.category}-${idx}` ? null : `${cat.category}-${idx}`
+                            )
+                          }
+                          className="w-full flex items-center justify-between px-4 py-3 hover:bg-white/[0.05] transition-colors"
+                        >
+                          <p className="text-sm text-white/80 text-left">{obj.objection}</p>
+                          <ChevronDown
+                            className={cn(
+                              "h-4 w-4 text-white/60 shrink-0 transition-transform",
+                              expandedObjection === `${cat.category}-${idx}` && "rotate-180"
+                            )}
+                          />
+                        </button>
+
+                        {expandedObjection === `${cat.category}-${idx}` && (
+                          <div className="px-4 py-3 border-t border-white/10 bg-white/[0.01]">
+                            <p className="text-sm text-white/70 leading-relaxed">{obj.response}</p>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Tab: History */}
       {tab === "history" && (
         <div className="overflow-x-auto rounded-lg border border-white/10">
@@ -610,6 +803,39 @@ function OutputCard({
       <div className="max-h-96 overflow-y-auto p-6">
         <p className="whitespace-pre-wrap text-sm leading-relaxed text-white/80">{content}</p>
       </div>
+    </div>
+  );
+}
+
+function PredictiveObjectionCard({
+  objection,
+  response,
+}: {
+  objection: string;
+  response: string;
+}) {
+  const [expanded, setExpanded] = useState(false);
+
+  return (
+    <div className="rounded-lg border border-brand-purple/30 bg-brand-purple/[0.08] overflow-hidden">
+      <button
+        onClick={() => setExpanded(!expanded)}
+        className="w-full flex items-center justify-between px-4 py-3 hover:bg-brand-purple/[0.12] transition-colors"
+      >
+        <p className="text-sm font-medium text-white text-left">Might say: "{objection}"</p>
+        <ChevronDown
+          className={cn(
+            "h-4 w-4 text-brand-purple-light shrink-0 transition-transform",
+            expanded && "rotate-180"
+          )}
+        />
+      </button>
+
+      {expanded && (
+        <div className="px-4 py-3 border-t border-brand-purple/30 bg-brand-purple/[0.05]">
+          <p className="text-sm text-white/80 leading-relaxed">{response}</p>
+        </div>
+      )}
     </div>
   );
 }
