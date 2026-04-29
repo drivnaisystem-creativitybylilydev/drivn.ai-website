@@ -1,17 +1,21 @@
-import { isLeadsAdminAuthenticated } from "@/lib/admin-session";
-import { AdminLoginPanel } from "@/components/admin/AdminLoginPanel";
-import { JarvisChat } from "@/components/admin/JarvisChat";
+"use client";
+
+import { useState } from "react";
+import { JarvisChat, JarvisModel } from "@/components/admin/JarvisChat";
 import Link from "next/link";
 import { ArrowLeft, Zap } from "lucide-react";
 import { HudBrackets } from "@/components/admin/hud-primitives";
 
-export const dynamic = "force-dynamic";
+export default function JarvisPage() {
+  const [currentModel, setCurrentModel] = useState<"haiku" | "sonnet" | "opus">("haiku");
+  const [currentCost, setCurrentCost] = useState(0.04);
 
-export default async function JarvisPage() {
-  const authed = await isLeadsAdminAuthenticated();
-  if (!authed) {
-    return <AdminLoginPanel />;
-  }
+  const handleModelChange = (model: JarvisModel) => {
+    setCurrentModel(model.currentModel);
+    setCurrentCost(model.currentCost);
+  };
+
+  const displayModel = currentModel.charAt(0).toUpperCase() + currentModel.slice(1);
 
   return (
     <div className="relative min-h-svh overflow-hidden bg-brand-dark text-white">
@@ -50,13 +54,13 @@ export default async function JarvisPage() {
           <div className="relative overflow-hidden rounded-2xl border border-brand-purple/40 bg-brand-purple/[0.08] p-6">
             <HudBrackets color="rgba(139,92,246,0.3)" size={8} />
             <p className="font-inter text-[0.6rem] font-bold uppercase tracking-[0.2em] text-white/40">Model</p>
-            <p className="mt-2 font-sora text-2xl font-bold text-brand-purple-light">Haiku</p>
+            <p className="mt-2 font-sora text-2xl font-bold text-brand-purple-light">{displayModel}</p>
           </div>
 
           <div className="relative overflow-hidden rounded-2xl border border-brand-purple/40 bg-brand-purple/[0.08] p-6">
             <HudBrackets color="rgba(139,92,246,0.3)" size={8} />
             <p className="font-inter text-[0.6rem] font-bold uppercase tracking-[0.2em] text-white/40">Cost/Query</p>
-            <p className="mt-2 font-sora text-2xl font-bold text-brand-purple-light">~$0.04</p>
+            <p className="mt-2 font-sora text-2xl font-bold text-brand-purple-light">~${currentCost.toFixed(2)}</p>
           </div>
         </div>
 
@@ -105,7 +109,7 @@ export default async function JarvisPage() {
         {/* Chat */}
         <div className="mb-8">
           <h2 className="mb-4 font-sora text-xl font-bold text-white">Ask Jarvis</h2>
-          <JarvisChat />
+          <JarvisChat onModelChange={handleModelChange} />
         </div>
 
         {/* How It Works */}

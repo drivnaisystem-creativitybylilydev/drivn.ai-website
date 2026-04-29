@@ -16,6 +16,33 @@ interface JarvisResponse {
   sessionId: string;
   assistantMessage: string;
   memory?: string;
+  model: string;
+  costEstimate: number;
+}
+
+type ModelType = "haiku" | "sonnet" | "opus";
+
+const MODEL_CONFIGS = {
+  haiku: { id: "claude-3-5-haiku-20241022", costPerQuery: 0.04 },
+  sonnet: { id: "claude-3-5-sonnet-20241022", costPerQuery: 0.10 },
+  opus: { id: "claude-opus-4-1-20250805", costPerQuery: 0.35 },
+};
+
+function selectModel(userMessage: string): ModelType {
+  const msg = userMessage.toLowerCase();
+
+  // Opus only for truly complex strategic planning (rare)
+  if (/comprehensive.*strategy|long-term.*plan|major.*architecture|fundamental.*redesign/i.test(msg)) {
+    return "opus";
+  }
+
+  // Sonnet for substantive building, implementation, complex analysis
+  if (/build|implement|develop|architect|code.*solution|complex.*analysis/i.test(msg)) {
+    return "sonnet";
+  }
+
+  // Haiku for everything else (default, most cost-efficient)
+  return "haiku";
 }
 
 function readOSFile(filePath: string): string | null {
@@ -161,6 +188,10 @@ export async function POST(req: NextRequest) {
       content: userMessage,
     });
 
+    // Select model based on message content
+    const selectedModel = selectModel(userMessage);
+    const modelConfig = MODEL_CONFIGS[selectedModel];
+
     // Call Claude API
     const response = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
@@ -170,8 +201,8 @@ export async function POST(req: NextRequest) {
         "content-type": "application/json",
       },
       body: JSON.stringify({
-        model: "claude-3-5-haiku-20241022",
-        max_tokens: 1500,
+        model: modelConfig.id,
+        max_tokens: 1000,
         system: buildSystemPrompt(),
         messages: recentMessages,
       }),
@@ -232,6 +263,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({
       sessionId,
       assistantMessage,
+      model: selectedModel,
+      costEstimate: modelConfig.costPerQuery,
     } as JarvisResponse);
   } catch (err) {
     console.error("[jarvis] API error:", err);

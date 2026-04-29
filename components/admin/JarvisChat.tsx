@@ -13,7 +13,12 @@ interface Message {
   timestamp?: Date;
 }
 
-export function JarvisChat() {
+export interface JarvisModel {
+  currentModel: "haiku" | "sonnet" | "opus";
+  currentCost: number;
+}
+
+export function JarvisChat({ onModelChange }: { onModelChange?: (model: JarvisModel) => void }) {
   const sessionId = useId();
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -25,6 +30,8 @@ export function JarvisChat() {
   ]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [currentModel, setCurrentModel] = useState<"haiku" | "sonnet" | "opus">("haiku");
+  const [currentCost, setCurrentCost] = useState(0.04);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -58,6 +65,9 @@ export function JarvisChat() {
       }
 
       const data = await response.json();
+      setCurrentModel(data.model);
+      setCurrentCost(data.costEstimate);
+      onModelChange?.({ currentModel: data.model, currentCost: data.costEstimate });
       setMessages((prev) => [
         ...prev,
         { role: "assistant", content: data.assistantMessage, timestamp: new Date() },
