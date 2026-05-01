@@ -15,6 +15,7 @@ import {
   BookOpen,
   ClipboardList,
   Mic2,
+  FileText,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -26,6 +27,7 @@ const NAV_ITEMS = [
   { href: "/admin/agents", icon: Terminal, label: "Agents", exact: false },
   { href: "/admin/discovery", icon: ClipboardList, label: "Discovery", exact: false },
   { href: "/admin/interview-questionnaire", icon: Mic2, label: "Interview", exact: false },
+  { href: "/admin/questionnaire-responses", icon: FileText, label: "Responses", exact: false },
   { href: "/admin/sourced-leads", icon: Zap, label: "Sourced Leads", exact: false },
   { href: "/admin/internal-files", icon: BookOpen, label: "Internal Files", exact: false },
 ];

@@ -1,8 +1,11 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+
+const STORAGE_KEY_DRAFT = "ntq_draft";
+const STORAGE_KEY_SESSION = "ntq_session_id";
 
 const inputWrap = "relative audit-form-field";
 const inputLine =
@@ -260,20 +263,107 @@ export default function NoTimeQuestionnaireForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [sessionId] = useState<string>(() => {
+    if (typeof window === "undefined") return "";
+    const stored = localStorage.getItem(STORAGE_KEY_SESSION);
+    if (stored) return stored;
+    const newId = crypto.randomUUID();
+    localStorage.setItem(STORAGE_KEY_SESSION, newId);
+    return newId;
+  });
+  const draftTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Restore from localStorage on mount
+  useEffect(() => {
+    const stored = localStorage.getItem(STORAGE_KEY_DRAFT);
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored);
+        setForm((prev) => ({ ...prev, ...parsed.form }));
+        setQ12Drivers(parsed.q12Drivers ?? {});
+        setQ22Pick(parsed.q22Pick ?? {});
+      } catch {
+        // Ignore parse errors
+      }
+    }
+  }, []);
+
+  // Save to localStorage immediately
+  const saveToLocalStorage = useCallback((
+    formData: Record<string, string>,
+    drivers: Record<string, boolean>,
+    picks: Record<string, boolean>
+  ) => {
+    const draft = { form: formData, q12Drivers: drivers, q22Pick: picks };
+    localStorage.setItem(STORAGE_KEY_DRAFT, JSON.stringify(draft));
+  }, []);
+
+  // Debounced server save (30 seconds)
+  const saveToServer = useCallback(
+    async (
+      formData: Record<string, string>,
+      drivers: Record<string, boolean>,
+      picks: Record<string, boolean>
+    ) => {
+      if (!sessionId) return;
+      try {
+        await fetch("/api/questionnaires/notime-storage/draft", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            sessionId,
+            data: formData,
+            checkboxes: { q12Drivers: drivers, q22Pick: picks },
+          }),
+        });
+      } catch (err) {
+        console.error("Failed to save draft to server:", err);
+      }
+    },
+    [sessionId]
+  );
 
   const set = useCallback((key: string, v: string) => {
     setSubmitError(null);
-    setForm((prev) => ({ ...prev, [key]: v }));
-  }, []);
+    setForm((prev) => {
+      const updated = { ...prev, [key]: v };
+      saveToLocalStorage(updated, q12Drivers, q22Pick);
+      // Debounce server save
+      if (draftTimeoutRef.current) clearTimeout(draftTimeoutRef.current);
+      draftTimeoutRef.current = setTimeout(
+        () => saveToServer(updated, q12Drivers, q22Pick),
+        30000
+      );
+      return updated;
+    });
+  }, [saveToLocalStorage, saveToServer, q12Drivers, q22Pick]);
 
   const toggleDriver = (key: string) => {
     setSubmitError(null);
-    setQ12Drivers((prev) => ({ ...prev, [key]: !prev[key] }));
+    setQ12Drivers((prev) => {
+      const updated = { ...prev, [key]: !prev[key] };
+      saveToLocalStorage(form, updated, q22Pick);
+      if (draftTimeoutRef.current) clearTimeout(draftTimeoutRef.current);
+      draftTimeoutRef.current = setTimeout(
+        () => saveToServer(form, updated, q22Pick),
+        30000
+      );
+      return updated;
+    });
   };
 
   const toggleQ22 = (id: string) => {
     setSubmitError(null);
-    setQ22Pick((prev) => ({ ...prev, [id]: !prev[id] }));
+    setQ22Pick((prev) => {
+      const updated = { ...prev, [id]: !prev[id] };
+      saveToLocalStorage(form, q12Drivers, updated);
+      if (draftTimeoutRef.current) clearTimeout(draftTimeoutRef.current);
+      draftTimeoutRef.current = setTimeout(
+        () => saveToServer(form, q12Drivers, updated),
+        30000
+      );
+      return updated;
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -291,6 +381,7 @@ export default function NoTimeQuestionnaireForm() {
     const { website: _honeypot, ...rest } = form;
     const payload = {
       ...rest,
+      sessionId,
       business_name: form.business_name || "NoTime Storage",
       q12_increase_drivers: drivers,
       q22_features: q22Combined,
@@ -317,6 +408,9 @@ export default function NoTimeQuestionnaireForm() {
         );
         return;
       }
+      // Clear localStorage on successful submission
+      localStorage.removeItem(STORAGE_KEY_DRAFT);
+      localStorage.removeItem(STORAGE_KEY_SESSION);
       setSubmitted(true);
     } catch {
       setSubmitError("Network error. Check your connection and try again.");

@@ -4,6 +4,7 @@ import {
   isQuestionnaireEmailConfigured,
   sendNotimeQuestionnaireEmails,
 } from "@/lib/case-study-questionnaire/notime-storage-email";
+import { markQuestionnaireSubmitted } from "@/lib/questionnaire-db";
 
 export const runtime = "nodejs";
 
@@ -60,6 +61,17 @@ export async function POST(request: Request) {
       { error: result.error ?? "Could not submit. Try again or email us directly." },
       { status: 502 },
     );
+  }
+
+  // Mark response as submitted in MongoDB if sessionId is provided
+  const sessionId = data.sessionId?.trim();
+  if (sessionId) {
+    try {
+      await markQuestionnaireSubmitted(sessionId);
+    } catch (err) {
+      console.error("Failed to mark questionnaire as submitted:", err);
+      // Don't fail the request if this fails — email was already sent
+    }
   }
 
   return NextResponse.json({ ok: true });
