@@ -1,94 +1,159 @@
 "use client";
 
-import { Code2, Phone, Zap, FileText } from "lucide-react";
+import { Phone, Zap, Star, Receipt, BarChart3, Globe } from "lucide-react";
 import { motion } from "framer-motion";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { viewRelaxed } from "@/lib/motion-viewport";
 
 const services = [
   {
-    icon: Code2,
-    title: "Revenue That Books Itself",
-    description:
-      "Your business shouldn't depend on you being available 24/7 to capture every opportunity. We design systems that work while you work — so qualified leads become booked jobs without the back-and-forth.",
-  },
-  {
     icon: Phone,
-    title: "Every Call Answered",
+    title: "Every Call Captured",
     description:
-      "No more voicemail. No more \"sorry we missed you.\" The businesses we work with never lose a job to a missed call again. How we do it is part of the audit.",
+      "No more voicemail. No more \"sorry we missed you.\" Your calls get answered 24/7, leads get qualified, and appointments land directly in your calendar—whether you're on a job site or home for dinner.",
+    metric: "40% More Appointments Booked",
+    metricColor: "#10B981",
   },
   {
     icon: Zap,
-    title: "Follow-Up That Wins",
+    title: "Instant Follow-Up",
     description:
-      "Leads go cold when they wait. Our clients respond in seconds, not hours — and they book more jobs because of it. The mechanics stay behind the scenes.",
+      "Leads go cold in hours, not days. Your prospects get an SMS within 60 seconds of inquiring, stay warm with automated check-ins, and book when they're ready—no manual chasing required.",
+    metric: "25% More Leads Closed",
+    metricColor: "#10B981",
   },
   {
-    icon: FileText,
-    title: "Operations That Scale",
+    icon: Star,
+    title: "Reviews On Autopilot",
     description:
-      "Stop trading your time for revenue. We help service businesses grow without adding headcount — fewer manual hours, more closed deals, margins that improve.",
+      "Every completed job becomes a review request automatically. Your Google rating climbs while you sleep, and you stay ahead of competitors without ever asking customers manually.",
+    metric: "3-5 New Reviews Every Month",
+    metricColor: "#10B981",
+  },
+  {
+    icon: Receipt,
+    title: "Quotes In Seconds",
+    description:
+      "Customer fills out a form, they get a detailed quote via text or email instantly. No more spending your evenings writing estimates—close deals faster because you're the first to put a number in front of them.",
+    metric: "5-10 Hours Saved Per Week",
+    metricColor: "#3B82F6",
+  },
+  {
+    icon: BarChart3,
+    title: "Custom Operating Systems",
+    description:
+      "Custom dashboards that show bookings, revenue, and customer data in one place. Manage your entire business from your phone without hiring another admin—growth without adding headcount.",
+    metric: "15+ Hours Saved Per Week",
+    metricColor: "#3B82F6",
+  },
+  {
+    icon: Globe,
+    title: "Websites That Convert",
+    description:
+      "Fast, modern sites built for one job: turning visitors into booked appointments. No WordPress bloat, no outdated design—just clean code, mobile-first, and live in under two weeks.",
+    metric: "Live In 1-2 Weeks",
+    metricColor: "#7C3AED",
   },
 ];
 
 export default function Services() {
   return (
-    <section
-      id="services"
-      className="pt-20 md:pt-24 pb-0"
-    >
+    <section id="services" className="pt-20 md:pt-24 pb-16 md:pb-20">
       <div className="max-w-7xl mx-auto px-4 md:px-8">
-        {/* Section header */}
+        {/* Hero banner */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={viewRelaxed}
           transition={{ duration: 0.6 }}
-          className="text-center mb-12 md:mb-16"
+          className="text-center mb-20"
         >
-          <h2 className="text-2xl md:text-3xl font-sora font-semibold text-neon-purple mb-2">
-            The Shift
-          </h2>
-          <h3 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-sora font-semibold text-white text-center">
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-sora font-semibold text-white mb-6">
             What We Solve
-          </h3>
+          </h2>
+          <p className="text-xl md:text-2xl text-gray-400 max-w-3xl mx-auto leading-relaxed">
+            The businesses we work with book{" "}
+            <span className="text-[#7C3AED]">40% more appointments</span> and
+            save <span className="text-[#7C3AED]">15+ hours per week</span>.
+            Here's what that looks like:
+          </p>
         </motion.div>
 
-        {/* Service cards with animated icon graphics */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
-          {services.map((service, i) => (
-            <motion.div
-              key={service.title}
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={viewRelaxed}
-              transition={{
-                duration: 0.6,
-                delay: i * 0.1,
-                ease: [0.22, 1, 0.36, 1],
-              }}
-            >
-              <Card className="group h-full overflow-hidden transition-all duration-300 hover:border-brand-purple/50 hover:-translate-y-2 hover:scale-[1.02] hover:shadow-[0_0_30px_-5px_rgba(139,92,246,0.3)] active:translate-y-0 active:scale-[1.01]">
-                <CardHeader>
-                  <div className="relative inline-flex">
-                    <div className="absolute inset-0 bg-brand-purple/20 rounded-lg blur-md scale-150 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                    <div className="relative p-3 rounded-xl border border-brand-purple/20 bg-brand-purple/5 w-fit">
-                      <service.icon className="h-8 w-8 text-brand-purple" />
+        {/* 6-card grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-6">
+          {services.map((service, i) => {
+            const Icon = service.icon;
+            return (
+              <motion.div
+                key={service.title}
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={viewRelaxed}
+                transition={{
+                  duration: 0.6,
+                  delay: i * 0.1,
+                  ease: [0.22, 1, 0.36, 1],
+                }}
+                className="group h-full"
+              >
+                <div
+                  className="h-full p-8 md:p-10 rounded-3xl transition-all duration-300 hover:translate-y-[-4px] flex flex-col"
+                  style={{
+                    background: "rgba(17, 24, 39, 0.6)",
+                    backdropFilter: "blur(16px)",
+                    WebkitBackdropFilter: "blur(16px)",
+                    border: "1px solid rgba(124, 58, 237, 0.2)",
+                    boxShadow: "0 0 50px rgba(124, 58, 237, 0.3)",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.borderColor =
+                      "rgba(124, 58, 237, 0.4)";
+                    e.currentTarget.style.boxShadow =
+                      "0 4px 70px rgba(124, 58, 237, 0.5)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.borderColor =
+                      "rgba(124, 58, 237, 0.2)";
+                    e.currentTarget.style.boxShadow =
+                      "0 0 50px rgba(124, 58, 237, 0.3)";
+                  }}
+                >
+                  {/* Icon circle */}
+                  <div className="mb-6 inline-block">
+                    <div
+                      className="w-20 h-20 rounded-full flex items-center justify-center transition-transform duration-300 group-hover:scale-110"
+                      style={{
+                        background: "rgba(124, 58, 237, 0.1)",
+                        border: "1px solid rgba(124, 58, 237, 0.3)",
+                        boxShadow: "0 0 30px rgba(124, 58, 237, 0.4)",
+                      }}
+                    >
+                      <Icon className="w-10 h-10" style={{ color: "#A78BFA" }} />
                     </div>
                   </div>
-                  <h3 className="text-xl md:text-2xl font-sora font-semibold mt-4">
+
+                  {/* Content */}
+                  <h3 className="text-2xl font-sora font-semibold text-white mb-4">
                     {service.title}
                   </h3>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-base md:text-lg text-white/80">
+                  <p className="text-gray-400 text-base leading-relaxed mb-6 flex-grow">
                     {service.description}
                   </p>
-                </CardContent>
-              </Card>
-            </motion.div>
-          ))}
+
+                  {/* Metric badge */}
+                  <div
+                    className="inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold"
+                    style={{
+                      background: `rgba(${parseInt(service.metricColor.slice(1, 3), 16)}, ${parseInt(service.metricColor.slice(3, 5), 16)}, ${parseInt(service.metricColor.slice(5, 7), 16)}, 0.1)`,
+                      border: `1px solid rgba(${parseInt(service.metricColor.slice(1, 3), 16)}, ${parseInt(service.metricColor.slice(3, 5), 16)}, ${parseInt(service.metricColor.slice(5, 7), 16)}, 0.3)`,
+                      color: service.metricColor,
+                    }}
+                  >
+                    {service.metric}
+                  </div>
+                </div>
+              </motion.div>
+            );
+          })}
         </div>
       </div>
     </section>
