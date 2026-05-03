@@ -74,7 +74,7 @@ export default function Services() {
             The businesses we work with book{" "}
             <span className="text-[#7C3AED]">40% more appointments</span> and
             save <span className="text-[#7C3AED]">15+ hours per week</span>.
-            Here's what that looks like:
+            Here&apos;s what that looks like:
           </p>
         </motion.div>
 
