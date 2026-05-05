@@ -16,6 +16,7 @@ import {
   ClipboardList,
   Mic2,
   FileText,
+  Clock,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -25,6 +26,7 @@ const NAV_ITEMS = [
   { href: "/admin/clients", icon: Briefcase, label: "Clients", exact: false },
   { href: "/admin/revenue", icon: TrendingUp, label: "Revenue", exact: false },
   { href: "/admin/agents", icon: Terminal, label: "Agents", exact: false },
+  { href: "/admin/timekeeper", icon: Clock, label: "TimeKeeper", exact: false },
   { href: "/admin/discovery", icon: ClipboardList, label: "Discovery", exact: false },
   { href: "/admin/interview-questionnaire", icon: Mic2, label: "Interview", exact: false },
   { href: "/admin/questionnaire-responses", icon: FileText, label: "Responses", exact: false },

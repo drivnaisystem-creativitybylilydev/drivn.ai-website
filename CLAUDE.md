@@ -11,7 +11,7 @@ drivn
 
 ---
 
-## Current State (Updated 2026-04-25)
+## Current State (Updated 2026-05-03)
 
 ### ✅ Deployed Features
 - **Dashboard** with 377 leads across 21 canonical niches
@@ -19,12 +19,17 @@ drivn
 - **Add Business form** to manually add leads (auto-calculates score)
 - **Niche merging** via drag-and-drop
 - **Status tracking** for each lead (new, called, booked, converted, dismissed)
+- **Services section** redesigned with 6-card outcome-focused showcase (NEW)
+- **Interview Questionnaire** auto-save (localStorage + MongoDB + Email) (NEW)
+- **Case Study Generator** for questionnaire responses (NEW)
+- **Jarvis Model Switching** for cost optimization (dynamic Haiku/Sonnet selection) (NEW)
 
 ### 📊 Data
 - **Total leads:** 377 (zero duplicates)
 - **Top niches:** Landscaper (91), Roofing (63), Junk Removal (57)
 - **Average score:** 77/100
 - **Sources:** MongoDB + manual entries
+- **Interview responses:** Auto-saved to MongoDB + emailed to drivn.ai.system@gmail.com
 
 ### 🔐 Security (CRITICAL)
 - ✅ Old MongoDB password rotated (2026-04-25)
@@ -138,12 +143,13 @@ MONGODB_URI="$(grep MONGODB_URI .env.local | cut -d= -f2-)" node scripts/export-
 
 ## Next Steps / To-Do
 
-- [ ] Update Vercel environment variables with new MongoDB password
-- [ ] Verify dashboard shows 377 leads again
-- [ ] Test "Add Business" form with real input
-- [ ] Monitor new leads being added via manual form
-- [ ] Document any new niches added via manual form
-- [ ] Consider expanding niche list if new categories discovered
+- [ ] Test questionnaire auto-save in browser (verify localStorage + MongoDB + Email flow)
+- [ ] Test case study generator (submit questionnaire, verify PDF/Markdown export)
+- [ ] Verify Jarvis model switching in production (check logs for Haiku vs Sonnet selection)
+- [ ] Test Services section on mobile (responsive design check)
+- [ ] Monitor questionnaire submissions to drivn.ai.system@gmail.com
+- [ ] Consider adding more services if case studies warrant
+- [ ] Measure API cost reduction from Jarvis model optimization
 
 ---
 
@@ -180,7 +186,15 @@ MONGODB_URI="$(grep MONGODB_URI .env.local | cut -d= -f2-)" node scripts/export-
 
 ## Session Context
 
-**Last session:** 2026-04-25, fixed security vulnerabilities, deployed dashboard features  
-**Current session:** 2026-04-25, restored MONGODB_URI to Vercel, redeployed application  
-**Current focus:** Verify dashboard shows 377 leads, enhance sync between OS and website  
-**Immediate next:** Test dashboard in browser, test "Add Business" form, verify OS/website sync
+**Last session:** 2026-04-25, security fixes, MONGODB_URI restored to Vercel  
+**Current session:** 2026-05-03, UI redesigns + interview automation  
+**What was done today:**
+- Redesigned Services section with 6-card outcome-focused showcase
+- Added hybrid questionnaire auto-save (localStorage + MongoDB + Email)
+- Built case study generator for questionnaire responses
+- Optimized Jarvis cost efficiency with dynamic model switching (Haiku vs Sonnet)
+- Linked Interview Questionnaire to admin sidebar
+- Fixed ESLint/TypeScript errors (apostrophe escaping, unused vars)
+
+**Current focus:** Website UX improvements + lead automation + case study generation  
+**Immediate next:** Test questionnaire auto-save flow, verify case studies generate correctly, check Jarvis model switching in production

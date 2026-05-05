@@ -1,0 +1,17 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/save-progress.sh 2>/dev/null || true",
+            "timeout": 10,
+            "statusMessage": "Saving progress to CLAUDE.md..."
+          }
+        ]
+      }
+    ]
+  }
+}
