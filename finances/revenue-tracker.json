@@ -5,22 +5,26 @@
   "goal_6month": 2500,
   "clients": [
     {
-      "name": "NoTime Storage",
+      "name": "Creativity by Lily",
       "status": "active",
+      "contact": "Lily Matthews",
+      "email": "creativitybylilyco@gmail.com",
       "monthly_retainer": 75,
       "setup_fee": 0,
-      "service": "Website + Marketing",
+      "service": "Website + Square Payment + Dashboard",
       "start_date": "2026-03-01",
-      "notes": "College move-in storage, seasonal"
+      "notes": "Jewelry business, e-commerce, direct sales without platform fees"
     },
     {
-      "name": "Local Contractor",
-      "status": "proposal",
-      "monthly_retainer": 100,
+      "name": "NoTime Storage",
+      "status": "active",
+      "contact": "Jermaine Williams",
+      "email": "notimestorage@gmail.com",
+      "monthly_retainer": 90,
       "setup_fee": 800,
-      "service": "Website + Basic Automation",
-      "start_date": null,
-      "notes": "Home service contractor, payment pending"
+      "service": "Website + Stripe Payment + Admin Dashboard",
+      "start_date": "2026-03-01",
+      "notes": "College student summer storage, seasonal peak demand"
     }
   ],
   "expenses": {
