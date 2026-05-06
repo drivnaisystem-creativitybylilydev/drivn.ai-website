@@ -1,0 +1,35 @@
+{
+  "current_mrr": 165,
+  "goal_30day": 500,
+  "goal_3month": 1500,
+  "goal_6month": 2500,
+  "clients": [
+    {
+      "name": "NoTime Storage",
+      "status": "active",
+      "monthly_retainer": 75,
+      "setup_fee": 0,
+      "service": "Website + Marketing",
+      "start_date": "2026-03-01",
+      "notes": "College move-in storage, seasonal"
+    },
+    {
+      "name": "Local Contractor",
+      "status": "proposal",
+      "monthly_retainer": 100,
+      "setup_fee": 800,
+      "service": "Website + Basic Automation",
+      "start_date": null,
+      "notes": "Home service contractor, payment pending"
+    }
+  ],
+  "expenses": {
+    "monthly_fixed": {
+      "claude_pro": 20,
+      "cursor": 20,
+      "mongodb_atlas": 10,
+      "vercel": 0
+    }
+  },
+  "last_updated": "2026-05-06"
+}
