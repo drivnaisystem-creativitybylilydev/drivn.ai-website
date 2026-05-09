@@ -1,0 +1,87 @@
+{
+  "name": "Drivn.AI Operating System",
+  "version": "2.0",
+  "description": "AI agency operations system—client management, agent orchestration, sales workflows, service delivery templates",
+
+  "folders": {
+    "clients": "Active & past client folders with project files, invoices, notes",
+    "deliverables": "Completed projects, case studies, client documentation",
+    "services": "Service delivery templates (Tier 1/2/3), setup guides, configuration",
+    "operations": "Workflows, checklists, agent docs, process documentation",
+    "finances": "Revenue tracker, expense logs, time tracking, profitability analysis",
+    "knowledge-base": "Strategic docs—30-day plan, ICP, sales playbook, goals, offer strategy",
+    "Drivn-AI": "Obsidian vault (reference/archive only, use OS as primary system)"
+  },
+
+  "context-files": [
+    "CLAUDE.md",
+    "knowledge-base/30-DAY-STRATEGY.md",
+    "knowledge-base/OFFER-REFINEMENT.md",
+    "knowledge-base/SALES-PLAYBOOK.md",
+    "knowledge-base/AGENCY-OVERVIEW.md",
+    "finances/revenue-tracker.json",
+    "clients/CLIENTS-TRACKER.md"
+  ],
+
+  "rules": {
+    "file-organization": [
+      "Client work goes in /clients/[CLIENT-NAME]/",
+      "Completed projects go in /deliverables/",
+      "Service templates go in /services/TIER-[1-3]-[SERVICE]/",
+      "All workflows documented in /operations/",
+      "One source of truth per type (not duplicated in Obsidian)"
+    ],
+    "naming": [
+      "Client folders: 01-ClientName (numbered for chronological order)",
+      "Workflows: [ACTION]-WORKFLOW.md",
+      "Checklists: [ACTION]-CHECKLIST.md",
+      "Templates: [SERVICE]-TEMPLATE.[md|html]"
+    ],
+    "agent-invocation": [
+      "JARVIS [query] — Master agent for everything",
+      "jarvis list leads [niche] — Pipeline Scout interface",
+      "jarvis prep [client] for outreach — Lead Nurture",
+      "jarvis analyze [transcript] — Discovery Auditor",
+      "jarvis generate case study [project] — Case Study Builder"
+    ],
+    "no-empty-folders": "Every folder must contain readme.md with its purpose or be deleted"
+  },
+
+  "daily-workflow": [
+    "1. Check /clients/CLIENTS-TRACKER.md → next actions",
+    "2. Review /finances/TIME-TRACKER.md → hours allocation",
+    "3. Run JARVIS briefing → leads + action items",
+    "4. Execute /operations/[RELEVANT]-WORKFLOW.md steps",
+    "5. Update tracker with progress"
+  ],
+
+  "critical-processes": {
+    "sales": "/operations/LEAD-OUTREACH-WORKFLOW.md + /operations/DISCOVERY-CALL-TEMPLATE.md + /operations/SALES-CLOSE-CHECKLIST.md",
+    "delivery": "/services/TIER-1-*/DELIVERY-CHECKLIST.md",
+    "client-onboarding": "/operations/CLIENT-ONBOARDING-WORKFLOW.md",
+    "weekly-review": "/operations/WEEKLY-REVIEW-CHECKLIST.md"
+  },
+
+  "git-strategy": {
+    "auto-commit": "Yes (via pre-commit hook recommended)",
+    "branch": "main only",
+    "ignored": ".DS_Store, .env.local, node_modules, .next",
+    "commit-message-pattern": "[TYPE] Summary: Brief description (e.g., '[UPDATE] Clients: Add CreativityByLily Q2 notes')"
+  },
+
+  "integration-points": {
+    "mongodb": "Website dashboard uses MongoDB for leads. OS exports to JSON files.",
+    "obsidian": "Read-only archive. Update OS first, then copy key insights to vault.",
+    "website": "drivn.ai-website/ in ~/Desktop/. Client leads sync via export script.",
+    "vercel": "Website deployed. CLAUDE.md auto-saves on session exit.",
+    "stripe": "Not integrated yet. Add when scaling payments."
+  },
+
+  "quick-reference": {
+    "revenue": "$165 MRR (2 clients), goal $500 in 30 days",
+    "leads": "377 sourced (21 niches), avg score 77/100",
+    "active-agents": "JARVIS (master), Pipeline Scout (leads), Discovery Auditor (analysis), Case Study Builder (content)",
+    "blocked-agents": "Lead Nurture (no email), Proposal Writer (no templates), KB Updater (no scheduling)",
+    "email": "drivn.ai.system@gmail.com (interview responses, submissions)"
+  }
+}
