@@ -29,7 +29,7 @@ LEADS_DIR.mkdir(exist_ok=True)
 MAPS_ACTOR = "compass~crawler-google-places"
 
 COLUMNS = [
-    "business_name", "category", "city", "phone", "email",
+    "business_name", "category", "city", "address", "phone", "email",
     "website_url", "website_score", "website_issues",
     "google_rating", "review_count",
     "instagram_url", "instagram_followers",
@@ -149,7 +149,7 @@ def analyze_website(url: str) -> tuple[int, str]:
     return max(1, score), (", ".join(issues) if issues else "Functional but improvable")
 
 
-def scrape_maps(city: str, industry: str, limit: int, no_website_only: bool = False, extra_names: list = None) -> list[dict]:
+def scrape_maps(city: str, industry: str, limit: int, no_website_only: bool = False, min_rating: float = 4.0, extra_names: list = None) -> list[dict]:
     print(f"\nPhase 1 — Google Maps: {industry} in {city}  (target: {limit})")
     if no_website_only:
         print("  Filter: NO WEBSITE only (score 10)")
@@ -188,8 +188,8 @@ def scrape_maps(city: str, industry: str, limit: int, no_website_only: bool = Fa
         except Exception:
             rating = 0
 
-        # Filter: 4+ stars (unrated = 0, include those)
-        if rating > 0 and rating < 4.0:
+        # Filter: minimum rating (unrated = 0, always include)
+        if min_rating > 0 and rating > 0 and rating < min_rating:
             continue
 
         website = place.get("website") or ""
@@ -205,10 +205,17 @@ def scrape_maps(city: str, industry: str, limit: int, no_website_only: bool = Fa
         emails = place.get("emails") or []
         email = emails[0] if emails else ""
 
+        address = place.get("address") or place.get("street") or ""
+
+        # Filter: address must contain the target city
+        if city.lower() not in address.lower():
+            continue
+
         lead = {
             "business_name": place.get("title", ""),
             "category":      place.get("categoryName", ""),
             "city":          city,
+            "address":       address,
             "phone":         place.get("phone") or place.get("phoneUnformatted") or "",
             "email":         email,
             "website_url":   website,
@@ -381,6 +388,7 @@ def main():
     parser.add_argument("--industry",        help="Industry keyword in German (e.g. Restaurant, Dachdecker)")
     parser.add_argument("--limit",           type=int, default=50, help="Max leads (default: 50)")
     parser.add_argument("--no-website-only", action="store_true", help="Only return businesses with zero website")
+    parser.add_argument("--min-rating",      type=float, default=4.0, help="Minimum star rating (0 = include all, default: 4.0)")
     parser.add_argument("--enrich",          metavar="CSV_PATH", help="Phase 2: enrich an existing CSV with social data")
     parser.add_argument("--upload-to-sheets",action="store_true", help="Signal Claude to upload CSV to Google Sheets")
     args = parser.parse_args()
@@ -392,7 +400,7 @@ def main():
     if not args.city or not args.industry:
         parser.error("--city and --industry are required for Phase 1")
 
-    leads = scrape_maps(args.city, args.industry, args.limit, no_website_only=args.no_website_only)
+    leads = scrape_maps(args.city, args.industry, args.limit, no_website_only=args.no_website_only, min_rating=args.min_rating)
 
     if not leads:
         print("\n[!] No qualified leads found. Try a different city or industry.")
