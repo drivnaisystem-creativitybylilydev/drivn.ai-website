@@ -31,24 +31,37 @@ export const caseStudies: CaseStudy[] = [
   {
     slug: "notime-storage",
     title: "NoTime Storage",
-    subheading: "College move-in service",
+    subheading: "College move-in & seasonal storage",
     sector: "Seasonal storage & logistics",
     timeline: "Ongoing partnership",
-    heroLine: "From chaotic peaks to a system that books while the team sleeps.",
+    heroLine:
+      "A credible front door, bookings on the customer’s schedule, and operations that keep pace when demand surges.",
     intro:
-      "They came to us with a problem: growth was chaos. We solved it. The details of how stay between us and our clients — but the outcome speaks for itself.",
+      "Founder Jermaine Williams built demand through hustle—then needed a real presence and a single system for quotes, bookings, and payments. We partnered to bring the NoTime Storage vision online: professional, automated, and easy to run.",
     challenge:
-      "Demand spiked hard at semester boundaries. Manual follow-up, scattered tools, and no single view of the pipeline meant revenue leaked every rush.",
+      "Leads and bookings lived in DMs and word of mouth—hard to organize alongside payments and scheduling. A trustworthy website was missing as the first impression new customers expect.",
     approach:
-      "We replaced ad-hoc workflows with revenue infrastructure: capture, qualification, and booking paths that run without constant human babysitting — tuned to their seasonality and brand voice.",
+      "We designed and built their branded booking path end-to-end: self-serve scheduling, card-ready checkout, confirmations, deposits, and a dashboard so the team can see traction without living in the inbox—flexible enough to match how they already sell the service.",
     stats: [
-      { label: "Bookings / semester", value: "50 → 200+", hint: "Same core team" },
-      { label: "Headcount", value: "0 added", hint: "Automation-first" },
+      {
+        label: "Operations",
+        value: "Unified",
+        hint: "Bookings, payments, and follow-up in one flow",
+      },
+      {
+        label: "Customer experience",
+        value: "Always on",
+        hint: "Instant booking when people are ready to commit",
+      },
     ],
     outcome:
-      "Qualified demand now converts on the clock, not when someone happens to check the inbox. The business scales through peaks without hiring into the spike.",
-    resultSummary: "50 → 200+ bookings per semester. No additional staff.",
-    cardResultLines: ["50 → 200+ bookings per semester.", "No additional staff."],
+      "The heavy lifting moves through the product: less manual chasing, clearer credibility, and more room to focus on strategy and growth. For Jermaine, the through-line is simple—partnership with a team that treats the business like their own.",
+    resultSummary:
+      "Credibility, unified bookings & payments, and time back for growth—with a true partner in the build.",
+    cardResultLines: [
+      "Credible presence + bookings when customers are ready.",
+      "Unified operations—more space for strategy, not spreadsheets.",
+    ],
     cardLogoSrc: "/case-studies/notime-storage/notime-storage-logo.png",
     cardLogoAlt: "NoTime Storage logo",
   },
