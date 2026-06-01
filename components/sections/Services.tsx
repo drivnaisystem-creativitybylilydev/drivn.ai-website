@@ -1,160 +1,240 @@
 "use client";
 
-import { Phone, Zap, Star, Receipt, BarChart3, Globe } from "lucide-react";
 import { motion } from "framer-motion";
+import { Globe, TrendingUp, Phone, Zap, Settings2 } from "lucide-react";
 import { viewRelaxed } from "@/lib/motion-viewport";
 
-const services = [
-  {
-    icon: Phone,
-    title: "Every Call Captured",
-    description:
-      "No more voicemail. No more \"sorry we missed you.\" Your calls get answered 24/7, leads get qualified, and appointments land directly in your calendar—whether you're on a job site or home for dinner.",
-    metric: "40% More Appointments Booked",
-    metricColor: "#10B981",
-  },
-  {
-    icon: Zap,
-    title: "Instant Follow-Up",
-    description:
-      "Leads go cold in hours, not days. Your prospects get an SMS within 60 seconds of inquiring, stay warm with automated check-ins, and book when they're ready—no manual chasing required.",
-    metric: "25% More Leads Closed",
-    metricColor: "#10B981",
-  },
-  {
-    icon: Star,
-    title: "Reviews On Autopilot",
-    description:
-      "Every completed job becomes a review request automatically. Your Google rating climbs while you sleep, and you stay ahead of competitors without ever asking customers manually.",
-    metric: "3-5 New Reviews Every Month",
-    metricColor: "#10B981",
-  },
-  {
-    icon: Receipt,
-    title: "Quotes In Seconds",
-    description:
-      "Customer fills out a form, they get a detailed quote via text or email instantly. No more spending your evenings writing estimates—close deals faster because you're the first to put a number in front of them.",
-    metric: "5-10 Hours Saved Per Week",
-    metricColor: "#3B82F6",
-  },
-  {
-    icon: BarChart3,
-    title: "Custom Operating Systems",
-    description:
-      "Custom dashboards that show bookings, revenue, and customer data in one place. Manage your entire business from your phone without hiring another admin—growth without adding headcount.",
-    metric: "15+ Hours Saved Per Week",
-    metricColor: "#3B82F6",
-  },
-  {
-    icon: Globe,
-    title: "Websites That Convert",
-    description:
-      "Fast, modern sites built for one job: turning visitors into booked appointments. No WordPress bloat, no outdated design—just clean code, mobile-first, and live in under two weeks.",
-    metric: "Live In 1-2 Weeks",
-    metricColor: "#7C3AED",
-  },
-];
+const SPRING = [0.32, 0.72, 0, 1] as const;
 
+// ── Tag pill pattern (replaces CheckCircle2 bullet list) ──────────────────
+function Tags({ items }: { items: string[] }) {
+  return (
+    <div className="flex flex-wrap gap-1.5 mt-auto pt-4">
+      {items.map((tag) => (
+        <span
+          key={tag}
+          className="inline-flex text-[11px] font-medium px-2.5 py-[5px] rounded-full"
+          style={{
+            background: "rgba(139,92,246,0.07)",
+            color: "rgba(167,139,250,0.72)",
+            border: "1px solid rgba(139,92,246,0.14)",
+          }}
+        >
+          {tag}
+        </span>
+      ))}
+    </div>
+  );
+}
+
+// ── Doppelrand card shell ─────────────────────────────────────────────────
+function Card({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+  return (
+    <div className="doppelrand-shell h-full">
+      <div className={`doppelrand-core p-7 h-full flex flex-col ${className}`}>
+        {children}
+      </div>
+    </div>
+  );
+}
+
+// ── Inline icon + heading ─────────────────────────────────────────────────
+function CardHead({
+  icon: Icon,
+  title,
+}: {
+  icon: React.ElementType<React.SVGProps<SVGSVGElement> & { strokeWidth?: number }>;
+  title: string;
+}) {
+  return (
+    <div className="flex items-center gap-2.5 mb-3">
+      <Icon
+        style={{ width: 18, height: 18, color: "#a78bfa", flexShrink: 0 }}
+        strokeWidth={1.75}
+      />
+      <h3 className="font-sora text-[17px] font-semibold text-white leading-tight">
+        {title}
+      </h3>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────
 export default function Services() {
   return (
-    <section id="services" className="pt-20 md:pt-24 pb-16 md:pb-20">
-      <div className="max-w-7xl mx-auto px-4 md:px-8">
-        {/* Hero banner */}
+    <section id="services" className="relative py-14 md:py-20 overflow-hidden">
+      <div className="container-max">
+
+        {/* Header — left-aligned, no eyebrow pill */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 14 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={viewRelaxed}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-20"
+          transition={{ duration: 0.6, ease: SPRING }}
+          className="mb-10 md:mb-12"
         >
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-sora font-semibold text-white mb-6">
-            What We Solve
+          <div className="flex items-center gap-3 mb-5">
+            <div style={{ width: 28, height: 1, background: "rgba(139,92,246,0.55)", borderRadius: 1 }} />
+            <span
+              className="text-[11px] font-medium uppercase tracking-[0.20em]"
+              style={{ color: "rgba(139,92,246,0.60)" }}
+            >
+              What We Build
+            </span>
+          </div>
+          <h2 className="font-sora text-[clamp(28px,4.5vw,48px)] font-semibold leading-[1.1] tracking-[-0.02em] max-w-[580px] text-balance text-white">
+            Everything your business needs to turn leads into booked jobs.
           </h2>
-          <p className="text-xl md:text-2xl text-gray-400 max-w-3xl mx-auto leading-relaxed">
-            The businesses we work with book{" "}
-            <span className="text-[#7C3AED]">40% more appointments</span> and
-            save <span className="text-[#7C3AED]">15+ hours per week</span>.
-            Here&apos;s what that looks like:
-          </p>
         </motion.div>
 
-        {/* 6-card grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-6">
-          {services.map((service, i) => {
-            const Icon = service.icon;
-            return (
-              <motion.div
-                key={service.title}
-                initial={{ opacity: 0, y: 24 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={viewRelaxed}
-                transition={{
-                  duration: 0.6,
-                  delay: i * 0.1,
-                  ease: [0.22, 1, 0.36, 1],
-                }}
-                className="group h-full"
+        {/* ── Row 1: AI Receptionist (wide) + Instant Follow-Up (narrow) ── */}
+        <div className="grid grid-cols-1 lg:grid-cols-[7fr_5fr] gap-4 mb-4">
+
+          {/* Card 1 — AI Receptionist: hero card, y entrance */}
+          <motion.div
+            initial={{ opacity: 0, y: 22 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={viewRelaxed}
+            transition={{ duration: 0.6, ease: SPRING, delay: 0.05 }}
+            className="h-full"
+          >
+            <Card>
+              <CardHead icon={Phone} title="AI Receptionist" />
+              <p
+                className="text-[14px] leading-relaxed mb-2"
+                style={{ color: "rgba(239,240,243,0.72)" }}
               >
-                <div
-                  className="h-full p-8 md:p-10 rounded-3xl transition-all duration-300 hover:translate-y-[-4px] flex flex-col"
-                  style={{
-                    background: "rgba(17, 24, 39, 0.6)",
-                    backdropFilter: "blur(16px)",
-                    WebkitBackdropFilter: "blur(16px)",
-                    border: "1px solid rgba(124, 58, 237, 0.2)",
-                    boxShadow: "0 0 50px rgba(124, 58, 237, 0.3)",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.borderColor =
-                      "rgba(124, 58, 237, 0.4)";
-                    e.currentTarget.style.boxShadow =
-                      "0 4px 70px rgba(124, 58, 237, 0.5)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.borderColor =
-                      "rgba(124, 58, 237, 0.2)";
-                    e.currentTarget.style.boxShadow =
-                      "0 0 50px rgba(124, 58, 237, 0.3)";
-                  }}
+                An AI that answers calls, chats, and form submissions around the clock — qualifying inquiries and booking appointments without you picking up the phone. Runs while you work.
+              </p>
+              <div
+                className="my-4 rounded-xl px-4 py-3"
+                style={{
+                  background: "rgba(139,92,246,0.05)",
+                  border: "1px solid rgba(139,92,246,0.12)",
+                }}
+              >
+                <span
+                  className="text-[13px] font-semibold font-sora"
+                  style={{ color: "#a78bfa" }}
                 >
-                  {/* Icon circle */}
-                  <div className="mb-6 inline-block">
-                    <div
-                      className="w-20 h-20 rounded-full flex items-center justify-center transition-transform duration-300 group-hover:scale-110"
-                      style={{
-                        background: "rgba(124, 58, 237, 0.1)",
-                        border: "1px solid rgba(124, 58, 237, 0.3)",
-                        boxShadow: "0 0 30px rgba(124, 58, 237, 0.4)",
-                      }}
-                    >
-                      <Icon className="w-10 h-10" style={{ color: "#A78BFA" }} />
-                    </div>
-                  </div>
+                  &ldquo;You missed 11 calls last month. That&apos;s 11 potential jobs.&rdquo;
+                </span>
+              </div>
+              <Tags
+                items={["Answers calls 24/7", "Qualifies leads", "Books to calendar", "No staff needed"]}
+              />
+            </Card>
+          </motion.div>
 
-                  {/* Content */}
-                  <h3 className="text-2xl font-sora font-semibold text-white mb-4">
-                    {service.title}
-                  </h3>
-                  <p className="text-gray-400 text-base leading-relaxed mb-6 flex-grow">
-                    {service.description}
-                  </p>
-
-                  {/* Metric badge */}
-                  <div
-                    className="inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold"
-                    style={{
-                      background: `rgba(${parseInt(service.metricColor.slice(1, 3), 16)}, ${parseInt(service.metricColor.slice(3, 5), 16)}, ${parseInt(service.metricColor.slice(5, 7), 16)}, 0.1)`,
-                      border: `1px solid rgba(${parseInt(service.metricColor.slice(1, 3), 16)}, ${parseInt(service.metricColor.slice(3, 5), 16)}, ${parseInt(service.metricColor.slice(5, 7), 16)}, 0.3)`,
-                      color: service.metricColor,
-                    }}
-                  >
-                    {service.metric}
-                  </div>
-                </div>
-              </motion.div>
-            );
-          })}
+          {/* Card 2 — Instant Follow-Up: x entrance from right */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={viewRelaxed}
+            transition={{ duration: 0.6, ease: SPRING, delay: 0.12 }}
+            className="h-full"
+          >
+            <Card>
+              <CardHead icon={Zap} title="Instant Follow-Up" />
+              <p
+                className="text-[14px] leading-relaxed"
+                style={{ color: "rgba(239,240,243,0.72)" }}
+              >
+                Every new inquiry gets an automatic SMS or email within seconds — before they contact anyone else. Speed is your biggest competitive advantage.
+              </p>
+              <Tags
+                items={["SMS + email under 60s", "Nurture sequences", "Cold lead re-engagement", "Source-based triggers"]}
+              />
+            </Card>
+          </motion.div>
         </div>
+
+        {/* ── Row 2: Website + Visibility (narrow) + Automation (wide) — inverted ratio ── */}
+        <div className="grid grid-cols-1 lg:grid-cols-[5fr_7fr] gap-4">
+
+          {/* Card 3 — Website & Visibility: x entrance from left */}
+          <motion.div
+            initial={{ opacity: 0, x: -18 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={viewRelaxed}
+            transition={{ duration: 0.6, ease: SPRING, delay: 0.08 }}
+            className="h-full"
+          >
+            <Card>
+              {/* Two sub-services in one card */}
+              <div className="flex flex-col gap-5 h-full">
+                <div>
+                  <CardHead icon={Globe} title="Website & Lead Capture" />
+                  <p
+                    className="text-[13px] leading-relaxed"
+                    style={{ color: "rgba(239,240,243,0.68)" }}
+                  >
+                    Designed to convert, not just look good. Live in under 2 weeks with forms wired to your follow-up system.
+                  </p>
+                </div>
+                <div
+                  className="border-t"
+                  style={{ borderColor: "rgba(255,255,255,0.06)" }}
+                />
+                <div className="flex-1">
+                  <CardHead icon={TrendingUp} title="Visibility & Trust" />
+                  <p
+                    className="text-[13px] leading-relaxed"
+                    style={{ color: "rgba(239,240,243,0.68)" }}
+                  >
+                    Automatic review requests, Google Business Profile optimization, and local SEO — so your reputation grows on autopilot.
+                  </p>
+                </div>
+                <Tags items={["Live in 2 weeks", "Auto reviews", "Local SEO", "Google profile"]} />
+              </div>
+            </Card>
+          </motion.div>
+
+          {/* Card 4 — Automation & Operations: y entrance from below */}
+          <motion.div
+            initial={{ opacity: 0, y: 22 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={viewRelaxed}
+            transition={{ duration: 0.6, ease: SPRING, delay: 0.15 }}
+            className="h-full"
+          >
+            <Card>
+              <CardHead icon={Settings2} title="Automation & Operations" />
+              <p
+                className="text-[14px] leading-relaxed mb-2"
+                style={{ color: "rgba(239,240,243,0.72)" }}
+              >
+                Stop doing manually what a system can do for you. Confirmations, reminders, follow-up sequences, and pipeline updates — all running on autopilot so you can focus on the job.
+              </p>
+              {/* Stat callout */}
+              <div className="flex gap-6 my-4">
+                {[
+                  { value: "3.2×", label: "more leads contacted" },
+                  { value: "—47%", label: "admin time saved" },
+                ].map(({ value, label }) => (
+                  <div key={label} className="flex flex-col gap-0.5">
+                    <span
+                      className="font-sora text-[22px] font-semibold leading-none"
+                      style={{ color: "#a78bfa" }}
+                    >
+                      {value}
+                    </span>
+                    <span
+                      className="text-[11px] leading-snug"
+                      style={{ color: "rgba(239,240,243,0.42)" }}
+                    >
+                      {label}
+                    </span>
+                  </div>
+                ))}
+              </div>
+              <Tags
+                items={["Appointment reminders", "Follow-up sequences", "CRM pipeline", "Custom workflows"]}
+              />
+            </Card>
+          </motion.div>
+        </div>
+
       </div>
     </section>
   );

@@ -13,10 +13,12 @@ const config: Config = {
         xs: "375px",
       },
       colors: {
-        "brand-purple": "#8B5CF6",
+        "brand-purple":       "#8B5CF6",
         "brand-purple-light": "#A78BFA",
-        "brand-dark": "#0A0A1A",
-        surface: "#1A1A2E",
+        "brand-dark":         "#08091A",
+        surface:              "#0F1220",
+        "surface-2":          "#161C30",
+        "surface-3":          "#1D2440",
         border: "hsl(var(--border))",
       },
       fontFamily: {
@@ -25,6 +27,10 @@ const config: Config = {
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
+      },
+      transitionTimingFunction: {
+        spring:          "cubic-bezier(0.32, 0.72, 0, 1)",
+        "spring-snap":   "cubic-bezier(0.22, 1, 0.36, 1)",
       },
       fontSize: {
         xs: "clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem)",
