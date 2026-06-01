@@ -1,27 +1,19 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/sections/Footer";
-import { CaseStudyView } from "@/components/case-study/CaseStudyView";
-import { getCaseStudyBySlug } from "@/lib/case-studies";
+import { NoTimeStorageCaseStudy } from "@/components/case-study/notime-storage/NoTimeStorageCaseStudy";
 
-export async function generateMetadata(): Promise<Metadata> {
-  const study = getCaseStudyBySlug("notime-storage");
-  if (!study) return { title: "Case study | Drivn.AI" };
-  return {
-    title: `${study.title} — Case study | Drivn.AI`,
-    description: study.heroLine,
-  };
-}
+export const metadata: Metadata = {
+  title: "NoTime Storage — Case study | Drivn.AI",
+  description:
+    "From DMs and hustle to a system that books while you sleep: 24/7 self-serve booking, unified Stripe payments, and a credible web presence for NoTime Storage.",
+};
 
 export default function NoTimeStorageCaseStudyPage() {
-  const study = getCaseStudyBySlug("notime-storage");
-  if (!study) notFound();
-
   return (
     <>
       <Navigation />
-      <CaseStudyView study={study} />
+      <NoTimeStorageCaseStudy />
       <Footer />
     </>
   );
