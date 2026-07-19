@@ -1,0 +1,488 @@
+{
+  "Ticker": {
+    "items": [
+      "SPEED-TO-LEAD",
+      "AI OPERATING SYSTEMS",
+      "WEBSITES THAT CONVERT",
+      "SYSTEMS YOU OWN",
+      "NO TEMPLATES",
+      "FIND IT. BUILD IT."
+    ]
+  },
+  "Navigation": {
+    "problem": "Problem",
+    "services": "Services",
+    "results": "Results",
+    "process": "Process",
+    "industries": "Industries",
+    "cta": "Book Free Audit"
+  },
+  "Hero": {
+    "eyebrow": "For Business Owners & Operators",
+    "eyebrow_overlay": "AI Consulting",
+    "headline1": "Run the Business.",
+    "headline2": "Don't Let It Run You.",
+    "subheadline": "The right system depends on your business, not a template. We find it. We build it.",
+    "cta_primary": "Book a Free Systems Audit",
+    "cta_secondary": "See What We've Built",
+    "pipeline_label": "Lead Pipeline",
+    "pipeline_live": "LIVE",
+    "scroll_label": "Scroll to problem section"
+  },
+  "DashboardVisual": {
+    "window_title": "Operations Dashboard",
+    "metrics": [
+      {
+        "value": "128",
+        "label": "Leads Answered"
+      },
+      {
+        "value": "52s",
+        "label": "Avg Response"
+      },
+      {
+        "value": "4",
+        "label": "Systems Active"
+      },
+      {
+        "value": "98%",
+        "label": "Success Rate"
+      }
+    ],
+    "timeline_label": "Lead Volume",
+    "timeline_range": "1W",
+    "timeline_stats": [
+      {
+        "label": "Peak",
+        "value": "84"
+      },
+      {
+        "label": "Avg",
+        "value": "47"
+      },
+      {
+        "label": "Low",
+        "value": "19"
+      }
+    ],
+    "activity_label": "Recent Activity",
+    "activity": [
+      {
+        "text": "New lead from contact form",
+        "time": "2m ago"
+      },
+      {
+        "text": "Follow-up sent automatically",
+        "time": "5m ago"
+      },
+      {
+        "text": "Booking confirmed — Tues 2pm",
+        "time": "12m ago"
+      },
+      {
+        "text": "Review request sent",
+        "time": "18m ago"
+      }
+    ],
+    "volume_label": "Response Volume",
+    "volume_range": "Last 7 days",
+    "data_label": "Data Pipeline",
+    "data_total": "4 sources",
+    "data_items": [
+      {
+        "name": "leads",
+        "count": "1.2K records"
+      },
+      {
+        "name": "bookings",
+        "count": "340 records"
+      },
+      {
+        "name": "follow_ups",
+        "count": "2.8K records"
+      },
+      {
+        "name": "reviews",
+        "count": "96 records"
+      }
+    ]
+  },
+  "Problem": {
+    "headline": "Most businesses don't need more leads. They need a system that converts the ones they already get.",
+    "beats": [
+      {
+        "lead": "A lead comes in and waits.",
+        "body": "Five minutes is usually enough for it to go cold. Most businesses take longer than that just to notice it arrived."
+      },
+      {
+        "lead": "Consistency is the first thing to slip.",
+        "body": "Content, outreach, follow-up: the things that compound over time are also the easiest to skip when the week gets busy. So they get skipped."
+      },
+      {
+        "lead": "Nobody can see the whole picture.",
+        "body": "Leads live in one place, bookings in another, and the actual state of the business lives in nobody's head. Not from a lack of care. From a lack of a system."
+      }
+    ],
+    "bottom_line1": "You don't need more tools.",
+    "bottom_line2": "You need one system that works whether or not you're the one running it.",
+    "bottom_cta": "See the system"
+  },
+  "CoreOffer": {
+    "number": "03",
+    "headline": "One connected system that turns leads into booked appointments.",
+    "subtext": "Five pieces. All connected. Tap any node to explore.",
+    "cta": "Book a Free Lead Conversion Audit",
+    "disclaimer": "15-minute call. No pitch. Just clarity on where you're losing leads.",
+    "timeline": [
+      {
+        "title": "Website & Lead Capture",
+        "date": "Foundation",
+        "content": "High-converting site with forms wired directly into your follow-up system so every inquiry is captured.",
+        "category": "Web"
+      },
+      {
+        "title": "Instant Follow-Up",
+        "date": "Automation",
+        "content": "Every inquiry gets an automatic SMS or email within 60 seconds — before they call anyone else.",
+        "category": "AI"
+      },
+      {
+        "title": "Appointment Booking",
+        "date": "Scheduling",
+        "content": "Leads book directly into your calendar. No phone tag, no back-and-forth. Jobs land while you work.",
+        "category": "Booking"
+      },
+      {
+        "title": "CRM & Lead Tracking",
+        "date": "Pipeline",
+        "content": "Every inquiry tracked in one place — see who's new, booked, or needs a nudge at a glance.",
+        "category": "CRM"
+      },
+      {
+        "title": "Review Automation",
+        "date": "Growth",
+        "content": "After every completed job, your system automatically asks for a Google review. Your rating climbs without you lifting a finger.",
+        "category": "Reviews"
+      }
+    ]
+  },
+  "Services": {
+    "eyebrow": "What We Build",
+    "headline": "Six systems. Built around how your business actually runs.",
+    "learn_more": "Learn more",
+    "panels": [
+      {
+        "eyebrow": "Speed-to-Lead — Messaging",
+        "headline": "Every message answered in seconds, on whatever app the lead already has open.",
+        "subtext": "Stores everything in a CRM — yours or one we build — and answers from a knowledge brain trained on your business, not a generic script.",
+        "bullets": [
+          {
+            "title": "Any Inbox",
+            "desc": "WhatsApp, Instagram, SMS — wherever the conversation starts."
+          },
+          {
+            "title": "Pre-Qualified",
+            "desc": "Asks the right questions before it ever reaches you."
+          },
+          {
+            "title": "Books It In",
+            "desc": "Confirms the appointment, no back-and-forth."
+          },
+          {
+            "title": "Reviews, Too",
+            "desc": "Requests the Google review automatically once the job's done."
+          }
+        ],
+        "cta": "See Speed-to-Lead",
+        "href": "/services/speed-to-lead"
+      },
+      {
+        "eyebrow": "Speed-to-Lead — Voice",
+        "headline": "A receptionist that actually answers — and does the admin work after.",
+        "subtext": "Books appointments, sends confirmations, handles reschedules, and hands off to a real person only when it actually needs to.",
+        "bullets": [
+          {
+            "title": "Answers Every Call",
+            "desc": "No more missed calls going to voicemail."
+          },
+          {
+            "title": "Real Conversations",
+            "desc": "Not a phone tree — it understands what's actually being asked."
+          },
+          {
+            "title": "Handles The Admin",
+            "desc": "Confirmations, reschedules, follow-up — the parts a receptionist does between calls."
+          },
+          {
+            "title": "Knows When To Escalate",
+            "desc": "Hands off to a real person the moment it should."
+          }
+        ],
+        "cta": "See Speed-to-Lead",
+        "href": "/services/speed-to-lead"
+      },
+      {
+        "eyebrow": "Websites",
+        "headline": "A site built to convert, live in under two weeks.",
+        "subtext": "Not a template — built around how leads actually reach you, with follow-up wired in from day one.",
+        "bullets": [
+          {
+            "title": "Built To Convert",
+            "desc": "Every page designed around one next step, not just a look."
+          },
+          {
+            "title": "Live In 2 Weeks",
+            "desc": "From kickoff to launch, not months of back-and-forth."
+          },
+          {
+            "title": "Auto Review Requests",
+            "desc": "Built in, not bolted on after."
+          },
+          {
+            "title": "Local SEO Included",
+            "desc": "Found by the people already searching for you."
+          }
+        ],
+        "cta": "See Websites",
+        "href": "/services/websites"
+      },
+      {
+        "eyebrow": "Marketing",
+        "headline": "Paid and organic, run as one system instead of two separate hires.",
+        "subtext": "Meta, Google, and LinkedIn campaigns paired with the content that keeps the audience they build.",
+        "bullets": [
+          {
+            "title": "Paid Lead Gen",
+            "desc": "Meta, Google, and LinkedIn Sales Navigator, AI-assisted end to end."
+          },
+          {
+            "title": "Content That Compounds",
+            "desc": "LinkedIn, Instagram, and Facebook — planned, not improvised."
+          },
+          {
+            "title": "One System",
+            "desc": "Ads and content built to reinforce each other, not run separately."
+          },
+          {
+            "title": "AI-Leveraged",
+            "desc": "Faster creative and targeting iteration than a typical agency retainer."
+          }
+        ],
+        "cta": "See Marketing",
+        "href": "/services/marketing"
+      },
+      {
+        "eyebrow": "Workflow Automation",
+        "headline": "Custom automations for the admin work eating your week.",
+        "subtext": "Built around your actual workflow, not a generic template — so the tedious, repetitive parts of the job just happen.",
+        "bullets": [
+          {
+            "title": "End-to-End",
+            "desc": "From trigger to resolution, no manual steps in between."
+          },
+          {
+            "title": "Built For Your Workflow",
+            "desc": "Shaped around how you actually work, not a generic template."
+          },
+          {
+            "title": "Any Admin Task",
+            "desc": "Inbox triage, data entry, follow-ups — whatever eats the most time."
+          },
+          {
+            "title": "Always On",
+            "desc": "Runs in the background, every time, without reminders."
+          }
+        ],
+        "cta": "See Workflow Automation",
+        "href": "/services/workflow-automation"
+      },
+      {
+        "eyebrow": "Full-Stack Operating System",
+        "headline": "The entire business, running on one system you actually own.",
+        "subtext": "Leads, bookings, marketing, reviews — in one place instead of five disconnected tools. Standalone, or as the layer everything else plugs into.",
+        "bullets": [
+          {
+            "title": "Unified Dashboard",
+            "desc": "Every system in one view, not five logins."
+          },
+          {
+            "title": "Real-Time Reporting",
+            "desc": "See what's happening as it happens."
+          },
+          {
+            "title": "One Login, Not Five",
+            "desc": "Less software to manage, not more."
+          },
+          {
+            "title": "Built Around You",
+            "desc": "Standalone, or connected to every other system we build."
+          }
+        ],
+        "cta": "See the Operating System",
+        "href": "/services/ai-operating-systems"
+      }
+    ]
+  },
+  "HowItWorks": {
+    "number": "04",
+    "headline": "We find it. We build it.",
+    "steps": [
+      {
+        "title": "Audit",
+        "subtitle": "Where the business actually loses time",
+        "description": "We map how leads, bookings, and follow-up really move through the business today — not how it's supposed to work on paper."
+      },
+      {
+        "title": "Consultation",
+        "subtitle": "What a system would need to do",
+        "description": "We walk through what we found and tell you exactly what's worth building. If the fit isn't there, we say so before anything starts."
+      },
+      {
+        "title": "Build",
+        "subtitle": "Built around your workflow, not a template",
+        "description": "The system gets built around how you actually run the business — not bent to fit an off-the-shelf tool."
+      },
+      {
+        "title": "Testing",
+        "subtitle": "Checked against real scenarios",
+        "description": "Every flow gets tested against real leads, real edge cases, and real mistakes before it ever touches a customer."
+      },
+      {
+        "title": "Deployment",
+        "subtitle": "Live, connected, nothing half-wired",
+        "description": "It goes live connected to the tools you already use — no loose ends, no manual patchwork left behind."
+      },
+      {
+        "title": "Ongoing Service",
+        "subtitle": "We stay on to tune it",
+        "description": "We stay on to tune the system against how it's actually being used. You're not on your own the day it launches."
+      }
+    ]
+  },
+  "TrustOwnership": {
+    "eyebrow": "How We Work",
+    "headline": "You Own It. We Stay On.",
+    "subtext": "Everything we build is yours outright — not something you rent from us. We stay on as a partner for as long as it's useful, never because you're locked in.",
+    "points": [
+      {
+        "title": "Full ownership",
+        "body": "Accounts, systems, and data are yours from day one."
+      },
+      {
+        "title": "Ongoing support, not a subscription trap",
+        "body": "You stay because it's working, not because you're stuck."
+      },
+      {
+        "title": "A partner, not a vendor",
+        "body": "We're invested in it continuing to work, not just shipping it and moving on."
+      }
+    ]
+  },
+  "Industries": {
+    "eyebrow": "Who We Work With",
+    "headline": "Built for owners who'd rather run the business than chase it.",
+    "subtext": "You already have steady demand. What's missing is the system to convert it — less time lost to manual follow-up, less ground given up to competitors already using this technology, more room to grow.",
+    "items": [
+      {
+        "label": "Professional Services & Consulting",
+        "desc": "Slow admin and inconsistent follow-up eating into billable time"
+      },
+      {
+        "label": "Coaching & Executive Coaching",
+        "desc": "Content, outreach, and client intake that shouldn't take hours a week"
+      },
+      {
+        "label": "Hospitality & Luxury Service",
+        "desc": "High-value bookings lost to slow response and manual quoting"
+      },
+      {
+        "label": "Moving & Logistics",
+        "desc": "Quote requests and booking conversion during peak demand"
+      },
+      {
+        "label": "Home Services",
+        "desc": "Missed calls and seasonal demand spikes"
+      },
+      {
+        "label": "Wellness & Med Spa",
+        "desc": "High-ticket bookings and repeat-visit follow-up"
+      }
+    ],
+    "footer_text": "Don't see what you do listed? If your business runs on leads, calls, or relationships, we've likely built a system for something like it.",
+    "footer_cta": "Let's talk"
+  },
+  "CaseStudies": {
+    "eyebrow": "Proof",
+    "headline": "Real businesses. Real results.",
+    "subtext": "We don't just build systems — we measure what happens after.",
+    "read_cta": "Read case study",
+    "cta": "See our work",
+    "coming_soon_badge": "Coming Soon",
+    "coming_soon_cta": "Coming soon"
+  },
+  "HomeFAQ": {
+    "eyebrow": "FAQ",
+    "headline": "Common questions.",
+    "footer_text": "Still have something else in mind? Just book a call — we'll answer it in 10 minutes.",
+    "faqs": [
+      {
+        "q": "How is this different from just buying a SaaS tool or template?",
+        "a": "SaaS tools and templates assume every business works the same way. We start by understanding how yours actually runs, then build the system for that — not the other way around."
+      },
+      {
+        "q": "How long does it take to see something live?",
+        "a": "It depends on the system — a website is usually live in about 2 weeks, a fuller operating system takes longer. You get a clear timeline after the Find It phase, once we know exactly what's being built."
+      },
+      {
+        "q": "What do we actually own after the build?",
+        "a": "Everything — accounts, systems, and data are yours from day one. It's yours whether or not you keep working with us."
+      },
+      {
+        "q": "Do you work with businesses that already have some of this in place?",
+        "a": "Yes. Part of the Find It phase is figuring out what's already working and should stay, versus what's actually costing you. We don't rip out things that work just to sell something new."
+      },
+      {
+        "q": "What if it doesn't work the way we expected?",
+        "a": "We stay on after launch specifically to tune it against real usage — that's part of the partnership, not a separate charge. If something's off, we fix it."
+      }
+    ]
+  },
+  "FinalCTA": {
+    "eyebrow": "Free Systems Audit",
+    "setup": "If you're still the one holding the business together,",
+    "punchline": "that's not a discipline problem. It's a systems problem.",
+    "body": "Book a free 15-minute Systems Audit. We'll look at how the business actually runs today and tell you exactly what it would take to fix what's costing you time or money. No pitch. No obligation.",
+    "cta": "Book a Free Systems Audit",
+    "tokens": [
+      "15 minutes",
+      "No sales pitch",
+      "Actual audit — not a demo",
+      "Keep insights either way"
+    ]
+  },
+  "Footer": {
+    "tagline": "Systems built around how your business actually runs.",
+    "copyright": "© 2026 Drivn.AI",
+    "problem": "Problem",
+    "services": "Services",
+    "results": "Results",
+    "process": "Process",
+    "industries": "Industries",
+    "contact": "Contact",
+    "privacy": "Privacy",
+    "impressum": "Legal Notice"
+  },
+  "CookieConsent": {
+    "title": "We use cookies",
+    "body": "We use essential cookies to run this site, and only add optional analytics or marketing cookies if you say yes.",
+    "linkLabel": "Learn more",
+    "reject": "Reject",
+    "accept": "Accept all"
+  },
+  "ComingSoon": {
+    "eyebrow": "Case Study",
+    "title": "This case study is still being written.",
+    "subtext": "NoTime Mover is a business Drivn.AI co-founded and helped build end-to-end. The full story is coming soon.",
+    "back_cta": "Back to all work"
+  }
+}

@@ -12,8 +12,8 @@ import {
 } from "lucide-react";
 
 const STAGES = [
-  { label: "New Lead",         Icon: UserPlus,      accent: "#a78bfa", sub: "Inquiry received" },
-  { label: "Contacted",        Icon: Phone,         accent: "#a78bfa", sub: "Auto-response sent in 41s" },
+  { label: "New Lead",         Icon: UserPlus,      accent: "#ddbf8f", sub: "Inquiry received" },
+  { label: "Contacted",        Icon: Phone,         accent: "#ddbf8f", sub: "Auto-response sent in 41s" },
   { label: "Qualified",        Icon: CheckCircle,   accent: "#818cf8", sub: "Lead scored & confirmed" },
   { label: "Booked",           Icon: CalendarCheck, accent: "#60a5fa", sub: "Appointment confirmed" },
   { label: "Completed",        Icon: Briefcase,     accent: "#4ade80", sub: "Job completed" },
@@ -207,7 +207,7 @@ export function CRMPipeline() {
       {/* Footer label */}
       <motion.p
         className="text-center text-[10px] uppercase tracking-[0.18em] font-semibold mt-3"
-        style={{ color: "rgba(139,92,246,0.45)" }}
+        style={{ color: "rgba(201,168,118,0.45)" }}
         animate={{ opacity: isHolding ? 1 : 0 }}
         transition={{ duration: 0.4 }}
       >

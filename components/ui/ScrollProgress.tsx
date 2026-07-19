@@ -12,7 +12,7 @@ export function ScrollProgress() {
       className="fixed top-0 left-0 right-0 pointer-events-none"
       style={{
         height: 2,
-        background: "#8b5cf6",
+        background: "#f5f5f4",
         scaleX,
         transformOrigin: "left",
         zIndex: 9999,

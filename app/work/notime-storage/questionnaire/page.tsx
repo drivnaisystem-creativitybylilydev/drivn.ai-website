@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
+import { NextIntlClientProvider } from "next-intl";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/sections/Footer";
 import NoTimeQuestionnaireForm from "@/components/case-study/notime-storage/NoTimeQuestionnaireForm";
+import enMessages from "@/messages/en.json";
 
 export const metadata: Metadata = {
   title: "NoTime Storage — Case study questionnaire | Drivn.AI",
@@ -12,7 +14,7 @@ export const metadata: Metadata = {
 
 export default function NoTimeStorageQuestionnairePage() {
   return (
-    <>
+    <NextIntlClientProvider locale="en" messages={enMessages}>
       <Navigation />
       <main className="relative min-h-screen px-4 sm:px-6 lg:px-8 pt-28 pb-24">
         <div className="mx-auto max-w-3xl">
@@ -31,6 +33,6 @@ export default function NoTimeStorageQuestionnairePage() {
         </div>
       </main>
       <Footer />
-    </>
+    </NextIntlClientProvider>
   );
 }

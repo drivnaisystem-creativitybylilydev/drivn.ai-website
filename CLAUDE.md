@@ -1,5 +1,33 @@
 # Drivn.AI Website - Claude Code Context
 
+## Design Stack — How to Use It
+
+**Brand context files exist — always read them before frontend work:**
+- `PRODUCT.md` — who drivn.ai is, clients, voice, anti-references
+- `DESIGN.md` — color tokens, typography, component inventory, known issues, fix list
+- `DESIGN_SKILLS_GUIDE.md` — full usage guide for skills + MCP stack
+
+**Skills must be explicitly invoked — they do NOT auto-activate:**
+
+| Skill | How to invoke | Best for |
+|---|---|---|
+| **impeccable** | `/impeccable [command] [target]` | Full design work: craft, overdrive, audit, polish, animate, bolder |
+| **ui-ux-pro-max** | `Use ui-ux-pro-max: [task]` | Palette selection, font pairing, style direction |
+| **design-taste-frontend** | `Use design-taste-frontend: [task]` | Anti-slop review, layout/spacing QA |
+| **21st magic MCP** | `Use 21st magic to find: [component]` | Find premium pre-built components before building from scratch |
+
+**Key impeccable commands for this site:**
+```
+/impeccable craft [section]     — shape → approve → build (best for full rebuilds)
+/impeccable overdrive hero      — cinematic mode, 60fps, physics-based motion
+/impeccable audit               — full site P0–P3 issue report
+/impeccable bolder [section]    — push safe designs toward impact
+/impeccable polish [section]    — final pass before shipping
+/impeccable animate [section]   — purposeful motion additions
+```
+
+**Full session template:** See `DESIGN_SKILLS_GUIDE.md` → "Full Power Session Template"
+
 ## Quick Start
 ```bash
 # Open this project
@@ -186,23 +214,11 @@ MONGODB_URI="$(grep MONGODB_URI .env.local | cut -d= -f2-)" node scripts/export-
 
 ## Session Context
 
-**Last session:** 2026-04-25, security fixes, MONGODB_URI restored to Vercel  
-**Current session:** 2026-05-03, UI redesigns + interview automation  
-**What was done today:**
-- Redesigned Services section with 6-card outcome-focused showcase
-- Added hybrid questionnaire auto-save (localStorage + MongoDB + Email)
-- Built case study generator for questionnaire responses
-- Optimized Jarvis cost efficiency with dynamic model switching (Haiku vs Sonnet)
-- Linked Interview Questionnaire to admin sidebar
-- Fixed ESLint/TypeScript errors (apostrophe escaping, unused vars)
-
-**Current focus:** TimeKeeper dashboard for automatic time tracking  
-**Session 2026-05-04:** Built complete TimeKeeper web dashboard with:
-- Auto-start timer on admin load (default "Admin" category)
-- Page navigation tracking with category suggestions
-- Dark HUD-themed UI matching admin aesthetic
-- Time entries table with ROI breakdown
-- Daily/weekly/monthly filtering
-- Obsidian STATS.md auto-sync
-
-**Immediate next:** Test auto-start in production, monitor page tracking accuracy
+**Last session updated:** 2026-05-27 17:42:47
+**Last 5 commits:**
+f2e3d42 feat(case-study): publish NoTime story; wire dedicated page to CaseStudyView
+ab4e51a Update CLAUDE.md with TimeKeeper session summary
+db23c2e Add TimeKeeper dashboard to admin panel with auto-start
+b7352b0 Fix ESLint error: escape unescaped apostrophe in Services section
+d1f4058 Redesign Services section with outcome-focused 6-card showcase
+**Status:** Progress auto-saved

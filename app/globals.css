@@ -1,7 +1,8 @@
 @import "tailwindcss";
 
 @theme {
-  /* ── Brand Purple ── */
+  /* ── Brand Purple (legacy — still used by /admin, case studies, /services/websites.
+       Do not remove until those are migrated too.) ── */
   --color-brand-purple: #8b5cf6;
   --color-brand-purple-light: #a78bfa;
 
@@ -13,6 +14,19 @@
 
   /* ── Text ── */
   --color-text-primary: #eff0f3;
+
+  /* ── Monochrome base (still the foundation — see DESIGN.md v3). Black/white carry most of
+       the page; the glass accent below is layered on top at specific moments, not everywhere. ── */
+  --color-mono-bg: #0a0a0c;
+  --color-mono-surface: #131316;
+  --color-mono-surface-2: #1a1a1e;
+  --color-mono-text: #f5f5f4;
+
+  /* ── Glass Accent (homepage v3, 2026-07-17 — purple/white/black, glossy).
+       Deliberately a different violet than the old --color-brand-purple (#8b5cf6) —
+       richer/deeper, not the lilac-leaning "generic AI startup" shade. ── */
+  --color-accent: #7c4dff;
+  --color-accent-light: #b79cff;
 
   /* Don't redefine --font-sora / --font-inter here — next/font sets them on <html>;
      self-referential tokens break computed font-family in Tailwind v4. */
@@ -173,6 +187,79 @@
     background: var(--color-surface);
     border: 1px solid rgba(139, 92, 246, 0.18);
     box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.05);
+  }
+
+  /* ── Glass card (homepage v3 — real refraction, not flat backdrop-blur).
+       Inner highlight border + inset shadow simulate a physical glass edge. ── */
+  .glass-card {
+    @apply rounded-2xl backdrop-blur-xl;
+    background: rgba(124, 77, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    box-shadow:
+      inset 0 1px 1px rgba(255, 255, 255, 0.10),
+      inset 0 0 40px rgba(124, 77, 255, 0.05);
+  }
+
+  /* ── Glass glow — purposeful, tied to one element, not a flat orb blob ── */
+  .glass-glow {
+    box-shadow: 0 0 60px 8px rgba(124, 77, 255, 0.22);
+  }
+
+  /* ── Legal page prose (Privacy / Impressum) ── */
+  .legal-prose h1 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    font-size: 36px;
+    line-height: 1.1;
+    margin-bottom: 0.75rem;
+    color: var(--color-mono-text);
+  }
+  @media (min-width: 768px) {
+    .legal-prose h1 { font-size: 46px; }
+  }
+  .legal-prose h2 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 20px;
+    margin-top: 3rem;
+    margin-bottom: 0.75rem;
+    color: var(--color-mono-text);
+  }
+  @media (min-width: 768px) {
+    .legal-prose h2 { font-size: 22px; }
+  }
+  .legal-prose h3 {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 15px;
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+    color: var(--color-accent-light);
+  }
+  .legal-prose p {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    line-height: 1.7;
+    margin-bottom: 1rem;
+    color: rgba(245, 245, 244, 0.62);
+  }
+  .legal-prose p.lead {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    margin-bottom: 2.5rem;
+    color: rgba(245, 245, 244, 0.35);
+  }
+  .legal-prose p.note {
+    font-size: 12.5px;
+    font-style: italic;
+    color: rgba(183, 156, 255, 0.65);
+  }
+  .legal-prose a {
+    color: var(--color-accent-light);
+    text-decoration: underline;
+    text-underline-offset: 2px;
   }
 
   /* ── Doppelrand card (double-bezel, premium nested look) ── */

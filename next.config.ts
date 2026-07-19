@@ -1,4 +1,7 @@
 import type { NextConfig } from "next";
+import createNextIntlPlugin from "next-intl/plugin";
+
+const withNextIntl = createNextIntlPlugin("./i18n/request.ts");
 
 const nextConfig: NextConfig = {
   /** R3F / drei ship modern ESM; transpiling avoids broken client chunks. */
@@ -12,12 +15,6 @@ const nextConfig: NextConfig = {
   serverExternalPackages: ["mongodb"],
 
   webpack: (config, { dev }) => {
-    /**
-     * Next’s default filesystem webpack cache uses pack.gz files under .next/cache/webpack.
-     * Those break with ENOENT if .next is deleted while `next dev` runs, or if two dev
-     * servers share one repo (two ports writing the same cache). Disabling cache in dev
-     * avoids that class of failures (slightly slower rebuilds, stable dev).
-     */
     if (dev) {
       config.cache = false;
     }
@@ -25,4 +22,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+export default withNextIntl(nextConfig);

@@ -1,195 +1,98 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ArrowDown } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { viewRelaxed } from "@/lib/motion-viewport";
+import { ChapterLabel } from "@/components/ui/ChapterLabel";
+import { MessageClockIcon, StreakGapIcon, ScatteredSquaresIcon } from "@/components/sections/problem/FilmstripIcons";
 
 const SPRING = [0.32, 0.72, 0, 1] as const;
-
-const rows = [
-  {
-    stat: "47%",
-    label: "of calls go unanswered",
-    title: "Missed Calls = Missed Revenue",
-    body: "Every unanswered call is a job going to your competitor. Most businesses never even know how many leads they're losing this way.",
-    improvement: "< 2%",
-    improvementLabel: "miss rate with AI",
-  },
-  {
-    stat: "5 min",
-    label: "window before a lead goes cold",
-    title: "Slow Follow-Up Kills Deals",
-    body: "85% of leads won't call back if you miss them. Speed of response is your biggest competitive advantage — and most businesses ignore it.",
-    improvement: "< 60s",
-    improvementLabel: "response time",
-  },
-  {
-    stat: "60%",
-    label: "of web forms never get a response",
-    title: "Website Forms Going Cold",
-    body: "A visitor fills out your contact form. Nothing happens. They book your competitor while you're on a job.",
-    improvement: "100%",
-    improvementLabel: "response rate",
-  },
-  {
-    stat: "0",
-    label: "automated follow-ups at most businesses",
-    title: "Manual Follow-Up Falls Apart",
-    body: "Staff forget. Owners are busy. Leads slip through because the system depends on someone remembering to make a call.",
-    improvement: "Fully",
-    improvementLabel: "automated",
-  },
-  {
-    stat: "3.8★",
-    label: "average rating without review automation",
-    title: "Reviews Left on the Table",
-    body: "Happy customers don't leave reviews unless you ask. Nobody asks. Meanwhile, competitors with fewer skills rank higher on Google.",
-    improvement: "4.8★",
-    improvementLabel: "avg with automation",
-  },
-];
+const ICONS = [MessageClockIcon, StreakGapIcon, ScatteredSquaresIcon];
 
 export default function ProblemStatement() {
-  return (
-    <section
-      id="problem"
-      className="relative py-16 md:py-24 overflow-hidden"
-    >
-      <hr className="section-divider absolute top-0 left-0 right-0" />
+  const t = useTranslations("Problem");
+  const beats = t.raw("beats") as Array<{ lead: string; body: string }>;
 
+  return (
+    <section id="problem" className="relative py-24 md:py-36 overflow-hidden">
       <div className="relative z-10 container-max">
-        {/* Header — left-aligned block number, no eyebrow pill */}
+        <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={viewRelaxed} transition={{ duration: 0.5 }}>
+          <ChapterLabel title="The Problem" />
+        </motion.div>
+
+        {/* Headline */}
+        <motion.h2
+          initial={{ opacity: 0, y: 18 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={viewRelaxed}
+          transition={{ duration: 0.65, ease: SPRING }}
+          className="font-display max-w-3xl text-[clamp(26px,4.2vw,44px)] font-semibold leading-[1.15] tracking-[-0.02em] text-white mb-16 md:mb-20"
+        >
+          {t("headline")}
+        </motion.h2>
+
+        {/* Filmstrip — one strip, three frames, divided by hairlines */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={viewRelaxed}
+          transition={{ duration: 0.7, ease: SPRING }}
+          className="grid grid-cols-1 md:grid-cols-3 border-t border-b"
+          style={{ borderColor: "rgba(255,255,255,0.10)" }}
+        >
+          {beats.map((beat, i) => {
+            const Icon = ICONS[i % ICONS.length];
+            return (
+              <div
+                key={i}
+                className={`p-8 md:p-10 border-b md:border-b-0 last:border-b-0 ${i > 0 ? "md:border-l" : ""}`}
+                style={{ borderColor: "rgba(255,255,255,0.10)" }}
+              >
+                <div className="mb-6">
+                  <Icon />
+                </div>
+                <p className="font-display text-[19px] md:text-[21px] font-semibold leading-snug text-white mb-3">
+                  {beat.lead}
+                </p>
+                <p className="font-mono text-[13.5px] leading-relaxed" style={{ color: "rgba(245,245,244,0.58)" }}>
+                  {beat.body}
+                </p>
+              </div>
+            );
+          })}
+        </motion.div>
+
+        {/* Bottom line — full width, centered, key phrase highlighted.
+            Hardcoded EN here (not t()) to split out the highlight span, matching the
+            same accepted exception already used in Hero/FinalCTA for inline emphasis. */}
         <motion.div
           initial={{ opacity: 0, y: 14 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={viewRelaxed}
-          transition={{ duration: 0.6, ease: SPRING }}
-          className="mb-14 md:mb-16 max-w-[680px]"
+          transition={{ duration: 0.6, delay: 0.1, ease: SPRING }}
+          className="mt-16 md:mt-20 flex flex-col items-center text-center gap-7"
         >
-          <span
-            className="block font-sora text-[clamp(56px,8vw,96px)] font-bold leading-none tracking-tight mb-4 select-none"
-            style={{ color: "rgba(139,92,246,0.12)" }}
-            aria-hidden
-          >
-            02
-          </span>
-          <h2 className="font-sora text-[clamp(28px,4.5vw,52px)] font-semibold leading-[1.1] tracking-[-0.02em] text-balance text-white">
-            Most businesses don&apos;t need more leads. They need a system that converts the ones they already get.
-          </h2>
-        </motion.div>
-
-        {/* Stat rows */}
-        <div className="max-w-5xl mx-auto">
-          {rows.map((row, i) => (
-            <motion.div
-              key={row.stat}
-              initial={{ opacity: 0, y: 14 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={viewRelaxed}
-              transition={{ duration: 0.5, ease: SPRING, delay: i * 0.08 }}
-              className="grid grid-cols-1 md:grid-cols-[200px_1fr_160px] gap-4 md:gap-10 py-8 border-b items-start"
-              style={{ borderColor: "rgba(255,255,255,0.07)" }}
+          <p className="font-display text-[28px] md:text-[40px] lg:text-[46px] font-semibold leading-[1.2] max-w-4xl text-white">
+            You don&apos;t need more tools. You need{" "}
+            <span
+              style={{
+                background: "rgba(124,77,255,0.28)",
+                borderRadius: "0.35em",
+                padding: "0.02em 0.18em",
+                boxDecorationBreak: "clone",
+                WebkitBoxDecorationBreak: "clone",
+              }}
             >
-              {/* Mobile: stat + improvement side by side; desktop: stat only in col 1 */}
-              <div className="flex items-start gap-4 md:block">
-                <div className="flex flex-col gap-1 min-w-0">
-                  <span
-                    className="font-sora text-[38px] md:text-[48px] font-bold leading-none tracking-tight"
-                    style={{ color: "#a78bfa" }}
-                  >
-                    {row.stat}
-                  </span>
-                  <span
-                    className="text-[12px] md:text-[13px] leading-snug max-w-[160px]"
-                    style={{ color: "rgba(239,240,243,0.50)" }}
-                  >
-                    {row.label}
-                  </span>
-                </div>
-                {/* Improvement pill — only shown inline on mobile */}
-                <div
-                  className="md:hidden flex flex-col gap-1 rounded-xl px-3 py-2.5 shrink-0"
-                  style={{
-                    background: "rgba(74,222,128,0.05)",
-                    border: "1px solid rgba(74,222,128,0.15)",
-                  }}
-                >
-                  <span
-                    className="font-sora text-[18px] font-bold leading-none"
-                    style={{ color: "#4ade80" }}
-                  >
-                    {row.improvement}
-                  </span>
-                  <span
-                    className="text-[10px] leading-snug"
-                    style={{ color: "rgba(74,222,128,0.70)" }}
-                  >
-                    {row.improvementLabel}
-                  </span>
-                </div>
-              </div>
-
-              {/* Pain copy */}
-              <div className="pt-0 md:pt-2">
-                <h3 className="font-sora text-[17px] md:text-[19px] font-semibold text-white leading-tight mb-2">
-                  {row.title}
-                </h3>
-                <p
-                  className="text-[14px] leading-relaxed"
-                  style={{ color: "rgba(239,240,243,0.70)" }}
-                >
-                  {row.body}
-                </p>
-              </div>
-
-              {/* Improvement column — desktop only */}
-              <div
-                className="hidden md:flex flex-col gap-1 pt-1 md:pt-2 rounded-xl px-3 py-2.5 self-start"
-                style={{
-                  background: "rgba(74,222,128,0.05)",
-                  border: "1px solid rgba(74,222,128,0.15)",
-                }}
-              >
-                <span
-                  className="font-sora text-[20px] md:text-[24px] font-bold leading-none"
-                  style={{ color: "#4ade80" }}
-                >
-                  {row.improvement}
-                </span>
-                <span
-                  className="text-[10px] md:text-[11px] leading-snug"
-                  style={{ color: "rgba(74,222,128,0.70)" }}
-                >
-                  {row.improvementLabel}
-                </span>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-
-        {/* Bottom CTA — centered */}
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={viewRelaxed}
-          transition={{ duration: 0.55, delay: 0.2, ease: SPRING }}
-          className="mt-12 flex flex-col items-center text-center gap-5"
-        >
-          <p
-            className="font-sora text-[18px] md:text-[20px] font-semibold leading-snug max-w-[560px]"
-            style={{ color: "#eff0f3" }}
-          >
-            You don&apos;t need more software.
-            <br />
-            You need a connected system that works while you&apos;re on the job.
+              one system that works
+            </span>{" "}
+            whether or not you&apos;re the one running it.
           </p>
           <a
-            href="#offer"
-            className="inline-flex flex-col items-center gap-1.5 text-[14px] font-semibold transition-colors duration-200"
-            style={{ color: "#a78bfa" }}
+            href="#systems"
+            className="inline-flex items-center gap-2 text-[14px] font-medium font-display text-white/60 hover:text-white transition-colors duration-200"
           >
-            <span>See the system</span>
-            <ArrowDown className="w-4 h-4" strokeWidth={2.5} />
+            {t("bottom_cta")}
+            <span aria-hidden>↓</span>
           </a>
         </motion.div>
       </div>

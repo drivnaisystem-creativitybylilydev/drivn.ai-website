@@ -24,6 +24,9 @@ const config: Config = {
       fontFamily: {
         sora: ["var(--font-sora)"],
         inter: ["var(--font-inter)"],
+        display: ["var(--font-display)"],
+        mono: ["var(--font-mono)"],
+        accent: ["var(--font-accent)"],
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",

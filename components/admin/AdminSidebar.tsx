@@ -17,6 +17,8 @@ import {
   Mic2,
   FileText,
   Clock,
+  MapPin,
+  KanbanSquare,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -31,6 +33,8 @@ const NAV_ITEMS = [
   { href: "/admin/interview-questionnaire", icon: Mic2, label: "Interview", exact: false },
   { href: "/admin/questionnaire-responses", icon: FileText, label: "Responses", exact: false },
   { href: "/admin/sourced-leads", icon: Zap, label: "Sourced Leads", exact: false },
+  { href: "/admin/consultant-pipeline", icon: KanbanSquare, label: "Consultant Pipeline", exact: false },
+  { href: "/admin/walk-in", icon: MapPin, label: "Walk-In Sales", exact: false },
   { href: "/admin/internal-files", icon: BookOpen, label: "Internal Files", exact: false },
 ];
 

@@ -1,11 +1,12 @@
 "use client";
 
-import { motion, useScroll, useTransform, useMotionValue, useSpring } from "framer-motion";
-import { ArrowRight, ChevronDown } from "lucide-react";
+import { motion, useMotionValue, useSpring } from "framer-motion";
+import { ArrowRight, ArrowDown } from "@phosphor-icons/react/dist/ssr";
+import { useTranslations } from "next-intl";
 import { useAuditForm } from "@/components/providers/AuditFormProvider";
-import { CRMPipeline } from "@/components/sections/hero/CRMPipeline";
-import Link from "next/link";
 import { useRef, type ReactNode } from "react";
+import DashboardVisual from "@/components/sections/DashboardVisual";
+import DottedSphere from "@/components/sections/hero/DottedSphere";
 
 const SPRING = [0.32, 0.72, 0, 1] as const;
 const SPRING_TIGHT = { type: "spring" as const, stiffness: 400, damping: 40 };
@@ -13,39 +14,44 @@ const SPRING_TIGHT = { type: "spring" as const, stiffness: 400, damping: 40 };
 // ── Word-by-word clip-path reveal ──────────────────────────────────────────
 function WordReveal({
   text,
-  accent = false,
   baseDelay = 0,
   wordDelay = 0.055,
+  color,
 }: {
   text: string;
-  accent?: boolean;
   baseDelay?: number;
   wordDelay?: number;
+  color?: string;
 }) {
   const words = text.split(" ");
   return (
-    <span
-      aria-label={text}
-      style={{ color: accent ? "#a78bfa" : undefined }}
-    >
+    <span aria-label={text} style={color ? { color } : undefined}>
       {words.map((word, i) => (
-        <span
-          key={i}
-          style={{ display: "inline-block", overflow: "hidden", verticalAlign: "bottom" }}
-        >
-          <motion.span
-            style={{ display: "inline-block" }}
-            initial={{ y: "108%", clipPath: "inset(0 0 100% 0)" }}
-            animate={{ y: "0%", clipPath: "inset(0 0 0% 0)" }}
-            transition={{
-              duration: 0.52,
-              ease: SPRING,
-              delay: baseDelay + i * wordDelay,
+        <span key={i}>
+          {/* Small padding buffer, canceled by matching negative margin so layout doesn't shift —
+              just enough room for ascenders/descenders on the overflow:hidden reveal box. Kept
+              tight since both lines are non-italic Geist now (the old italic-clipping issue that
+              needed generous padding no longer applies here). */}
+          <span
+            style={{
+              display: "inline-block",
+              overflow: "hidden",
+              verticalAlign: "bottom",
+              lineHeight: 1.15,
+              padding: "0.12em 0.1em 0.04em 0.04em",
+              margin: "-0.12em -0.1em -0.04em -0.04em",
             }}
           >
-            {word}
-            {i < words.length - 1 ? " " : ""}
-          </motion.span>
+            <motion.span
+              style={{ display: "inline-block" }}
+              initial={{ y: "108%", clipPath: "inset(0 0 100% 0)" }}
+              animate={{ y: "0%", clipPath: "inset(0 0 0% 0)" }}
+              transition={{ duration: 0.55, ease: SPRING, delay: baseDelay + i * wordDelay }}
+            >
+              {word}
+            </motion.span>
+          </span>
+          {i < words.length - 1 ? " " : ""}
         </span>
       ))}
     </span>
@@ -71,10 +77,13 @@ function MagneticButton({
   const onMove = (e: React.MouseEvent<HTMLButtonElement>) => {
     if (!ref.current) return;
     const r = ref.current.getBoundingClientRect();
-    mx.set((e.clientX - r.left - r.width / 2) * 0.28);
-    my.set((e.clientY - r.top - r.height / 2) * 0.28);
+    mx.set((e.clientX - r.left - r.width / 2) * 0.22);
+    my.set((e.clientY - r.top - r.height / 2) * 0.22);
   };
-  const onLeave = () => { mx.set(0); my.set(0); };
+  const onLeave = () => {
+    mx.set(0);
+    my.set(0);
+  };
 
   return (
     <motion.button
@@ -88,202 +97,158 @@ function MagneticButton({
       whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.97 }}
       transition={SPRING_TIGHT}
-      data-cursor-ring
     >
       {children}
     </motion.button>
   );
 }
 
-// ── Hero ───────────────────────────────────────────────────────────────────
+// ── Hero — cinematic center, no side widget ─────────────────────────────────
 export default function Hero() {
+  const t = useTranslations("Hero");
   const { openAuditForm } = useAuditForm();
 
-  const heroRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: heroRef,
-    offset: ["start start", "end start"],
-  });
-  // Parallax: card moves up 25% of the hero travel distance
-  const cardY = useTransform(scrollYProgress, [0, 1], [0, -100]);
-
   return (
-    <section
-      id="hero"
-      className="relative overflow-x-clip min-h-[100dvh] flex items-center"
-    >
-      {/* Background — single subtle radial vignette only, no orbs, no grid */}
-      <div className="pointer-events-none absolute inset-0 z-0 bg-brand-dark" aria-hidden />
+    <section id="hero" className="relative overflow-x-clip">
+      {/* Background — near-black base, no orb field, no grid */}
+      <div className="pointer-events-none absolute inset-0 z-0" style={{ background: "var(--color-mono-bg)" }} aria-hidden />
+
+      {/* Dotted sphere — replaces the old soft radial-gradient glow. Same footprint/position,
+          same rough opacity, glows and pulses instead of being a static blur. */}
+      <DottedSphere />
+
+      {/* Dashboard as true hero background — sits behind ALL text (low z-index, low opacity),
+          not a separate section and not competing for legibility with the CTA/headline on top. */}
       <div
-        className="pointer-events-none absolute inset-0 z-0"
+        className="pointer-events-none absolute inset-0 z-[1] flex items-center justify-center px-4"
         style={{
-          background:
-            "radial-gradient(ellipse 80% 60% at 38% 50%, rgba(139,92,246,0.055) 0%, transparent 70%)",
+          opacity: 0.28,
+          transform: "scale(1.05)",
+          filter: "blur(0.5px)",
+          maskImage: "radial-gradient(ellipse 65% 60% at 50% 55%, black 40%, transparent 85%)",
+          WebkitMaskImage: "radial-gradient(ellipse 65% 60% at 50% 55%, black 40%, transparent 85%)",
         }}
         aria-hidden
-      />
-
-      {/* Bottom fade */}
-      <div
-        className="pointer-events-none absolute bottom-0 left-0 right-0 z-0 h-32"
-        style={{ background: "linear-gradient(to bottom, transparent, var(--color-brand-dark))" }}
-        aria-hidden
-      />
-
-      {/* Content */}
-      <div
-        ref={heroRef}
-        className="relative z-10 container-max w-full pt-24 pb-16 md:pt-28 md:pb-20"
       >
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_420px] xl:grid-cols-[1fr_460px] items-center gap-10 lg:gap-14">
+        <DashboardVisual />
+      </div>
 
-          {/* LEFT — copy */}
-          <div className="flex flex-col items-start gap-6">
-
-            {/* Eyebrow — numbered label, not pill */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.5, delay: 0.05 }}
-              className="flex items-center gap-3"
-            >
-              <span
-                className="font-sora text-[11px] font-semibold"
-                style={{ color: "rgba(139,92,246,0.55)", letterSpacing: "0.06em" }}
-              >
-                01
-              </span>
-              <div style={{ width: 18, height: 1, background: "rgba(139,92,246,0.35)" }} />
-              <span
-                className="text-[11px] font-medium uppercase tracking-[0.18em]"
-                style={{ color: "rgba(239,240,243,0.35)" }}
-              >
-                AI Growth Partner for Service Businesses
-              </span>
-            </motion.div>
-
-            {/* Headline — word-by-word clip-path reveal */}
-            <h1
-              className="font-sora text-[clamp(38px,6.5vw,72px)] font-semibold leading-[1.02] tracking-[-0.03em] text-balance"
-            >
-              <span style={{ display: "block" }}>
-                <WordReveal text="The AI Growth Partner" baseDelay={0.12} wordDelay={0.055} />
-              </span>
-              <span style={{ display: "block" }}>
-                <WordReveal text="for Service Businesses" baseDelay={0.36} wordDelay={0.055} />
-              </span>
-              <span style={{ display: "block" }}>
-                <WordReveal text="Ready to Scale." accent baseDelay={0.57} wordDelay={0.055} />
-              </span>
-            </h1>
-
-            {/* Subheadline */}
-            <motion.p
-              initial={{ opacity: 0, y: 14 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.65, ease: SPRING, delay: 0.78 }}
-              className="text-[17px] leading-relaxed max-w-[540px]"
-              style={{ color: "rgba(239,240,243,0.82)" }}
-            >
-              Drivn.AI helps service businesses capture more leads, respond
-              faster, book more appointments, and automate the busywork that
-              slows growth.
-            </motion.p>
-
-            {/* CTA row */}
-            <motion.div
-              initial={{ opacity: 0, y: 14 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.65, ease: SPRING, delay: 0.86 }}
-              className="flex flex-col xs:flex-row items-start xs:items-center gap-3 mt-1"
-            >
-              <MagneticButton
-                onClick={() => openAuditForm()}
-                className="btn-primary group"
-              >
-                <span className="btn-primary-text">Book a Free Lead Conversion Audit</span>
-                <span className="btn-pocket" aria-hidden>
-                  <ArrowRight className="w-4 h-4" strokeWidth={2.25} />
-                </span>
-              </MagneticButton>
-
-              <motion.div
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.97 }}
-                transition={SPRING_TIGHT}
-              >
-                <Link href="#work" className="btn-ghost" data-cursor-ring>
-                  See Systems We&apos;ve Built
-                </Link>
-              </motion.div>
-            </motion.div>
-          </div>
-
-          {/* RIGHT — CRM Pipeline with parallax */}
-          <motion.div
-            className="flex justify-center lg:justify-end"
-            initial={{ opacity: 0, x: 24 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ type: "spring", stiffness: 280, damping: 22, delay: 0.3 }}
-            style={{ y: cardY }}
+      <div className="relative z-10 min-h-[100dvh] container-max w-full pt-32 pb-16 flex flex-col items-center justify-center text-center">
+        {/* Eyebrow — "AI Consulting" stacked above the caption, same font-mono treatment,
+            twice the size, in white. */}
+        <div className="mb-7 flex flex-col items-center gap-1.5">
+          <motion.span
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.05 }}
+            className="font-mono text-[22px] font-semibold uppercase tracking-[0.22em] text-white"
           >
-            <div
-              className="relative w-full max-w-[420px] rounded-3xl p-6"
-              style={{
-                background: "rgba(15,18,32,0.65)",
-                border: "1px solid rgba(255,255,255,0.07)",
-                backdropFilter: "blur(20px)",
-                boxShadow: "inset 0 1px 1px rgba(255,255,255,0.05)",
-              }}
-            >
-              {/* Panel header */}
-              <div className="flex items-center gap-2 mb-5">
-                <div className="flex gap-1.5" aria-hidden>
-                  <span className="w-2.5 h-2.5 rounded-full bg-white/10" />
-                  <span className="w-2.5 h-2.5 rounded-full bg-white/10" />
-                  <span className="w-2.5 h-2.5 rounded-full bg-white/10" />
-                </div>
-                <span
-                  className="text-[11px] font-medium"
-                  style={{ color: "rgba(239,240,243,0.35)", letterSpacing: "0.06em" }}
-                >
-                  Lead Pipeline
-                </span>
-                <motion.span
-                  className="ml-auto flex items-center gap-1.5 text-[10px] font-semibold"
-                  style={{ color: "rgba(74,222,128,0.80)" }}
-                  animate={{ opacity: [1, 0.5, 1] }}
-                  transition={{ duration: 2, repeat: Infinity }}
-                >
-                  <span className="w-1.5 h-1.5 rounded-full bg-green-400" />
-                  LIVE
-                </motion.span>
-              </div>
-
-              <CRMPipeline />
-            </div>
-          </motion.div>
-
+            {t("eyebrow_overlay")}
+          </motion.span>
+          <motion.span
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.05 }}
+            className="font-mono text-[11px] font-medium uppercase tracking-[0.22em]"
+            style={{ color: "var(--color-accent-light)" }}
+          >
+            {t("eyebrow")}
+          </motion.span>
         </div>
 
-        {/* Scroll indicator */}
-        <motion.div
-          className="flex justify-center mt-14 md:mt-16"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.4, duration: 0.5 }}
+        {/* Headline — max 2 lines. Both lines in Geist now (italic Instrument Serif dropped —
+            its own letterforms read as "cut off" on n/e at this size, confirmed not a CSS bug
+            by disabling all clipping and getting a pixel-identical render). Color still
+            differentiates line 1. */}
+        <h1 className="font-display max-w-5xl text-[clamp(38px,7vw,84px)] font-semibold leading-[0.98] tracking-[-0.03em] text-white">
+          <span style={{ display: "block" }}>
+            <WordReveal text={t("headline1")} baseDelay={0.12} wordDelay={0.06} color="var(--color-accent-light)" />
+          </span>
+          <span style={{ display: "block", marginTop: "-0.02em" }}>
+            <WordReveal text={t("headline2")} baseDelay={0.4} wordDelay={0.06} />
+          </span>
+        </h1>
+
+        {/* Subheadline */}
+        <motion.p
+          initial={{ opacity: 0, y: 14 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.65, ease: SPRING, delay: 0.72 }}
+          className="font-mono mt-7 text-[15px] sm:text-[17px] md:text-[19px] leading-relaxed whitespace-nowrap"
+          style={{ color: "rgba(245,245,244,0.68)" }}
         >
-          <motion.a
-            href="#problem"
-            aria-label="Scroll to problem section"
-            className="flex flex-col items-center gap-1.5 text-white/30 hover:text-white/55 transition-colors duration-300"
-            animate={{ y: [0, 7, 0] }}
-            transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
+          The right system depends on your business, not a template.
+        </motion.p>
+        <motion.p
+          initial={{ opacity: 0, y: 14 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.65, ease: SPRING, delay: 0.8 }}
+          className="font-mono mt-1 text-[17px] md:text-[19px] font-semibold leading-relaxed"
+          style={{ color: "var(--color-accent-light)" }}
+        >
+          We find it. We build it.
+        </motion.p>
+
+        {/* CTA row */}
+        <motion.div
+          initial={{ opacity: 0, y: 14 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.65, ease: SPRING, delay: 0.85 }}
+          className="flex flex-col xs:flex-row items-center gap-3 mt-10"
+        >
+          <MagneticButton
+            onClick={() => openAuditForm()}
+            className="relative inline-flex items-center gap-3 pl-7 pr-2 py-2 font-display font-medium rounded-full cursor-pointer select-none bg-white text-[#0a0a0c]"
           >
-            <ChevronDown className="h-5 w-5" strokeWidth={1.75} />
-          </motion.a>
+            <span
+              className="pointer-events-none absolute -inset-2 rounded-full -z-10"
+              style={{ boxShadow: "0 0 40px 4px rgba(124,77,255,0.35)" }}
+              aria-hidden
+            />
+            <span className="text-[15px] tracking-tight font-semibold">{t("cta_primary")}</span>
+            <span
+              className="w-11 h-11 rounded-full flex items-center justify-center bg-black/10 transition-transform duration-500 ease-spring"
+              aria-hidden
+            >
+              <ArrowRight size={16} weight="bold" />
+            </span>
+          </MagneticButton>
         </motion.div>
       </div>
+
+      {/* Glowy gradient bottom border — soft light bleeding along the hero's bottom edge */}
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[2] overflow-hidden h-40" aria-hidden>
+        <div
+          className="absolute left-1/2 bottom-0 -translate-x-1/2"
+          style={{
+            width: "min(1100px, 92%)",
+            height: "160px",
+            background:
+              "radial-gradient(ellipse 55% 100% at 50% 100%, rgba(255,255,255,0.5) 0%, rgba(124,77,255,0.4) 32%, rgba(124,77,255,0.12) 55%, transparent 78%)",
+            filter: "blur(36px)",
+          }}
+        />
+        <div
+          className="absolute left-1/2 bottom-0 -translate-x-1/2 h-px"
+          style={{
+            width: "min(760px, 70%)",
+            background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.9), transparent)",
+            boxShadow: "0 0 24px 4px rgba(255,255,255,0.5), 0 0 60px 12px rgba(124,77,255,0.5)",
+          }}
+        />
+      </div>
+
+      {/* Scroll indicator */}
+      <motion.a
+        href="#problem"
+        aria-label={t("scroll_label")}
+        className="relative z-10 mb-10 flex flex-col items-center gap-1.5 text-white/25 hover:text-white/50 transition-colors duration-300"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1, y: [0, 7, 0] }}
+        transition={{ opacity: { delay: 1.3, duration: 0.5 }, y: { duration: 2.2, repeat: Infinity, ease: "easeInOut" } }}
+      >
+        <ArrowDown size={18} weight="light" />
+      </motion.a>
     </section>
   );
 }

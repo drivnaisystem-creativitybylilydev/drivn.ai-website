@@ -74,7 +74,7 @@ export function RadialOrbitalTimeline({ timelineData }: { timelineData: Timeline
   };
 
   const statusColor = (s: TimelineItem["status"]) =>
-    s === "completed" ? "#4ade80" : s === "in-progress" ? "#a78bfa" : "rgba(239,240,243,0.35)";
+    s === "completed" ? "#4ade80" : s === "in-progress" ? "#ddbf8f" : "rgba(239,240,243,0.35)";
   const statusLabel = (s: TimelineItem["status"]) =>
     s === "completed" ? "Live" : s === "in-progress" ? "Active" : "Planned";
 
@@ -103,17 +103,17 @@ export function RadialOrbitalTimeline({ timelineData }: { timelineData: Timeline
           <circle
             cx={CX} cy={CY} r={ORBIT_R}
             fill="none"
-            stroke="rgba(139,92,246,0.18)"
+            stroke="rgba(201,168,118,0.18)"
             strokeWidth="1.5"
             strokeDasharray="5 8"
           />
 
           {/* Center glow layers */}
-          <circle cx={CX} cy={CY} r="72" fill="rgba(139,92,246,0.04)" />
-          <circle cx={CX} cy={CY} r="50" fill="rgba(139,92,246,0.08)" />
+          <circle cx={CX} cy={CY} r="72" fill="rgba(201,168,118,0.04)" />
+          <circle cx={CX} cy={CY} r="50" fill="rgba(201,168,118,0.08)" />
           <circle cx={CX} cy={CY} r="32"
-            fill="rgba(139,92,246,0.16)"
-            stroke="rgba(139,92,246,0.32)" strokeWidth="1.5"
+            fill="rgba(201,168,118,0.16)"
+            stroke="rgba(201,168,118,0.32)" strokeWidth="1.5"
           />
 
           {/* Spokes */}
@@ -125,7 +125,7 @@ export function RadialOrbitalTimeline({ timelineData }: { timelineData: Timeline
               <line
                 key={`spoke-${item.id}`}
                 x1={CX} y1={CY} x2={pos.x} y2={pos.y}
-                stroke={isSelected || isRelated ? "rgba(139,92,246,0.35)" : "rgba(139,92,246,0.08)"}
+                stroke={isSelected || isRelated ? "rgba(201,168,118,0.35)" : "rgba(201,168,118,0.08)"}
                 strokeWidth={isSelected || isRelated ? "1.5" : "0.8"}
                 strokeDasharray="4 6"
               />
@@ -143,7 +143,7 @@ export function RadialOrbitalTimeline({ timelineData }: { timelineData: Timeline
               <line
                 key={`conn-${relId}`}
                 x1={sp.x} y1={sp.y} x2={rp.x} y2={rp.y}
-                stroke="rgba(139,92,246,0.42)" strokeWidth="1.5"
+                stroke="rgba(201,168,118,0.42)" strokeWidth="1.5"
               />
             );
           })}
@@ -182,22 +182,22 @@ export function RadialOrbitalTimeline({ timelineData }: { timelineData: Timeline
                 <div
                   className="w-14 h-14 rounded-full flex items-center justify-center"
                   style={{
-                    background: isSelected ? "rgba(139,92,246,0.28)" : "rgba(8,9,26,1)",
-                    border: `2px solid ${isSelected ? "rgba(139,92,246,0.82)" : isRelated ? "rgba(139,92,246,0.50)" : "rgba(139,92,246,0.24)"}`,
+                    background: isSelected ? "rgba(201,168,118,0.28)" : "rgba(8,9,26,1)",
+                    border: `2px solid ${isSelected ? "rgba(201,168,118,0.82)" : isRelated ? "rgba(201,168,118,0.50)" : "rgba(201,168,118,0.24)"}`,
                     boxShadow: isSelected
-                      ? "0 0 28px rgba(139,92,246,0.40), inset 0 1px 1px rgba(255,255,255,0.10)"
+                      ? "0 0 28px rgba(201,168,118,0.40), inset 0 1px 1px rgba(255,255,255,0.10)"
                       : "inset 0 1px 1px rgba(255,255,255,0.05)",
                   }}
                 >
                   {React.createElement(Icon as React.ElementType<{ style: React.CSSProperties; strokeWidth: number }>, {
-                    style: { width: 24, height: 24, color: isSelected ? "#a78bfa" : "rgba(167,139,250,0.65)" },
+                    style: { width: 24, height: 24, color: isSelected ? "#ddbf8f" : "rgba(221,191,143,0.65)" },
                     strokeWidth: 1.75,
                   })}
                 </div>
                 <span
                   className="text-[11px] font-semibold leading-snug text-center"
                   style={{
-                    color: isSelected ? "#a78bfa" : "rgba(239,240,243,0.55)",
+                    color: isSelected ? "#ddbf8f" : "rgba(239,240,243,0.55)",
                     maxWidth: 96,
                     whiteSpace: "normal",
                     display: "block",
@@ -226,7 +226,7 @@ export function RadialOrbitalTimeline({ timelineData }: { timelineData: Timeline
                 transition={{ duration: 0.2 }}
               >
                 <span className="text-[10px] uppercase tracking-[0.20em] font-semibold"
-                  style={{ color: "rgba(139,92,246,0.42)" }}>
+                  style={{ color: "rgba(201,168,118,0.42)" }}>
                   System
                 </span>
                 <span className="text-[10px]" style={{ color: "rgba(239,240,243,0.26)" }}>
@@ -263,8 +263,8 @@ export function RadialOrbitalTimeline({ timelineData }: { timelineData: Timeline
                   translateY: "-50%",
                   zIndex: 30,
                   background: "rgba(10,11,30,0.98)",
-                  border: "1px solid rgba(139,92,246,0.36)",
-                  boxShadow: "0 16px 56px rgba(0,0,0,0.70), 0 0 0 1px rgba(139,92,246,0.06)",
+                  border: "1px solid rgba(201,168,118,0.36)",
+                  boxShadow: "0 16px 56px rgba(0,0,0,0.70), 0 0 0 1px rgba(201,168,118,0.06)",
                   originX,
                   originY,
                 }}
@@ -277,7 +277,7 @@ export function RadialOrbitalTimeline({ timelineData }: { timelineData: Timeline
                 <div className="flex items-center justify-between gap-3">
                   <span
                     className="text-[13px] uppercase tracking-[0.16em] font-semibold"
-                    style={{ color: "rgba(139,92,246,0.75)" }}
+                    style={{ color: "rgba(201,168,118,0.75)" }}
                   >
                     {selected.category}
                   </span>
@@ -307,9 +307,9 @@ export function RadialOrbitalTimeline({ timelineData }: { timelineData: Timeline
                 <button
                   className="self-start text-[13px] font-medium px-3 py-1.5 rounded-xl"
                   style={{
-                    color: "rgba(139,92,246,0.70)",
-                    background: "rgba(139,92,246,0.10)",
-                    border: "1px solid rgba(139,92,246,0.20)",
+                    color: "rgba(201,168,118,0.70)",
+                    background: "rgba(201,168,118,0.10)",
+                    border: "1px solid rgba(201,168,118,0.20)",
                   }}
                   onClick={() => { setSelectedId(null); setPaused(false); }}
                 >

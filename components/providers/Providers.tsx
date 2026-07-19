@@ -3,6 +3,7 @@
 import { AuditFormProvider } from "./AuditFormProvider";
 import { ScrollRestoreNudge } from "./ScrollRestoreNudge";
 import { AdminEasterEgg } from "./AdminEasterEgg";
+import { CookieConsent } from "./CookieConsent";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
@@ -10,6 +11,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
       <ScrollRestoreNudge />
       <AdminEasterEgg />
       {children}
+      <CookieConsent />
     </AuditFormProvider>
   );
 }

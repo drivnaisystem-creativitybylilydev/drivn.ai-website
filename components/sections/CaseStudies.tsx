@@ -3,159 +3,97 @@
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowRight } from "@phosphor-icons/react/dist/ssr";
+import { useTranslations } from "next-intl";
 import { viewRelaxed } from "@/lib/motion-viewport";
-import { caseStudies } from "@/lib/case-studies";
+import { ChapterLabel } from "@/components/ui/ChapterLabel";
 
 const SPRING = [0.32, 0.72, 0, 1] as const;
 
-const cardVariants = {
-  hidden: { opacity: 0, y: 18 },
-  show: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.6, ease: SPRING },
-  },
-};
+const LOGOS = [
+  { src: "/case-studies/logos-tint/notime-storage-cutout.png", alt: "NoTime Storage logo", ratio: 482 / 481 },
+  { src: "/case-studies/logos-tint/creativity-by-lily-cutout.png", alt: "Creativity by Lilly Co logo", ratio: 1200 / 1201 },
+  { src: "/case-studies/logos-tint/notimemover-cutout.png", alt: "NoTime Mover logo", ratio: 785 / 265 },
+];
+
+const DUOTONE_FILTER = "grayscale(1) brightness(0.4) sepia(1) hue-rotate(235deg) saturate(1.6)";
 
 const containerVariants = {
   hidden: {},
-  show: { transition: { staggerChildren: 0.14 } },
+  show: { transition: { staggerChildren: 0.08 } },
+};
+
+const tileVariants = {
+  hidden: { opacity: 0, y: 16 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.55, ease: SPRING } },
 };
 
 export default function CaseStudies() {
-  return (
-    <section id="work" className="relative py-14 md:py-20 overflow-hidden">
-      {/* Light surface wash */}
-      <div
-        className="pointer-events-none absolute inset-0 z-0"
-        style={{
-          background:
-            "linear-gradient(180deg, var(--color-brand-dark) 0%, rgba(15,18,32,0.60) 50%, var(--color-brand-dark) 100%)",
-        }}
-        aria-hidden
-      />
+  const t = useTranslations("CaseStudies");
 
-      <div className="relative z-10 container-max">
-        {/* Header */}
+  return (
+    <section id="work" className="relative py-24 md:py-36 overflow-hidden">
+      <div className="container-max">
+        {/* Header — centered */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={viewRelaxed}
           transition={{ duration: 0.6, ease: SPRING }}
-          className="mb-10 md:mb-14"
+          className="mb-14 md:mb-16 max-w-2xl mx-auto flex flex-col items-center text-center"
         >
-          <div className="flex items-center gap-3 mb-5">
-            <div style={{ width: 28, height: 1, background: "rgba(139,92,246,0.55)", borderRadius: 1 }} />
-            <span
-              className="text-[11px] font-medium uppercase tracking-[0.20em]"
-              style={{ color: "rgba(139,92,246,0.60)" }}
-            >
-              Proof
-            </span>
-          </div>
-          <h2 className="font-sora text-[clamp(28px,4.5vw,48px)] font-semibold leading-[1.1] tracking-[-0.02em] max-w-[540px] text-balance text-white">
-            Real businesses. Real results.
+          <ChapterLabel title={t("eyebrow")} />
+          <h2 className="font-display mt-4 text-[clamp(28px,4.5vw,48px)] font-semibold leading-[1.1] tracking-[-0.02em] text-white text-balance">
+            {t("headline")}
           </h2>
-          <p
-            className="mt-3 text-[16px] max-w-[480px] leading-relaxed"
-            style={{ color: "rgba(239,240,243,0.78)" }}
-          >
-            We don&apos;t just build systems — we measure what happens after.
+          <p className="font-mono mt-4 text-[15px] max-w-[420px] leading-relaxed" style={{ color: "rgba(245,245,244,0.62)" }}>
+            {t("subtext")}
           </p>
         </motion.div>
 
-        {/* Case study cards */}
+        {/* Logo teaser — ghosted, low-opacity dark-purple duotone, tight together, centered */}
         <motion.div
-          className="grid grid-cols-1 md:grid-cols-2 gap-5 items-stretch"
+          className="flex flex-wrap items-center justify-center gap-6 md:gap-9"
           variants={containerVariants}
           initial="hidden"
           whileInView="show"
           viewport={viewRelaxed}
         >
-          {caseStudies.map((study) => (
-            <motion.div key={study.slug} variants={cardVariants} className="h-full">
-              <Link
-                href={`/work/${study.slug}`}
-                className="group block h-full rounded-2xl overflow-hidden outline-none focus-visible:ring-2 focus-visible:ring-brand-purple focus-visible:ring-offset-2 focus-visible:ring-offset-brand-dark"
-              >
-                <div
-                  className="h-full flex flex-col p-7 rounded-2xl transition-all duration-300"
-                  style={{
-                    background: "rgba(20,26,46,0.96)",
-                    border: "1px solid rgba(255,255,255,0.10)",
-                    boxShadow: "inset 0 1px 1px rgba(255,255,255,0.04)",
-                  }}
-                  onMouseEnter={(e) => {
-                    (e.currentTarget as HTMLDivElement).style.borderColor =
-                      "rgba(139,92,246,0.28)";
-                  }}
-                  onMouseLeave={(e) => {
-                    (e.currentTarget as HTMLDivElement).style.borderColor =
-                      "rgba(255,255,255,0.10)";
-                  }}
-                >
-                  {/* Logo + arrow */}
-                  <div className="flex items-start justify-between mb-6">
-                    <div className="relative h-14 w-28">
-                      <Image
-                        src={study.cardLogoSrc}
-                        alt={study.cardLogoAlt}
-                        fill
-                        className="object-contain object-left"
-                        sizes="112px"
-                      />
-                    </div>
-                    <span
-                      className="w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 group-hover:bg-brand-purple/20 group-hover:text-brand-purple-light"
-                      style={{
-                        background: "rgba(255,255,255,0.05)",
-                        color: "rgba(239,240,243,0.35)",
-                      }}
-                    >
-                      <ArrowUpRight className="w-4 h-4" strokeWidth={2} />
-                    </span>
-                  </div>
-
-                  {/* Title + subheading */}
-                  <div className="mb-4">
-                    <h3 className="font-sora text-[18px] font-semibold text-white mb-1 group-hover:text-brand-purple-light transition-colors duration-200">
-                      {study.title}
-                    </h3>
-                    <p
-                      className="text-[13px] capitalize font-medium"
-                      style={{ color: "rgba(139,92,246,0.80)" }}
-                    >
-                      {study.subheading}
-                    </p>
-                  </div>
-
-                  {/* Result lines */}
-                  <div
-                    className="flex flex-col gap-2 pt-4 mt-auto border-t"
-                    style={{ borderColor: "rgba(255,255,255,0.10)" }}
-                  >
-                    {study.cardResultLines.map((line, i) => (
-                      <p
-                        key={`${study.slug}-${i}`}
-                        className="text-[14px] font-semibold text-white leading-snug"
-                      >
-                        {line}
-                      </p>
-                    ))}
-                  </div>
-
-                  <span
-                    className="mt-5 inline-flex items-center gap-1 text-[12px] font-semibold uppercase tracking-widest transition-colors duration-200"
-                    style={{ color: "rgba(167,139,250,0.65)" }}
-                  >
-                    Read case study
-                    <ArrowUpRight className="w-3 h-3" strokeWidth={2.5} />
-                  </span>
-                </div>
-              </Link>
+          {LOGOS.map((logo) => (
+            <motion.div
+              key={logo.alt}
+              variants={tileVariants}
+              className="relative h-20 md:h-24 transition-opacity duration-300 hover:opacity-70"
+              style={{ aspectRatio: logo.ratio, opacity: 0.32 }}
+            >
+              <Image
+                src={logo.src}
+                alt={logo.alt}
+                fill
+                className="object-contain"
+                style={{ filter: DUOTONE_FILTER }}
+                sizes="200px"
+              />
             </motion.div>
           ))}
+        </motion.div>
+
+        {/* CTA to full case study index */}
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={viewRelaxed}
+          transition={{ duration: 0.55, delay: 0.2, ease: SPRING }}
+          className="flex justify-center"
+        >
+          <Link
+            href="/work"
+            className="mt-10 inline-flex items-center gap-2 text-[14px] font-medium font-display transition-colors duration-200"
+            style={{ color: "var(--color-accent-light)" }}
+          >
+            {t("cta")}
+            <ArrowRight size={14} weight="bold" />
+          </Link>
         </motion.div>
       </div>
     </section>
