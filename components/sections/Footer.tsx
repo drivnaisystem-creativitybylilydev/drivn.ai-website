@@ -35,9 +35,6 @@ export default function Footer() {
               <IntlLink href="/privacy" className="underline-offset-2 hover:underline hover:text-white/50 transition-colors">
                 {t("privacy")}
               </IntlLink>
-              <IntlLink href="/impressum" className="underline-offset-2 hover:underline hover:text-white/50 transition-colors">
-                {t("impressum")}
-              </IntlLink>
             </div>
           </div>
 

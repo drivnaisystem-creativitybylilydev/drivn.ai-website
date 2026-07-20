@@ -1,14 +1,4 @@
 {
-  "Ticker": {
-    "items": [
-      "SPEED-TO-LEAD",
-      "AI OPERATING SYSTEMS",
-      "WEBSITES THAT CONVERT",
-      "SYSTEMS YOU OWN",
-      "NO TEMPLATES",
-      "FIND IT. BUILD IT."
-    ]
-  },
   "Navigation": {
     "problem": "Problem",
     "services": "Services",
@@ -469,8 +459,7 @@
     "process": "Process",
     "industries": "Industries",
     "contact": "Contact",
-    "privacy": "Privacy",
-    "impressum": "Legal Notice"
+    "privacy": "Privacy"
   },
   "CookieConsent": {
     "title": "We use cookies",

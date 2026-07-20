@@ -27,9 +27,6 @@ function EnglishContent() {
         <br />
         Email: <a href={`mailto:${EMAIL}`}>{EMAIL}</a>
       </p>
-      <p className="note">
-        A full postal address and phone number will be added here — see the Legal Notice page.
-      </p>
 
       <h2>2. What we collect and why</h2>
       <h3>Discovery / audit form</h3>
@@ -102,9 +99,6 @@ function GermanContent() {
         Finn Schüler, handelnd unter Drivn.AI.
         <br />
         E-Mail: <a href={`mailto:${EMAIL}`}>{EMAIL}</a>
-      </p>
-      <p className="note">
-        Eine vollständige Postanschrift und Telefonnummer wird hier noch ergänzt — siehe Impressum.
       </p>
 
       <h2>2. Welche Daten wir erheben und warum</h2>

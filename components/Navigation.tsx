@@ -49,7 +49,7 @@ export default function Navigation() {
   return (
     <>
       <motion.header
-        className="fixed inset-x-0 top-8 z-50 w-full flex items-center justify-between h-20 md:h-24 px-6 md:px-10 transition-colors duration-500"
+        className="fixed inset-x-0 top-0 z-50 w-full flex items-center justify-between h-20 md:h-24 px-6 md:px-10 transition-colors duration-500"
         style={{
           // Solid-enough dark fill so the bar stays legible over both dark AND the light
           // Trust section — a faint tint previously washed out to near-invisible there.

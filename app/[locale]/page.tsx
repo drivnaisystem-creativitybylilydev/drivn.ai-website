@@ -1,7 +1,6 @@
 "use client";
 
 import Navigation from "@/components/Navigation";
-import Ticker from "@/components/Ticker";
 import Hero from "@/components/sections/Hero";
 import ProblemStatement from "@/components/sections/ProblemStatement";
 import Services from "@/components/sections/Services";
@@ -19,7 +18,6 @@ export default function Home() {
     <div style={{ background: "var(--color-mono-bg)" }}>
       <div className="grain-overlay" aria-hidden />
       <ScrollProgress />
-      <Ticker />
       <Navigation />
       <Hero />
       <ProblemStatement />
