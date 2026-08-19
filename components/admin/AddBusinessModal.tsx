@@ -29,24 +29,39 @@ const NICHES = [
   "Insulation Service",
   "Fence Service",
   "Construction Service",
+  "North Easton",
+  "MA Moving Companies",
 ];
 
-export function AddBusinessModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: () => void }) {
+export function AddBusinessModal({
+  onClose,
+  onSuccess,
+  preferredNiches,
+}: {
+  onClose: () => void;
+  onSuccess: () => void;
+  /** When set (e.g. opened from a scoped view like Priority Pipeline), these niches
+   * are listed first in the dropdown and pre-selected — saves a scroll when you're
+   * already looking at one specific list. */
+  preferredNiches?: string[];
+}) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState("");
+  const otherNiches = NICHES.filter((n) => !preferredNiches?.includes(n));
   const [formData, setFormData] = useState({
     name: "",
     address: "",
     phone: "",
     website: "",
     email: "",
-    category: "",
+    category: preferredNiches?.[0] ?? "",
     rating: "",
     reviewCount: "",
+    notes: "",
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
     setError("");
@@ -74,6 +89,8 @@ export function AddBusinessModal({ onClose, onSuccess }: { onClose: () => void; 
         category: formData.category,
         rating: formData.rating ? parseFloat(formData.rating) : undefined,
         reviewCount: formData.reviewCount ? parseInt(formData.reviewCount) : undefined,
+        notes: formData.notes.trim() ? `Notes: ${formData.notes.trim()}` : undefined,
+        priority: true,
       });
 
       if (result.error) {
@@ -148,11 +165,30 @@ export function AddBusinessModal({ onClose, onSuccess }: { onClose: () => void; 
                 className="w-full rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2 font-inter text-sm text-white transition focus:border-brand-purple/50 focus:outline-none focus:ring-2 focus:ring-brand-purple/20 disabled:opacity-50"
               >
                 <option value="">Select a niche...</option>
-                {NICHES.map((niche) => (
-                  <option key={niche} value={niche}>
-                    {niche}
-                  </option>
-                ))}
+                {preferredNiches && preferredNiches.length > 0 ? (
+                  <>
+                    <optgroup label="This list">
+                      {preferredNiches.map((niche) => (
+                        <option key={niche} value={niche}>
+                          {niche}
+                        </option>
+                      ))}
+                    </optgroup>
+                    <optgroup label="Other niches">
+                      {otherNiches.map((niche) => (
+                        <option key={niche} value={niche}>
+                          {niche}
+                        </option>
+                      ))}
+                    </optgroup>
+                  </>
+                ) : (
+                  NICHES.map((niche) => (
+                    <option key={niche} value={niche}>
+                      {niche}
+                    </option>
+                  ))
+                )}
               </select>
             </div>
 
@@ -254,6 +290,22 @@ export function AddBusinessModal({ onClose, onSuccess }: { onClose: () => void; 
                   className="w-full rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2 font-inter text-sm text-white placeholder-white/30 transition focus:border-brand-purple/50 focus:outline-none focus:ring-2 focus:ring-brand-purple/20 disabled:opacity-50"
                 />
               </div>
+            </div>
+
+            {/* Notes / reminder */}
+            <div>
+              <label className="block font-inter text-xs font-semibold text-white/60 mb-1.5">
+                Note to yourself
+              </label>
+              <textarea
+                name="notes"
+                placeholder="Why this is worth pursuing, how you found them, anything you'll want to remember later..."
+                value={formData.notes}
+                onChange={handleChange}
+                disabled={pending}
+                rows={2}
+                className="w-full resize-none rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2 font-inter text-sm text-white placeholder-white/30 transition focus:border-brand-purple/50 focus:outline-none focus:ring-2 focus:ring-brand-purple/20 disabled:opacity-50"
+              />
             </div>
 
             {/* Error */}

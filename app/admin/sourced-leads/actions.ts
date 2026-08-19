@@ -1,7 +1,18 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { updateSourcedLeadStatus, mergeNicheCategories, createManualLead, updateLeadNotes, bulkUpdateStatus, type SourcedLeadStatus } from "@/lib/sourced-lead-db";
+import {
+  updateSourcedLeadStatus,
+  mergeNicheCategories,
+  createManualLead,
+  updateLeadNotes,
+  bulkUpdateStatus,
+  setNextActionDate,
+  autoScheduleQueue,
+  clearQueueSchedule,
+  setInQueue,
+  type SourcedLeadStatus,
+} from "@/lib/sourced-lead-db";
 
 export async function updateLeadStatusAction(
   id: string,
@@ -40,6 +51,8 @@ export async function addBusinessAction(data: {
   category: string;
   rating?: number;
   reviewCount?: number;
+  notes?: string;
+  priority?: boolean;
 }): Promise<{ id?: string; error?: string }> {
   try {
     const id = await createManualLead(data);
@@ -76,5 +89,60 @@ export async function bulkUpdateStatusAction(
   } catch (err) {
     console.error("[bulkUpdateStatusAction]", err);
     return { error: "Failed to update leads." };
+  }
+}
+
+export async function generateWeeklyQueueAction(
+  niches: string[],
+): Promise<{ scheduled?: number; error?: string }> {
+  try {
+    const result = await autoScheduleQueue(niches, { perDay: 20, dayCount: 5 });
+    revalidatePath("/admin/sourced-leads/queue");
+    return { scheduled: result.scheduled };
+  } catch (err) {
+    console.error("[generateWeeklyQueueAction]", err);
+    return { error: "Failed to generate queue." };
+  }
+}
+
+export async function resetWeeklyQueueAction(
+  niches: string[],
+): Promise<{ cleared?: number; error?: string }> {
+  try {
+    const cleared = await clearQueueSchedule(niches);
+    revalidatePath("/admin/sourced-leads/queue");
+    return { cleared };
+  } catch (err) {
+    console.error("[resetWeeklyQueueAction]", err);
+    return { error: "Failed to reset queue." };
+  }
+}
+
+export async function toggleQueueInclusionAction(
+  id: string,
+  value: boolean,
+): Promise<{ error?: string }> {
+  try {
+    await setInQueue(id, value);
+    revalidatePath("/admin/sourced-leads");
+    revalidatePath("/admin/sourced-leads/queue");
+    return {};
+  } catch (err) {
+    console.error("[toggleQueueInclusionAction]", err);
+    return { error: "Failed to update lead." };
+  }
+}
+
+export async function rescheduleLeadAction(
+  id: string,
+  isoDate: string | null,
+): Promise<{ error?: string }> {
+  try {
+    await setNextActionDate(id, isoDate ? new Date(isoDate) : null);
+    revalidatePath("/admin/sourced-leads/queue");
+    return {};
+  } catch (err) {
+    console.error("[rescheduleLeadAction]", err);
+    return { error: "Failed to reschedule lead." };
   }
 }

@@ -2,6 +2,7 @@
 
 import { useState, useTransition, useCallback, useRef, useEffect, type DragEvent } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Phone,
@@ -19,19 +20,23 @@ import {
   Plus,
   LayoutList,
   LayoutGrid,
+  Target,
+  ListPlus,
+  ListChecks,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { HudBrackets } from "@/components/admin/hud-primitives";
 import { NichePieChart } from "@/components/admin/NichePieChart";
 import { AddBusinessModal } from "@/components/admin/AddBusinessModal";
 import { LeadsList } from "@/components/admin/LeadsList";
-import { updateLeadStatusAction, mergeNichesAction } from "@/app/admin/sourced-leads/actions";
+import { updateLeadStatusAction, mergeNichesAction, toggleQueueInclusionAction } from "@/app/admin/sourced-leads/actions";
 import type { SourcedLeadRow, SourcedLeadStatus, NicheGroup } from "@/lib/sourced-lead-db";
 
 // ─── Status meta ──────────────────────────────────────────────────────────────
 
 const STATUS_META: Record<SourcedLeadStatus, { label: string; color: string; bg: string; border: string }> = {
   new:       { label: "New",       color: "text-brand-purple-light", bg: "bg-brand-purple/10",  border: "border-brand-purple/30" },
+  emailed:   { label: "Emailed",   color: "text-sky-400",            bg: "bg-sky-400/10",        border: "border-sky-400/30" },
   called:    { label: "Called",    color: "text-amber-400",          bg: "bg-amber-400/10",      border: "border-amber-400/30" },
   booked:    { label: "Booked",    color: "text-emerald-400",        bg: "bg-emerald-400/10",    border: "border-emerald-400/30" },
   converted: { label: "Converted", color: "text-emerald-300",        bg: "bg-emerald-300/10",    border: "border-emerald-300/30" },
@@ -44,7 +49,7 @@ function getStatusMeta(status: SourcedLeadStatus) {
   return STATUS_META[status] ?? DEFAULT_STATUS_META;
 }
 
-const STATUS_FLOW: SourcedLeadStatus[] = ["new", "called", "booked", "converted", "dismissed"];
+const STATUS_FLOW: SourcedLeadStatus[] = ["new", "emailed", "called", "booked", "converted", "dismissed"];
 
 // ─── Score ring ───────────────────────────────────────────────────────────────
 
@@ -158,12 +163,21 @@ function StatusDropdown({
 
 function LeadRow({ lead, index }: { lead: SourcedLeadRow; index: number }) {
   const [pending, startTransition] = useTransition();
+  const [inQueue, setInQueueLocal] = useState(Boolean(lead.inQueue));
   const router = useRouter();
 
   function handleStatus(status: SourcedLeadStatus) {
     startTransition(async () => {
       await updateLeadStatusAction(lead.id, status);
       router.refresh();
+    });
+  }
+
+  function handleToggleQueue() {
+    const next = !inQueue;
+    setInQueueLocal(next);
+    startTransition(async () => {
+      await toggleQueueInclusionAction(lead.id, next);
     });
   }
 
@@ -222,11 +236,28 @@ function LeadRow({ lead, index }: { lead: SourcedLeadRow; index: number }) {
           )}
         </div>
 
-        <StatusDropdown
-          current={lead.status}
-          onSelect={handleStatus}
-          disabled={pending}
-        />
+        <div className="flex shrink-0 flex-col items-end gap-1.5">
+          <StatusDropdown
+            current={lead.status}
+            onSelect={handleStatus}
+            disabled={pending}
+          />
+          <button
+            onClick={handleToggleQueue}
+            disabled={pending}
+            title={inQueue ? "In this week's outreach queue" : "Add to this week's outreach queue"}
+            className={cn(
+              "flex items-center gap-1.5 rounded-lg border px-2.5 py-1.5 font-inter text-xs font-semibold transition whitespace-nowrap",
+              inQueue
+                ? "border-emerald-400/40 bg-emerald-400/10 text-emerald-300"
+                : "border-white/10 bg-white/[0.03] text-white/40 hover:border-emerald-400/30 hover:text-emerald-300",
+              pending && "opacity-50",
+            )}
+          >
+            {inQueue ? <ListChecks className="h-3.5 w-3.5" /> : <ListPlus className="h-3.5 w-3.5" />}
+            {inQueue ? "In Queue" : "Add to Queue"}
+          </button>
+        </div>
       </div>
     </motion.div>
   );
@@ -552,6 +583,15 @@ export function NicheDashboard({
 
             <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
               <div className="flex flex-col gap-3 md:flex-row md:items-center">
+                {/* Priority Pipeline link */}
+                <Link
+                  href="/admin/sourced-leads/pipeline"
+                  className="flex items-center justify-center gap-1.5 whitespace-nowrap rounded-lg border border-emerald-400/30 bg-emerald-400/10 px-4 py-2 font-inter text-sm font-semibold text-emerald-400 transition hover:bg-emerald-400/20 md:justify-start"
+                >
+                  <Target className="h-4 w-4" />
+                  Priority Pipeline
+                </Link>
+
                 {/* Add Business Button */}
                 <button
                   onClick={() => setShowAddModal(true)}

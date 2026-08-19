@@ -2,7 +2,7 @@ import { ObjectId } from "mongodb";
 import { getDb } from "@/lib/mongodb";
 import type { ScoredLead } from "@/lib/lead-sourcing/types";
 
-export type SourcedLeadStatus = "new" | "called" | "booked" | "converted" | "dismissed";
+export type SourcedLeadStatus = "new" | "emailed" | "called" | "booked" | "converted" | "dismissed";
 
 export interface SourcedLeadDocument {
   _id?: ObjectId;
@@ -22,6 +22,17 @@ export interface SourcedLeadDocument {
   status: SourcedLeadStatus;
   source: "google_maps" | "apify" | "manual";
   notes?: string;
+  priority?: boolean;
+  legendary?: boolean;
+  /** Manual visual flag (orange outline in the pipeline table) for leads with a hot, time-sensitive angle. */
+  hotLead?: boolean;
+  /** Pet groomer flag — flashy paw badge in the pipeline table. */
+  dogGroomer?: boolean;
+  /** When this lead is next due for outreach. Drives the Weekly Queue view. */
+  nextActionDate?: Date;
+  /** Manually flagged from the general leads pool to pull into the Weekly Queue,
+   * regardless of category — lets a lead outside the 5 queue niches still get scheduled. */
+  inQueue?: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -44,6 +55,12 @@ export interface SourcedLeadRow {
   status: SourcedLeadStatus;
   source: "google_maps" | "apify" | "manual";
   notes?: string;
+  priority?: boolean;
+  legendary?: boolean;
+  hotLead?: boolean;
+  dogGroomer?: boolean;
+  nextActionDate?: string;
+  inQueue?: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -81,6 +98,12 @@ function normalizeRow(doc: SourcedLeadDocument & { _id: ObjectId }): SourcedLead
     status: doc.status,
     source: doc.source,
     notes: doc.notes,
+    priority: doc.priority,
+    legendary: doc.legendary,
+    hotLead: doc.hotLead,
+    dogGroomer: doc.dogGroomer,
+    nextActionDate: doc.nextActionDate ? doc.nextActionDate.toISOString() : undefined,
+    inQueue: doc.inQueue,
     createdAt: doc.createdAt.toISOString(),
     updatedAt: doc.updatedAt.toISOString(),
   };
@@ -157,6 +180,66 @@ export async function listSourcedLeads(limit = 100): Promise<SourcedLeadRow[]> {
   }
 }
 
+export async function setInQueue(id: string, value: boolean): Promise<boolean> {
+  if (!ObjectId.isValid(id)) return false;
+  const db = await getDb();
+  if (!db) return false;
+  const col = db.collection<SourcedLeadDocument>(COLLECTION);
+  const res = await col.updateOne(
+    { _id: new ObjectId(id) },
+    { $set: { inQueue: value, updatedAt: new Date() } },
+  );
+  return res.matchedCount > 0;
+}
+
+/**
+ * Leads eligible for the Weekly Queue: everything in the given niches, PLUS any
+ * lead manually flagged via setInQueue regardless of its category. This is what
+ * both the Queue page's display and its scheduler should read from.
+ */
+export async function listQueueEligibleLeads(niches: string[], limit = 1000): Promise<SourcedLeadRow[]> {
+  try {
+    const db = await getDb();
+    if (!db) return [];
+    await ensureIndexes();
+    const col = db.collection<SourcedLeadDocument>(COLLECTION);
+    const docs = await col
+      .find({ $or: [{ category: { $in: niches } }, { inQueue: true }] })
+      .sort({ score: -1, createdAt: -1 })
+      .limit(limit)
+      .toArray();
+    return docs.map((d) => normalizeRow(d as SourcedLeadDocument & { _id: ObjectId }));
+  } catch (err) {
+    console.error("[sourced-lead-db] listQueueEligibleLeads failed:", err);
+    return [];
+  }
+}
+
+/**
+ * Like listSourcedLeads, but scoped to specific categories via the query itself
+ * instead of a global top-N-by-score cut. The collection has grown past 500 docs
+ * total, so niche-scoped pages (Priority Pipeline, Weekly Queue) that used to call
+ * listSourcedLeads(500) and filter client-side were silently dropping leads whose
+ * global score rank fell outside the top 500 even though they belonged in scope.
+ */
+export async function listSourcedLeadsByCategory(categories: string[], limit = 1000): Promise<SourcedLeadRow[]> {
+  try {
+    const db = await getDb();
+    if (!db) return [];
+    await ensureIndexes();
+    const col = db.collection<SourcedLeadDocument>(COLLECTION);
+    const docs = await col
+      .find({ category: { $in: categories } })
+      .sort({ score: -1, createdAt: -1 })
+      .limit(limit)
+      .toArray();
+    return docs.map((d) => normalizeRow(d as SourcedLeadDocument & { _id: ObjectId }));
+  } catch (err) {
+    console.error("[sourced-lead-db] listSourcedLeadsByCategory failed:", err);
+    return [];
+  }
+}
+
 // ─── Niche grouping ───────────────────────────────────────────────────────────
 
 export interface NicheGroup {
@@ -225,6 +308,8 @@ export async function createManualLead(data: {
   category: string;
   rating?: number;
   reviewCount?: number;
+  notes?: string;
+  priority?: boolean;
 }): Promise<string> {
   const db = await getDb();
   if (!db) throw new Error("MONGODB_URI not configured");
@@ -262,6 +347,8 @@ export async function createManualLead(data: {
     sourcingQuery: data.category,
     status: "new" as const,
     source: "manual" as const,
+    notes: data.notes,
+    priority: data.priority,
     createdAt: now,
     updatedAt: now,
   };
@@ -294,6 +381,117 @@ export async function bulkUpdateStatus(
   const res = await col.updateMany(
     { _id: { $in: validIds } },
     { $set: { status, updatedAt: new Date() } },
+  );
+  return res.modifiedCount;
+}
+
+// ─── Weekly outreach queue ─────────────────────────────────────────────────
+// Assigns each not-yet-contacted lead a nextActionDate (a business day) so
+// the Weekly Queue view can show "who do I contact today" instead of a flat
+// list. Regenerating only touches leads that don't already have a date, so
+// a lead Finn is mid-sequence with never gets silently reshuffled.
+
+export async function setNextActionDate(id: string, date: Date | null): Promise<boolean> {
+  if (!ObjectId.isValid(id)) return false;
+  const db = await getDb();
+  if (!db) return false;
+  const col = db.collection<SourcedLeadDocument>(COLLECTION);
+  const res = await col.updateOne(
+    { _id: new ObjectId(id) },
+    date
+      ? { $set: { nextActionDate: date, updatedAt: new Date() } }
+      : { $unset: { nextActionDate: "" }, $set: { updatedAt: new Date() } },
+  );
+  return res.matchedCount > 0;
+}
+
+/** Next N business days (Mon-Fri) starting from `from`, inclusive if `from` is itself a weekday. */
+function nextBusinessDays(from: Date, count: number): Date[] {
+  const days: Date[] = [];
+  const cursor = new Date(from);
+  cursor.setHours(9, 0, 0, 0);
+  while (days.length < count) {
+    const dow = cursor.getDay();
+    if (dow !== 0 && dow !== 6) days.push(new Date(cursor));
+    cursor.setDate(cursor.getDate() + 1);
+  }
+  return days;
+}
+
+export interface AutoScheduleResult {
+  scheduled: number;
+  byDay: { date: string; count: number }[];
+}
+
+/**
+ * Buckets every unscheduled, not-yet-contacted lead in `niches` across the next
+ * `dayCount` business days, `perDay` leads at a time. Priority order:
+ *   1. manually-verified (priority) leads — walk-in candidates
+ *   2. leads with no website on file — fastest, most self-evident pitch
+ *   3. everything else, niche order as given, highest score first
+ */
+export async function autoScheduleQueue(
+  niches: string[],
+  opts: { startDate?: Date; perDay?: number; dayCount?: number } = {},
+): Promise<AutoScheduleResult> {
+  const db = await getDb();
+  if (!db) return { scheduled: 0, byDay: [] };
+  const col = db.collection<SourcedLeadDocument>(COLLECTION);
+
+  const perDay = opts.perDay ?? 20;
+  const dayCount = opts.dayCount ?? 5;
+  const startDate = opts.startDate ?? new Date();
+
+  const candidates = await col
+    .find({
+      $or: [{ category: { $in: niches } }, { inQueue: true }],
+      status: "new",
+      nextActionDate: { $exists: false },
+    })
+    .toArray();
+
+  const nicheRank = new Map(niches.map((n, i) => [n, i]));
+  candidates.sort((a, b) => {
+    if (Boolean(a.priority) !== Boolean(b.priority)) return a.priority ? -1 : 1;
+    const aNoSite = a.website ? 1 : 0;
+    const bNoSite = b.website ? 1 : 0;
+    if (aNoSite !== bNoSite) return aNoSite - bNoSite;
+    const rankA = nicheRank.get(a.category ?? "") ?? 999;
+    const rankB = nicheRank.get(b.category ?? "") ?? 999;
+    if (rankA !== rankB) return rankA - rankB;
+    return b.score - a.score;
+  });
+
+  const days = nextBusinessDays(startDate, dayCount);
+  const byDay: { date: string; count: number }[] = days.map((d) => ({ date: d.toISOString(), count: 0 }));
+
+  // Cap at perDay*dayCount and leave the rest unscheduled (still nextActionDate-less) so a
+  // future regenerate picks them up for the following week instead of dumping the whole
+  // overflow onto the last day.
+  const capped = candidates.slice(0, perDay * days.length);
+  const ops = capped.map((lead, i) => {
+    const dayIndex = Math.floor(i / perDay);
+    byDay[dayIndex].count += 1;
+    return {
+      updateOne: {
+        filter: { _id: lead._id },
+        update: { $set: { nextActionDate: days[dayIndex], updatedAt: new Date() } },
+      },
+    };
+  });
+
+  if (ops.length > 0) await col.bulkWrite(ops);
+
+  return { scheduled: ops.length, byDay: byDay.filter((d) => d.count > 0) };
+}
+
+export async function clearQueueSchedule(niches: string[]): Promise<number> {
+  const db = await getDb();
+  if (!db) return 0;
+  const col = db.collection<SourcedLeadDocument>(COLLECTION);
+  const res = await col.updateMany(
+    { $or: [{ category: { $in: niches } }, { inQueue: true }], status: "new" },
+    { $unset: { nextActionDate: "" }, $set: { updatedAt: new Date() } },
   );
   return res.modifiedCount;
 }

@@ -1,13 +1,14 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { Check, Phone, Mail, Filter } from "lucide-react";
+import { Check, Phone, Mail, Filter, ListPlus, ListChecks } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { updateLeadStatusAction, bulkUpdateStatusAction, updateLeadNotesAction } from "@/app/admin/sourced-leads/actions";
+import { updateLeadStatusAction, bulkUpdateStatusAction, updateLeadNotesAction, toggleQueueInclusionAction } from "@/app/admin/sourced-leads/actions";
 import type { SourcedLeadRow, SourcedLeadStatus } from "@/lib/sourced-lead-db";
 
 const STATUS_META: Record<SourcedLeadStatus, { label: string; color: string; bg: string }> = {
   new:       { label: "New",       color: "text-brand-purple-light", bg: "bg-brand-purple/10" },
+  emailed:   { label: "Emailed",   color: "text-sky-400",            bg: "bg-sky-400/10" },
   called:    { label: "Called",    color: "text-amber-400",          bg: "bg-amber-400/10" },
   booked:    { label: "Booked",    color: "text-emerald-400",        bg: "bg-emerald-400/10" },
   converted: { label: "Converted", color: "text-emerald-300",        bg: "bg-emerald-300/10" },
@@ -19,6 +20,20 @@ export function LeadsList({ leads }: { leads: SourcedLeadRow[] }) {
   const [statusFilter, setStatusFilter] = useState<SourcedLeadStatus | "all">("all");
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [editingNotes, setEditingNotes] = useState<{ [key: string]: string }>({});
+  const [queuedIds, setQueuedIds] = useState<Set<string>>(
+    () => new Set(leads.filter((l) => l.inQueue).map((l) => l.id)),
+  );
+
+  const handleToggleQueue = (id: string) => {
+    const next = new Set(queuedIds);
+    const willBeQueued = !next.has(id);
+    if (willBeQueued) next.add(id);
+    else next.delete(id);
+    setQueuedIds(next);
+    startTransition(async () => {
+      await toggleQueueInclusionAction(id, willBeQueued);
+    });
+  };
 
   const filteredLeads = statusFilter === "all"
     ? leads
@@ -133,6 +148,7 @@ export function LeadsList({ leads }: { leads: SourcedLeadRow[] }) {
               <th className="px-4 py-3 text-left text-xs font-semibold text-white/60">Contact</th>
               <th className="px-4 py-3 text-left text-xs font-semibold text-white/60">Score</th>
               <th className="px-4 py-3 text-left text-xs font-semibold text-white/60">Status</th>
+              <th className="px-4 py-3 text-left text-xs font-semibold text-white/60">Queue</th>
               <th className="px-4 py-3 text-left text-xs font-semibold text-white/60">Notes</th>
             </tr>
           </thead>
@@ -199,6 +215,23 @@ export function LeadsList({ leads }: { leads: SourcedLeadRow[] }) {
                       <option value="converted">Converted</option>
                       <option value="dismissed">Dismissed</option>
                     </select>
+                  </td>
+                  <td className="px-4 py-3">
+                    <button
+                      onClick={() => handleToggleQueue(lead.id)}
+                      disabled={pending}
+                      title={queuedIds.has(lead.id) ? "In this week's outreach queue" : "Add to this week's outreach queue"}
+                      className={cn(
+                        "flex items-center gap-1.5 rounded-lg border px-2.5 py-1 font-inter text-xs font-semibold transition whitespace-nowrap",
+                        queuedIds.has(lead.id)
+                          ? "border-emerald-400/40 bg-emerald-400/10 text-emerald-300"
+                          : "border-white/10 bg-white/[0.03] text-white/40 hover:border-emerald-400/30 hover:text-emerald-300",
+                        pending && "opacity-50",
+                      )}
+                    >
+                      {queuedIds.has(lead.id) ? <ListChecks className="h-3.5 w-3.5" /> : <ListPlus className="h-3.5 w-3.5" />}
+                      {queuedIds.has(lead.id) ? "In Queue" : "Add"}
+                    </button>
                   </td>
                   <td className="px-4 py-3 max-w-xs">
                     {editingNotes[lead.id] !== undefined ? (

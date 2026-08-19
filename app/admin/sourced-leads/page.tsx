@@ -16,7 +16,7 @@ export default async function SourcedLeadsPage() {
     );
   }
 
-  const leads = await listSourcedLeads(500);
+  const leads = await listSourcedLeads(1000);
   const niches = groupLeadsByNiche(leads);
 
   return (
