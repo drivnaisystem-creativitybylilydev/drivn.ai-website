@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight } from "@phosphor-icons/react/dist/ssr";
 import { useTranslations } from "next-intl";
@@ -12,7 +13,11 @@ const SPRING = [0.32, 0.72, 0, 1] as const;
 export default function IndustriesWeServe() {
   const t = useTranslations("Industries");
   const { openAuditForm } = useAuditForm();
-  const industries = t.raw("items") as Array<{ label: string; desc: string }>;
+  const industries = t.raw("items") as Array<{
+    label: string;
+    desc: string;
+    link?: string;
+  }>;
 
   return (
     <section id="industries" className="relative py-24 md:py-36 overflow-hidden">
@@ -55,6 +60,16 @@ export default function IndustriesWeServe() {
               <p className="font-mono text-[12.5px] leading-relaxed" style={{ color: "rgba(245,245,244,0.55)" }}>
                 {industry.desc}
               </p>
+              {industry.link && (
+                <Link
+                  href={industry.link}
+                  className="mt-3 inline-flex items-center gap-1.5 font-display text-[13px] font-medium transition-colors duration-200 hover:opacity-80"
+                  style={{ color: "var(--color-accent-light)" }}
+                >
+                  See solutions
+                  <ArrowRight size={13} weight="bold" />
+                </Link>
+              )}
             </motion.div>
           ))}
         </div>

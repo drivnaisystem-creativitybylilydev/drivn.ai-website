@@ -28,6 +28,45 @@
 
 **Full session template:** See `DESIGN_SKILLS_GUIDE.md` → "Full Power Session Template"
 
+## Building a Separate Vertical / Service Landing Page
+
+**Whenever building a standalone landing/service page on the Drivn.AI site for a single
+industry (roofing, med spa, HVAC, restaurants, etc.) — a route like
+`/moving-and-logistics` — read `VERTICAL-LANDING-PAGE-PLAYBOOK.md` first and follow it.**
+It encodes every correction from the `/moving-and-logistics` build (Sept 2026). Do not
+re-derive these:
+
+- **Match the homepage design system exactly** — same tokens (`--color-mono-bg`,
+  `--color-accent` / `--color-accent-light`), Geist + Geist Mono, `SPRING`,
+  `container-max`, `ChapterLabel`, `grain-overlay`, Phosphor icons. It's a re-skin, not a
+  new design. Visual-system reference: `app/allset-moving` / `app/sheridan-movers`.
+- **Full width** — `container-max` sections, full-bleed backgrounds; never a whole
+  section in `max-w-3xl`.
+- **Hero = the homepage hero restyled** — eyebrow stack → huge two-beat imperative Geist
+  headline (no terminal periods) → mono sub (general outcome, not a feature list) →
+  white pill CTA + purple bottom-glow. Headline colour = `var(--color-accent-light)`
+  (the exact homepage token). Add a dark contrast scrim + a dark per-line drop-shadow so
+  the headline doesn't blend into the background art.
+- **Hero background is generated with Higgsfield** (`nano_banana_pro`, abstract, dark,
+  on-palette, strong edge vignette, zero stock photography) and is **different** from the
+  homepage's dotted-sphere/dashboard. Section renders use the frosted-glass-panel style.
+  Optimize to webp (~35–70 KB), place with the `BlendedRender` component. Full prompts in
+  the playbook.
+- **Body text is solid white**, not the homepage's muted grey.
+- **CTAs open a stepped modal wizard** (`GetStartedDialog` pattern), they don't scroll to
+  an on-page form. Dedicated `app/api/<vertical>-lead/route.ts` — don't touch the shared
+  `LEAD_FIELD_KEYS`.
+- **Scroll animations on every section, bidirectional**; solution rows slide in from
+  alternating left/right.
+- **Never publish fixed prices** — tier names + inclusions + ROI framing only
+  (internal numbers: `~/Desktop/Drivn.AI/knowledge/pricing-menu.md`).
+- **Flat route** (`app/<slug>/`), own `layout.tsx` metadata, **add the slug to the
+  `middleware.ts` matcher exclusion** (next-intl will 404 it otherwise), entry point =
+  an optional "See solutions →" link on the matching `IndustriesWeServe` card.
+
+Verify every change: `tsc` + `next lint` + `next build` + Playwright screenshots; clean
+up test leads from Mongo.
+
 ## Quick Start
 ```bash
 # Open this project
