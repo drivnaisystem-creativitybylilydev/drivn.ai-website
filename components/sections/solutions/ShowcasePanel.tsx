@@ -8,18 +8,20 @@ import { useRef, type ReactNode } from "react";
 
 const SPRING = [0.32, 0.72, 0, 1] as const;
 
-// Scroll-linked reveal: starts tilted back (semi-lifted, hinged at the bottom edge),
+// Scroll-linked reveal: starts slightly tilted back (hinged at the bottom edge),
 // lays flat as it scrolls into place. Continuously tied to scroll position (not a
-// one-shot animation) so it reverses smoothly on scroll-up too.
+// one-shot animation) so it reverses smoothly on scroll-up too. Kept subtle — a
+// gentle settle, not a big flip — and resolved over a long scroll window so it
+// never reads as a snap.
 function TiltReveal({ children }: { children: ReactNode }) {
   const ref = useRef<HTMLDivElement>(null);
   const reducedMotion = useReducedMotion();
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start 0.95", "start 0.4"] });
-  const smoothProgress = useSpring(scrollYProgress, { stiffness: 300, damping: 40, restDelta: 0.001 });
-  const rotateX = useTransform(smoothProgress, [0, 1], reducedMotion ? [0, 0] : [22, 0]);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start 1", "start 0.35"] });
+  const smoothProgress = useSpring(scrollYProgress, { stiffness: 140, damping: 34, restDelta: 0.001 });
+  const rotateX = useTransform(smoothProgress, [0, 1], reducedMotion ? [0, 0] : [7, 0]);
 
   return (
-    <div ref={ref} style={{ perspective: 1400 }}>
+    <div ref={ref} style={{ perspective: 1600 }}>
       <motion.div style={{ rotateX, transformOrigin: "bottom center", transformStyle: "preserve-3d", willChange: "transform" }}>
         {children}
       </motion.div>
