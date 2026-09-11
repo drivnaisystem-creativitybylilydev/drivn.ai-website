@@ -7,6 +7,10 @@ import { SiGmail } from "react-icons/si";
 export const FPS = 30;
 export const TOTAL_FRAMES = 390;
 
+// Authored wide — a left-to-right pipeline that fills a horizontal band.
+export const COMPOSITION_WIDTH = 1180;
+export const COMPOSITION_HEIGHT = 280;
+
 const GMAIL_COLOR = "#EA4335";
 
 const STEPS = [
@@ -20,7 +24,12 @@ const STEPS = [
 
 const STEP_STARTS = [20, 70, 120, 170, 220, 270];
 const STEP_LEN = 20;
-const ROW_HEIGHT = 52;
+
+// Horizontal geometry
+const PAD_X = 56; // matches the track inset below
+const ICON = 48;
+const ROW_TOP = 40; // top offset of the icon row inside the card
+const TRACK_Y = ROW_TOP + ICON / 2;
 
 function reveal(frame: number, start: number, len = STEP_LEN) {
   return interpolate(frame, [start, start + len], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
@@ -37,23 +46,41 @@ export default function WorkflowComposition() {
   );
   const fadeOut = 1 - interpolate(frame, [340, 365], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
 
-  const totalHeight = ROW_HEIGHT * STEPS.length - (ROW_HEIGHT - 24);
-
   return (
     <AbsoluteFill style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-      <div style={{ opacity: fadeOut }} className="glass-card glass-glow w-[400px] p-6">
-        <div className="relative" style={{ paddingLeft: 4 }}>
-          {/* Connecting line, draws downward as steps activate */}
+      <div
+        style={{ opacity: fadeOut, width: COMPOSITION_WIDTH - 40 }}
+        className="glass-card glass-glow"
+      >
+        <div
+          style={{
+            position: "relative",
+            display: "flex",
+            alignItems: "flex-start",
+            justifyContent: "space-between",
+            padding: `${ROW_TOP}px ${PAD_X}px 36px`,
+          }}
+        >
+          {/* Connecting rail, draws left-to-right as steps activate */}
           <div
-            className="absolute left-[24px] top-3 w-px"
-            style={{ height: totalHeight, background: "rgba(255,255,255,0.08)" }}
+            style={{
+              position: "absolute",
+              left: PAD_X,
+              right: PAD_X,
+              top: TRACK_Y,
+              height: 2,
+              background: "rgba(255,255,255,0.08)",
+            }}
             aria-hidden
           />
           <div
-            className="absolute left-[24px] top-3 w-px"
             style={{
-              height: totalHeight * lineProgress,
-              background: "linear-gradient(180deg, var(--color-accent), var(--color-accent-light))",
+              position: "absolute",
+              left: PAD_X,
+              top: TRACK_Y,
+              height: 2,
+              width: `calc((100% - ${PAD_X * 2}px) * ${lineProgress})`,
+              background: "linear-gradient(90deg, var(--color-accent), var(--color-accent-light))",
               boxShadow: "0 0 8px rgba(124,77,255,0.6)",
             }}
             aria-hidden
@@ -63,24 +90,44 @@ export default function WorkflowComposition() {
             const lit = reveal(frame, STEP_STARTS[i]);
             const isBrand = step.color.startsWith("#");
             return (
-              <div key={step.label} className="relative flex items-center gap-4" style={{ height: ROW_HEIGHT }}>
+              <div
+                key={step.label}
+                style={{
+                  position: "relative",
+                  zIndex: 1,
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  gap: 14,
+                  width: 150,
+                }}
+              >
                 <span
-                  className="relative z-10 shrink-0 rounded-full flex items-center justify-center"
+                  className="shrink-0 rounded-full flex items-center justify-center"
                   style={{
-                    width: 48,
-                    height: 48,
-                    background: `color-mix(in srgb, ${isBrand ? step.color : "var(--color-accent)"} ${10 + lit * 10}%, transparent)`,
-                    border: `1.5px solid color-mix(in srgb, ${isBrand ? step.color : "var(--color-accent)"} ${25 + lit * 45}%, transparent)`,
-                    boxShadow: lit > 0.15 ? `0 0 ${14 * lit}px color-mix(in srgb, ${isBrand ? step.color : "var(--color-accent)"} 45%, transparent)` : "none",
-                    opacity: 0.45 + lit * 0.55,
-                    transform: `scale(${0.9 + lit * 0.1})`,
+                    width: ICON,
+                    height: ICON,
+                    // Opaque fill (mixed into the surface colour) so the connecting
+                    // rail is never visible through the icon.
+                    background: `color-mix(in srgb, ${isBrand ? step.color : "var(--color-accent)"} ${14 + lit * 16}%, #131316)`,
+                    border: `1.5px solid color-mix(in srgb, ${isBrand ? step.color : "var(--color-accent)"} ${30 + lit * 42}%, rgba(255,255,255,0.05))`,
+                    boxShadow: lit > 0.15 ? `0 0 ${16 * lit}px color-mix(in srgb, ${isBrand ? step.color : "var(--color-accent)"} 45%, transparent)` : "none",
+                    transform: `scale(${0.92 + lit * 0.08})`,
                   }}
                 >
-                  <step.Icon size={20} color={step.color} />
+                  <span style={{ display: "flex", opacity: 0.5 + lit * 0.5 }}>
+                    <step.Icon size={20} color={step.color} />
+                  </span>
                 </span>
                 <span
-                  className="font-mono text-[13px]"
-                  style={{ color: `rgba(245,245,244,${0.4 + lit * 0.5})`, fontWeight: lit > 0.5 ? 600 : 400 }}
+                  className="font-mono"
+                  style={{
+                    fontSize: 12,
+                    lineHeight: 1.35,
+                    textAlign: "center",
+                    color: `rgba(245,245,244,${0.4 + lit * 0.5})`,
+                    fontWeight: lit > 0.5 ? 600 : 400,
+                  }}
                 >
                   {step.label}
                 </span>

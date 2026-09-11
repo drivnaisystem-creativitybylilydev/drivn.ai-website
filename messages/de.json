@@ -158,160 +158,180 @@
   },
   "Services": {
     "eyebrow": "What We Build",
-    "headline": "Six systems. Built around how your business actually runs.",
+    "headline": "<a>The Foundation</a> first — then the system that turns attention into <a>booked work</a>.",
     "learn_more": "Learn more",
-    "panels": [
-      {
-        "eyebrow": "Speed-to-Lead — Messaging",
-        "headline": "Every message answered in seconds, on whatever app the lead already has open.",
-        "subtext": "Stores everything in a CRM — yours or one we build — and answers from a knowledge brain trained on your business, not a generic script.",
-        "bullets": [
-          {
-            "title": "Any Inbox",
-            "desc": "WhatsApp, Instagram, SMS — wherever the conversation starts."
-          },
-          {
-            "title": "Pre-Qualified",
-            "desc": "Asks the right questions before it ever reaches you."
-          },
-          {
-            "title": "Books It In",
-            "desc": "Confirms the appointment, no back-and-forth."
-          },
-          {
-            "title": "Reviews, Too",
-            "desc": "Requests the Google review automatically once the job's done."
-          }
-        ],
-        "cta": "See Speed-to-Lead",
-        "href": "/services/speed-to-lead"
-      },
-      {
-        "eyebrow": "Speed-to-Lead — Voice",
-        "headline": "A receptionist that actually answers — and does the admin work after.",
-        "subtext": "Books appointments, sends confirmations, handles reschedules, and hands off to a real person only when it actually needs to.",
-        "bullets": [
-          {
-            "title": "Answers Every Call",
-            "desc": "No more missed calls going to voicemail."
-          },
-          {
-            "title": "Real Conversations",
-            "desc": "Not a phone tree — it understands what's actually being asked."
-          },
-          {
-            "title": "Handles The Admin",
-            "desc": "Confirmations, reschedules, follow-up — the parts a receptionist does between calls."
-          },
-          {
-            "title": "Knows When To Escalate",
-            "desc": "Hands off to a real person the moment it should."
-          }
-        ],
-        "cta": "See Speed-to-Lead",
-        "href": "/services/speed-to-lead"
-      },
-      {
-        "eyebrow": "Websites",
-        "headline": "A site built to convert, live in under two weeks.",
-        "subtext": "Not a template — built around how leads actually reach you, with follow-up wired in from day one.",
-        "bullets": [
-          {
-            "title": "Built To Convert",
-            "desc": "Every page designed around one next step, not just a look."
-          },
-          {
-            "title": "Live In 2 Weeks",
-            "desc": "From kickoff to launch, not months of back-and-forth."
-          },
-          {
-            "title": "Auto Review Requests",
-            "desc": "Built in, not bolted on after."
-          },
-          {
-            "title": "Local SEO Included",
-            "desc": "Found by the people already searching for you."
-          }
-        ],
-        "cta": "See Websites",
-        "href": "/services/websites"
-      },
-      {
-        "eyebrow": "Marketing",
-        "headline": "Paid and organic, run as one system instead of two separate hires.",
-        "subtext": "Meta, Google, and LinkedIn campaigns paired with the content that keeps the audience they build.",
-        "bullets": [
-          {
-            "title": "Paid Lead Gen",
-            "desc": "Meta, Google, and LinkedIn Sales Navigator, AI-assisted end to end."
-          },
-          {
-            "title": "Content That Compounds",
-            "desc": "LinkedIn, Instagram, and Facebook — planned, not improvised."
-          },
-          {
-            "title": "One System",
-            "desc": "Ads and content built to reinforce each other, not run separately."
-          },
-          {
-            "title": "AI-Leveraged",
-            "desc": "Faster creative and targeting iteration than a typical agency retainer."
-          }
-        ],
-        "cta": "See Marketing",
-        "href": "/services/marketing"
-      },
-      {
-        "eyebrow": "Workflow Automation",
-        "headline": "Custom automations for the admin work eating your week.",
-        "subtext": "Built around your actual workflow, not a generic template — so the tedious, repetitive parts of the job just happen.",
-        "bullets": [
-          {
-            "title": "End-to-End",
-            "desc": "From trigger to resolution, no manual steps in between."
-          },
-          {
-            "title": "Built For Your Workflow",
-            "desc": "Shaped around how you actually work, not a generic template."
-          },
-          {
-            "title": "Any Admin Task",
-            "desc": "Inbox triage, data entry, follow-ups — whatever eats the most time."
-          },
-          {
-            "title": "Always On",
-            "desc": "Runs in the background, every time, without reminders."
-          }
-        ],
-        "cta": "See Workflow Automation",
-        "href": "/services/workflow-automation"
-      },
-      {
-        "eyebrow": "Full-Stack Operating System",
-        "headline": "The entire business, running on one system you actually own.",
-        "subtext": "Leads, bookings, marketing, reviews — in one place instead of five disconnected tools. Standalone, or as the layer everything else plugs into.",
-        "bullets": [
-          {
-            "title": "Unified Dashboard",
-            "desc": "Every system in one view, not five logins."
-          },
-          {
-            "title": "Real-Time Reporting",
-            "desc": "See what's happening as it happens."
-          },
-          {
-            "title": "One Login, Not Five",
-            "desc": "Less software to manage, not more."
-          },
-          {
-            "title": "Built Around You",
-            "desc": "Standalone, or connected to every other system we build."
-          }
-        ],
-        "cta": "See the Operating System",
-        "href": "/services/ai-operating-systems"
-      }
-    ]
+    "foundation": {
+      "eyebrow": "Show up first",
+      "headline": "Get found before your competition does",
+      "subtext": "The visibility layer. Each piece earns its keep on its own; together they fill the top of the funnel the rest of the system runs on.",
+      "cta": "See what's included",
+      "href": "/services/websites",
+      "items": [
+        {
+          "title": "Website",
+          "desc": "A site built to turn the visit into a lead — not just to look right.",
+          "bullets": [
+            "Every page points at one next step, not a dead end",
+            "Live in about two weeks, not months of back-and-forth",
+            "Fast on a phone, on a job site, on bad signal"
+          ],
+          "cta": "Get my site audited"
+        },
+        {
+          "title": "Local SEO",
+          "desc": "Rank for what people in your area actually type when they need you.",
+          "bullets": [
+            "A page for each service and each town you cover",
+            "Structured data search engines can read and cite",
+            "Name, address, and phone consistent across the web"
+          ],
+          "cta": "Check my local rankings"
+        },
+        {
+          "title": "Google Business Profile",
+          "desc": "The map-pack listing set up properly and kept active — not left to go stale.",
+          "bullets": [
+            "Categories, photos, posts, and Q&A done right",
+            "Shows up for the jobs you actually want",
+            "Stays active without you logging in to post"
+          ],
+          "cta": "Audit my Google profile"
+        },
+        {
+          "title": "Reviews",
+          "desc": "A steady flow of new Google reviews from finished jobs, on autopilot.",
+          "bullets": [
+            "Request sent automatically once the job is done",
+            "More recent reviews than the competitor down the road",
+            "Monitored — a bad one never sits unseen"
+          ],
+          "cta": "See my review setup"
+        },
+        {
+          "title": "Paid ads",
+          "desc": "Google and social campaigns pointed at a page built to convert them — the amplifier once the foundation is earning.",
+          "bullets": [
+            "High-intent search plus demand-gen on social",
+            "Spend tracked to booked jobs, not clicks",
+            "AI-assisted creative and targeting, iterated fast"
+          ],
+          "cta": "Map my ad opportunity"
+        }
+      ]
+    },
+    "speedToLead": {
+      "eyebrow": "Answer first",
+      "headline": "Reply before the lead moves on",
+      "subtext": "The gap between a lead reaching out and a reply going back is where most jobs quietly die. This closes it to seconds — with a real answer, and a real number.",
+      "items": [
+        {
+          "title": "Instant reply",
+          "desc": "Every message and form answered in seconds, on whatever app the lead already has open — WhatsApp, Instagram, SMS.",
+          "bullets": [
+            "Trained on your business, not a generic script",
+            "Qualifies and books before it ever reaches you",
+            "Logs every lead in a CRM — yours or one we build"
+          ],
+          "cta": "See my response times"
+        },
+        {
+          "title": "Instant quoting",
+          "desc": "A real ballpark number back while the lead is still deciding — not a \"we'll get back to you\".",
+          "bullets": [
+            "Priced from your rules, not a guess",
+            "Sent in the same conversation, minutes not days",
+            "Every quote tracked from sent to booked"
+          ],
+          "cta": "Get a quoting demo"
+        }
+      ]
+    },
+    "neverMissACall": {
+      "eyebrow": "Never miss a call",
+      "headline": "Every call covered — even the ones you miss",
+      "subtext": "A missed call is a missed job — the caller just dials the next name on the list. This layer makes sure something always picks up, and follows up when it doesn't.",
+      "items": [
+        {
+          "title": "AI receptionist",
+          "desc": "Answers every call in your business's voice, books the appointment, and only hands off to a person when it truly needs to.",
+          "bullets": [
+            "No call goes to voicemail, day or night",
+            "A real conversation, not a phone tree",
+            "Confirmations, reschedules and follow-ups handled after"
+          ],
+          "cta": "Hear the receptionist"
+        },
+        {
+          "title": "Missed-call text-back",
+          "desc": "The moment a call goes unanswered, the caller gets a text — so the lead stays yours instead of going to the next result.",
+          "bullets": [
+            "Fires within seconds of the missed call",
+            "Opens a real conversation, not an autoreply",
+            "Books or routes straight from the thread"
+          ],
+          "cta": "Set this up for me"
+        },
+        {
+          "title": "Lead reactivation",
+          "desc": "Old enquiries and past customers worked automatically — booked jobs pulled out of a list you already have.",
+          "bullets": [
+            "Every old lead and quote followed up, not forgotten",
+            "Personalised outreach, not a blast",
+            "Runs on a schedule without you touching it"
+          ],
+          "cta": "Reactivate my list"
+        }
+      ]
+    },
+    "customAutomations": {
+      "eyebrow": "Custom automations",
+      "headline": "The busywork eating your week, run for you",
+      "subtext": "Shaped around how you actually work — not a template — so the tedious, repetitive parts of the job run themselves, every time, in the background.",
+      "bullets": [
+        {
+          "title": "End-to-End",
+          "desc": "From trigger to resolution, no manual steps in between."
+        },
+        {
+          "title": "Built For Your Workflow",
+          "desc": "Shaped around how you actually work, not a generic template."
+        },
+        {
+          "title": "Any Admin Task",
+          "desc": "Inbox triage, data entry, follow-ups — whatever eats the most time."
+        },
+        {
+          "title": "Always On",
+          "desc": "Runs in the background, every time, without reminders."
+        }
+      ],
+      "cta": "Map my busywork"
+    },
+    "operatingSystem": {
+      "eyebrow": "Full-Stack Operating System",
+      "headline": "The entire business, running on one system you actually own.",
+      "subtext": "Leads, bookings, marketing, reviews — in one place instead of five disconnected tools. Standalone, or as the layer everything else plugs into.",
+      "bullets": [
+        {
+          "title": "Unified Dashboard",
+          "desc": "Every system in one view, not five logins."
+        },
+        {
+          "title": "Real-Time Reporting",
+          "desc": "See what's happening as it happens."
+        },
+        {
+          "title": "One Login, Not Five",
+          "desc": "Less software to manage, not more."
+        },
+        {
+          "title": "Built Around You",
+          "desc": "Standalone, or connected to every other system we build."
+        }
+      ],
+      "cta": "See the Operating System",
+      "href": "/services/ai-operating-systems"
+    }
   },
   "HowItWorks": {
     "number": "04",
@@ -387,7 +407,8 @@
       },
       {
         "label": "Moving & Logistics",
-        "desc": "Quote requests and booking conversion during peak demand"
+        "desc": "A booking-ready site, instant quotes, fast follow-up, and the local search presence movers get found through",
+        "link": "/moving-and-logistics"
       },
       {
         "label": "Home Services",
