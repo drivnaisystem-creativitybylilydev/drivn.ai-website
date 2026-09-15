@@ -171,6 +171,22 @@ MONGODB_URI="$(grep MONGODB_URI .env.local | cut -d= -f2-)" node scripts/export-
 
 ## Next Steps / To-Do
 
+- [ ] **P0: Backfill JSON-only leads into MongoDB.** `scripts/export-leads-to-os.js` is a one-way
+      MongoDB → JSON export that fully overwrites each `leads/*/leads.json` on every run. The
+      dashboard reads only from MongoDB — never from these JSON files. There are **95 leads with
+      `source: "instagram"` across 14 niche folders** (a value the app itself never writes — only
+      `google_maps` / `apify` / `manual` come from real code paths) that exist ONLY in JSON, added
+      by hand in past sessions instead of via MongoDB. They're invisible in the dashboard right now
+      and will be **silently deleted** the next time the export script runs. Fix:
+      1. Write a backfill script (needs `MONGODB_URI`, not available in a sandboxed/remote session —
+         run it somewhere with `.env.local` or the Vercel URI) that reads every JSON-only lead,
+         dedupes against Mongo by `placeId`/name, and inserts the missing ones using the scoring
+         formula in `lib/sourced-lead-db.ts:328-333`.
+      2. Run `scripts/export-leads-to-os.js` once after backfilling to confirm Mongo and JSON agree.
+      3. **Going forward: never hand-edit `leads/*/leads.json`.** Add new leads via MongoDB (the
+         dashboard's "Add Business" form, or an insert script) so they're dashboard-visible and
+         survive the next export. (This includes the "Top Notch Moving & Storage LLC" lead added
+         2026-09-15 — it's JSON-only and needs backfilling too.)
 - [ ] Test questionnaire auto-save in browser (verify localStorage + MongoDB + Email flow)
 - [ ] Test case study generator (submit questionnaire, verify PDF/Markdown export)
 - [ ] Verify Jarvis model switching in production (check logs for Haiku vs Sonnet selection)
@@ -214,11 +230,11 @@ MONGODB_URI="$(grep MONGODB_URI .env.local | cut -d= -f2-)" node scripts/export-
 
 ## Session Context
 
-**Last session updated:** 2026-05-27 17:42:47
+**Last session updated:** 2026-09-15 19:42:06
 **Last 5 commits:**
-f2e3d42 feat(case-study): publish NoTime story; wire dedicated page to CaseStudyView
-ab4e51a Update CLAUDE.md with TimeKeeper session summary
-db23c2e Add TimeKeeper dashboard to admin panel with auto-start
-b7352b0 Fix ESLint error: escape unescaped apostrophe in Services section
-d1f4058 Redesign Services section with outcome-focused 6-card showcase
+b2dfb84 Add Top Notch Moving & Storage LLC to moving leads
+08eebb3 Remove Apollonas Moving sub-routes — redoing as standalone project
+2bb65a5 Add free demo homepage + pitch page for Apollonas Moving & Junk Removal
+d300591 Add sourced-leads pipeline/queue admin views and demo pages
+388d5c1 Remove Impressum (non-German entity), remove top ticker banner, fix privacy page references
 **Status:** Progress auto-saved
