@@ -230,11 +230,11 @@ MONGODB_URI="$(grep MONGODB_URI .env.local | cut -d= -f2-)" node scripts/export-
 
 ## Session Context
 
-**Last session updated:** 2026-09-15 19:42:06
+**Last session updated:** 2026-09-17 16:18:21
 **Last 5 commits:**
+3978d57 Document JSON-vs-MongoDB lead sync issue as P0 to-do
 b2dfb84 Add Top Notch Moving & Storage LLC to moving leads
 08eebb3 Remove Apollonas Moving sub-routes — redoing as standalone project
 2bb65a5 Add free demo homepage + pitch page for Apollonas Moving & Junk Removal
 d300591 Add sourced-leads pipeline/queue admin views and demo pages
-388d5c1 Remove Impressum (non-German entity), remove top ticker banner, fix privacy page references
 **Status:** Progress auto-saved
